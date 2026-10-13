@@ -1,12 +1,13 @@
 // Figma: Category tile (Selected: No, Yes). The four broad categories at the top of Directory, two to a row with a
-// 12pt gap: a 72pt tile on bg/color-surface-raised, radius/16, a soft border/color-control-subtle edge in Light only,
+// 12pt gap, styled like the listing cards under them: a 72pt tile on bg/color-surface-raised, radius/20, Elevation/Card
+// and no edge,
 // a 40pt bg/color-brand-subtle circle with the icon in icon/color-brand, then the label in Body S Medium, which may
 // wrap to two lines. Selected fills the tile with bg/color-selected, a 2pt border/color-brand edge, the circle in
 // bg/color-brand with the icon in icon/color-on-brand and the label in Bold, so the state never rests on color alone.
 // On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
 import { View, Text, Pressable } from '../rn';
-import { useTheme, type } from '../theme';
+import { useTheme, type, elevation } from '../theme';
 import Icon from './Icon';
 
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
@@ -22,9 +23,9 @@ export default function CategoryTile({ label, icon, selected, onPress, testID })
       accessibilityLabel={label}
       style={({ pressed }) => [
         {
-          flex: 1, minHeight: 72, paddingHorizontal: selected ? 11 : 12, borderRadius: 16, flexDirection: 'row', alignItems: 'center', gap: 12,
-          backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'),
-          borderWidth: selected ? 2 : 1, borderColor: c(selected ? 'border/color-brand' : 'border/color-control-subtle'),
+          flex: 1, minHeight: 72, paddingHorizontal: selected ? 10 : 12, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 12,
+          backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
+          ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
         },
         pressed && { transform: [{ scale: 0.97 }] },
       ]}
