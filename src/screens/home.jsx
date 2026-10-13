@@ -173,7 +173,7 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: no title bar. Search with the Saved bookmark at its right, then every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// The Filter pill at the start of the chip row opens the Subcategories sheet. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
+// The Filter pill at the start of the chip row opens the Subcategories sheet. Tapping the selected chip again shows every place.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -236,12 +236,6 @@ export function Directory() {
   // The map: only on a search, and only for places you visit to buy (Food, Shop). Holistic businesses and services
   // come to you or take bookings, so no pin.
   const places = q && state === 'ready' ? results.filter((l) => l.category === 'Food' || l.category === 'Shop') : [];
-  const n = results.length;
-  const where = sub || (cat === 'All' ? '' : cat);
-  const countLabel = q ? `${n} ${n === 1 ? 'result' : 'results'}${where ? ` in ${where}` : ''}`
-    : sub ? `${n} ${n === 1 ? 'place' : 'places'} in ${sub}`
-      : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} ${place}`;
-  const showCount = state === 'ready' && app.listings.length > 0 && n > 0 && !!countLabel;
 
   return (
     <>
@@ -266,12 +260,6 @@ export function Directory() {
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
             <CategoryChips value={cat} onPick={pickCategory} filterOn={!!sub} filterLabel={sub ? `Filter, ${sub}` : 'Filter'} onFilter={() => setSheet(true)} />
-            {showCount && (
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
-                {cat !== 'All' && <TextLink testID="clear-category" label="Clear" onPress={() => { clearAll(); fb.haptic('selection'); }} />}
-              </View>
-            )}
           </View>
           {/* The city picker takes Near you's place, over the map and the list. */}
           <View style={{ gap: 12 }}>
