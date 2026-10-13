@@ -26,7 +26,7 @@ import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
-import CategoryChips from '../components/CategoryChips';
+import { CategoryTiles } from '../components/CategoryTile';
 import SubcategorySheet from '../components/SubcategorySheet';
 import { CityButton, CitySheet } from '../components/CityPicker';
 
@@ -173,7 +173,8 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: no title bar. Search with the Saved bookmark at its right, then every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// The Filter pill at the start of the chip row opens the Subcategories sheet. Tapping the selected chip again shows every place.
+// Four Category tiles, two to a row, pick the category. The sliders button next to Search opens the Subcategories sheet.
+// Tapping the selected tile again shows every place.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -256,9 +257,10 @@ export function Directory() {
               <View style={{ flex: 1 }}>
                 <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
               </View>
+              <IconButton testID="open-subcategories" icon="sliders" variant={sub ? 'filled' : 'outline'} accessibilityLabel={sub ? `Filter, ${sub}` : 'Filter'} onPress={() => setSheet(true)} />
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
-            <CategoryChips value={cat} onPick={pickCategory} filterOn={!!sub} filterLabel={sub ? `Filter, ${sub}` : 'Filter'} onFilter={() => setSheet(true)} />
+            <CategoryTiles value={cat} onPick={pickCategory} />
           </View>
           {/* The city picker takes Near you's place, over the map and the list. */}
           <View style={{ gap: 12 }}>

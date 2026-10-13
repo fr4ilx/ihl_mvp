@@ -9,7 +9,7 @@ import {
   BadgeCheck, Gift, CalendarCheck, ChatBubbleQuestion, Megaphone, MailOpen, ArrowDown, ShieldCheck,
   Group, Apple as AppleFruit, SoilAlt, Leaf, Flower, Tree, PineTree, AfricanTree, Crown, Compass, Farm, UserLove, SunLight,
   EmojiTalkingHappy, Emoji, EmojiQuite, EmojiSad, Yoga, Walking, Flash, Medal, User, HomeUser, Brain,
-  FilterList,
+  FilterList, Tools,
 } from 'iconoir-react/regular';
 import {
   Bookmark as BookmarkSolid, Heart as HeartSolid, CheckCircle as CheckCircleSolid, WarningCircle as WarningCircleSolid,
@@ -52,7 +52,7 @@ const REGULAR = {
   'african-tree': AfricanTree, crown: Crown, compass: Compass, farm: Farm, 'user-love': UserLove, 'sun-light': SunLight,
   'emoji-talking-happy': EmojiTalkingHappy, emoji: Emoji, 'emoji-quite': EmojiQuite, 'emoji-sad': EmojiSad,
   yoga: Yoga, walking: Walking, flash: Flash, medal: Medal, user: User, 'home-user': HomeUser, brain: Brain,
-  'filter-list': FilterList, sliders: Sliders,
+  'filter-list': FilterList, sliders: Sliders, tools: Tools,
 };
 const SOLID = {
   bookmark: BookmarkSolid, heart: HeartSolid, 'check-circle': CheckCircleSolid, 'warning-circle': WarningCircleSolid,
