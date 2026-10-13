@@ -1,11 +1,12 @@
 // Figma: Chip. 40pt pill, 16pt side padding. Idle is a quiet raised pill, Selected fills with brand.
-// On a sheet the idle chip is bg/color-sheet-raised with no edge.
+// On a sheet the idle chip is bg/color-sheet-raised with no edge. small: the label in Caption (13pt), for the Directory
+// chip row.
 import React from 'react';
 import { Pressable, Text, StyleSheet } from '../rn';
 import { useTheme, type, useRaised, useOnSheet } from '../theme';
 import Icon from './Icon';
 
-export default function Chip({ label, selected, showCheck, onPress, testID, style }) {
+export default function Chip({ label, selected, showCheck, onPress, testID, style, small }) {
   const { c } = useTheme();
   const raised = useRaised();
   const onSheet = useOnSheet();
@@ -27,7 +28,7 @@ export default function Chip({ label, selected, showCheck, onPress, testID, styl
       ]}
     >
       {selected && showCheck && <Icon name="check" size={20} color={fg} strokeWidth={2} />}
-      <Text numberOfLines={1} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: fg }]}>{label}</Text>
+      <Text numberOfLines={1} style={[type(small ? 'Caption' : 'BodyS', selected ? 'bold' : 'medium'), { color: fg }]}>{label}</Text>
     </Pressable>
   );
 }

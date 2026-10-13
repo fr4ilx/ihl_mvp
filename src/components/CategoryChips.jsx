@@ -1,5 +1,5 @@
 // The Directory filter row under Search: a round Filter pill with the sliders icon, then the four broad categories as
-// Chips (Holistic Business, Food, Shop, Services), 8 apart with 8pt sides so the row fits in 370pt. The Filter pill
+// Chips (Holistic Business, Food, Shop, Services), 8 apart, with the label in Caption and 12pt sides so the row fits in 370pt. The Filter pill
 // opens the Subcategories sheet. It is 40pt like the Chips, idle on the raised fill with the soft Light edge, and
 // fills with brand once a subcategory is picked. Selected Chips fill with brand and turn Bold. Tapping the selected
 // one again shows every place.
@@ -30,7 +30,7 @@ export default function CategoryChips({ value, onPick, filterOn, filterLabel, on
       >
         <Icon name="sliders" size={20} color={c(filterOn ? 'icon/color-on-brand' : 'icon/color-primary')} />
       </Pressable>
-      {DIRECTORY_CATEGORIES.map((k) => <Chip key={k} testID={`category-${k}`} label={k} selected={value === k} style={{ paddingHorizontal: 8, flexShrink: 0 }} onPress={() => onPick(value === k ? 'All' : k)} />)}
+      {DIRECTORY_CATEGORIES.map((k) => <Chip key={k} testID={`category-${k}`} label={k} selected={value === k} small style={{ paddingHorizontal: 12, flexShrink: 0 }} onPress={() => onPick(value === k ? 'All' : k)} />)}
     </View>
   );
 }
