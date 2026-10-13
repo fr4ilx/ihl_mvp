@@ -15,6 +15,7 @@ import ListingCard from '../components/ListingCard';
 import EmptyState from '../components/EmptyState';
 import { RowSkeleton, ReelSkeleton, ThreadsSkeleton } from '../components/Skeleton';
 import IconButton from '../components/IconButton';
+import ResultsMap from '../components/ResultsMap';
 import TextLink from '../components/TextLink';
 import Reel from '../components/Reel';
 import ThreadRow from '../components/ThreadRow';
@@ -199,18 +200,18 @@ function ListingList({ items, keyPrefix, onOpen }) {
   );
 }
 
-// Directory and a category page share one layout, with no title bar: Search with the Saved bookmark at its right,
-// tiles two to a row, then the City picker and the places in that city. On Directory the tiles are the four
-// categories and each opens its category page. On a category page a back button sits left of Search, the tiles are
-// its subcategories and picking one narrows the list in place. Tapping the selected tile again shows the whole
-// category.
-function DirectoryLayout({ category }) {
+// Directory, a category page and a subcategory page share one layout, with no title bar: Search with the Saved
+// bookmark at its right, then the City picker and the places in that city. On Directory four category tiles sit under
+// Search and each opens its category page. A category page adds a back button left of Search, and its tiles are the
+// subcategories, each opening its subcategory page. A subcategory page has no tiles and shows the map, with a pin for
+// every place in the list, between the City picker and the list.
+function DirectoryLayout({ category, subcategory }) {
   const nav = useNav();
   const app = useApp();
   const fb = useFeedback();
   const { params } = useRoute().route;
   const [query, setQuery] = useState(params.query || '');
-  const [sub, setSub] = useState(params.subcategory || null);
+  const sub = subcategory || null;
   const c2 = useCity(params.city);
   const { city } = c2;
   useEffect(() => { if (params.openCity) c2.setOpen(true); }, []);
@@ -225,8 +226,8 @@ function DirectoryLayout({ category }) {
   }, [q, category, sub, city, app.listings]);
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
   const place = city === NEAR_ME ? 'near you' : `in ${city}`;
-  const tiles = category
-    ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }))} value={sub} onPick={(k) => { setSub(k); fb.haptic('selection'); }} />
+  const tiles = sub ? null : category
+    ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }))} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubcategoryResults', { category, subcategory: k, city }); }} />
     : <CategoryTiles onPick={(k) => { fb.haptic('selection'); nav.navigate('CategoryResults', { category: k, city }); }} />;
 
   let body;
@@ -240,7 +241,7 @@ function DirectoryLayout({ category }) {
     body = q
       ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word." action="Clear search" onAction={() => setQuery('')} />
       : sub
-        ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing in ${what} yet`} message={`We’re still adding places ${place}.`} action="Show all" onAction={() => setSub(null)} />
+        ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing in ${what} ${place} yet`} message="We’re still adding places in your area." action={city === NEAR_ME ? null : 'Show places near me'} onAction={() => c2.setCity(NEAR_ME)} />
         : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`No ${what} ${place} yet`} message="We’re still adding places in your area." action={city === NEAR_ME ? null : 'Show places near me'} onAction={() => c2.setCity(NEAR_ME)} />;
   } else {
     body = <ListingList items={results} keyPrefix={city + sub} onOpen={open} />;
@@ -248,7 +249,7 @@ function DirectoryLayout({ category }) {
 
   return (
     <>
-    <Screen testID={category ? 'screen-category' : 'screen-directory'} bodyTop={12} statusFill bottom={category ? null : <TabBar active="directory" onChange={nav.switchTab} />}>
+    <Screen testID={sub ? 'screen-subcategory' : category ? 'screen-category' : 'screen-directory'} bodyTop={12} statusFill bottom={category ? null : <TabBar active="directory" onChange={nav.switchTab} />}>
       {state === 'error' ? (
         // Figma Offline: no search or filters, the message sits lower (y 260). With no title bar the body starts at y 74.
         <View style={{ paddingTop: 186 }}>
@@ -260,7 +261,7 @@ function DirectoryLayout({ category }) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               {!!category && <IconButton testID="nav-back" icon="nav-arrow-left" variant="outline" accessibilityLabel="Back" onPress={nav.goBack} />}
               <View style={{ flex: 1 }}>
-                <SearchField testID="directory-search" value={query} onChangeText={setQuery} placeholder={category ? `Search ${category}` : undefined} />
+                <SearchField testID="directory-search" value={query} onChangeText={setQuery} placeholder={category ? `Search ${sub || category}` : undefined} />
               </View>
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
@@ -268,6 +269,7 @@ function DirectoryLayout({ category }) {
           </View>
           <View style={{ gap: 12 }}>
             {app.listings.length > 0 && <CityButton value={city} onPress={c2.openSheet} />}
+            {!!sub && <ResultsMap testID="subcategory-map" places={state === 'ready' ? results : []} onOpen={open} />}
             {body}
           </View>
         </>
@@ -285,6 +287,11 @@ export function Directory() {
 export function CategoryResults() {
   const { params } = useRoute().route;
   return <DirectoryLayout category={params.category || 'Holistic Business'} />;
+}
+
+export function SubcategoryResults() {
+  const { params } = useRoute().route;
+  return <DirectoryLayout category={params.category || 'Holistic Business'} subcategory={params.subcategory || 'Massage'} />;
 }
 
 export function ListingProfile() {
