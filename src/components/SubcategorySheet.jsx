@@ -35,7 +35,6 @@ export default function SubcategorySheet({ visible, category, value, onPick, onC
   return (
     <Sheet visible={visible} onClose={onClose} title={groups.length === 1 ? groups[0] : 'Narrow down'} testID="subcategory-sheet">
       <View style={{ gap: 24 }}>
-        <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>Tap a heart to keep a favorite on top.</Text>
         {groups.length === 1 ? rows(groups[0]) : groups.map((k) => (
           <View key={k} style={{ gap: 12 }}>
             <Text style={[type('H6', 'bold'), { color: c('text/color-secondary') }]}>{k}</Text>
