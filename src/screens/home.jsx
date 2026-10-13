@@ -171,7 +171,7 @@ export function Home() {
 // What a category's count line calls its places, one and many: "1 shop near you", "4 holistic businesses near you".
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
-// Directory: every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
+// Directory: no title bar. Search with the Saved bookmark at its right, then every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
 // The Filter pill at the start of the chip row opens the Subcategories sheet. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
@@ -243,18 +243,23 @@ export function Directory() {
     <Screen
       testID="screen-directory"
       bodyTop={12}
-      nav={<NavBar kind="title" title="Directory" actions={[{ icon: 'bookmark', onPress: () => nav.navigate('Saved'), accessibilityLabel: 'Saved', testID: 'open-saved' }]} />}
+      statusFill
       bottom={<TabBar active="directory" onChange={nav.switchTab} />}
     >
       {state === 'error' ? (
-        // Figma Offline: no search or filters, the message sits lower (y 260).
-        <View style={{ paddingTop: 130 }}>
+        // Figma Offline: no search or filters, the message sits lower (y 260). With no title bar the body starts at y 74.
+        <View style={{ paddingTop: 186 }}>
           <EmptyState testID="directory-offline" tone="error" illustration={images.illustrations.offline} title="Can’t connect" message="Check your connection and try again." action="Try again" onAction={() => { fb.haptic('light'); retry(); }} />
         </View>
       ) : (
         <>
           <View style={{ gap: 12 }}>
-            <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+              </View>
+              <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
+            </View>
             <CategoryChips value={cat} onPick={pickCategory} filterOn={!!sub} filterLabel={sub ? `Filter, ${sub}` : 'Filter'} onFilter={() => setSheet(true)} />
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

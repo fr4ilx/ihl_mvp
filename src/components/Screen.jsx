@@ -60,7 +60,8 @@ export function HeaderFill({ visible, height = STATUS_BAR + NAV_BAR }) {
 }
 
 // bodyTop: 24 under a Back bar (content starts at y 142), 12 under a Title bar on the tab screens (y 130).
-export default function Screen({ nav, children, bottom, bodyPadding = 16, bodyGap = 20, bodyTop = 24, bottomSpace = 140, background, scrollRef, testID, center }) {
+// statusFill: no nav bar, but the canvas fills in behind the status bar once content scrolls under it (Directory).
+export default function Screen({ nav, statusFill, children, bottom, bodyPadding = 16, bodyGap = 20, bodyTop = 24, bottomSpace = 140, background, scrollRef, testID, center }) {
   const { c } = useTheme();
   const [scrolled, onScroll] = useScrolled();
   return (
@@ -73,6 +74,11 @@ export default function Screen({ nav, children, bottom, bodyPadding = 16, bodyGa
       >
         <View style={[{ paddingHorizontal: bodyPadding, paddingTop: bodyTop, gap: bodyGap }, center && { flex: 1, justifyContent: 'center', paddingBottom: 60 }]}>{children}</View>
       </ScrollView>
+      {!nav && statusFill && (
+        <View pointerEvents="none" style={[styles.header, { paddingTop: 0 }]}>
+          <HeaderFill visible={scrolled} height={STATUS_BAR} />
+        </View>
+      )}
       {nav && (
         <View pointerEvents="box-none" style={styles.header}>
           <HeaderFill visible={scrolled} />
