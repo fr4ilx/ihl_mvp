@@ -24,16 +24,6 @@ const AppleLogo = ({ width, height, color, style }) => (
   <svg width={width} height={height} viewBox="4.08 8.6 22.8 22.8" style={style} aria-hidden="true"><path d={APPLE_LOGO} fill={color || 'currentColor'} /></svg>
 );
 
-// Filter sliders: two tracks with a knob each, drawn on Iconoir's 24pt grid with its 1.5 stroke and round caps, since
-// Iconoir has no sliders glyph. In the app: react-native-svg with the same paths.
-const Sliders = ({ width, height, color, strokeWidth = 1.5, style }) => (
-  <svg width={width} height={height} viewBox="0 0 24 24" fill="none" stroke={color || 'currentColor'} strokeWidth={strokeWidth} strokeLinecap="round" style={style} aria-hidden="true">
-    <path d="M3 7h9M18 7h3M3 17h3M12 17h9" />
-    <circle cx="15" cy="7" r="2.5" />
-    <circle cx="9" cy="17" r="2.5" />
-  </svg>
-);
-
 const REGULAR = {
   'home-simple': HomeSimple, community: Community, 'user-circle': UserCircle, bookmark: Bookmark, search: Search,
   'nav-arrow-left': NavArrowLeft, 'nav-arrow-right': NavArrowRight, xmark: Xmark, 'xmark-circle': XmarkCircle, plus: Plus,
@@ -52,7 +42,7 @@ const REGULAR = {
   'african-tree': AfricanTree, crown: Crown, compass: Compass, farm: Farm, 'user-love': UserLove, 'sun-light': SunLight,
   'emoji-talking-happy': EmojiTalkingHappy, emoji: Emoji, 'emoji-quite': EmojiQuite, 'emoji-sad': EmojiSad,
   yoga: Yoga, walking: Walking, flash: Flash, medal: Medal, user: User, 'home-user': HomeUser, brain: Brain,
-  'filter-list': FilterList, sliders: Sliders, tools: Tools,
+  'filter-list': FilterList, tools: Tools,
 };
 const SOLID = {
   bookmark: BookmarkSolid, heart: HeartSolid, 'check-circle': CheckCircleSolid, 'warning-circle': WarningCircleSolid,
