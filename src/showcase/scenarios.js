@@ -127,6 +127,7 @@ export const FLOWS = [
       { id: 'directory-empty', label: 'No places yet', state: true, content: 'empty', nav: tab('directory', ['Directory']) },
       { id: 'city-sheet', label: 'Show places in', state: true, nav: tab('directory', ['Directory', { openCity: true }]) },
       { id: 'city-near-me', label: 'Near me', state: true, nav: tab('directory', ['Directory', { city: 'Near me' }]) },
+      { id: 'radius', label: 'Within 5 mi', state: true, nav: tab('directory', ['Directory', { city: 'Near me', radius: 5 }]) },
       { id: 'city-empty', label: 'No places in a city', state: true, nav: tab('directory', ['Directory', { city: 'Fort Wayne' }]) },
       { id: 'holistic', label: 'Holistic Business', nav: tab('directory', ['Directory'], ['CategoryResults', { category: 'Holistic Business' }]) },
       { id: 'category-sub', label: 'Massage', nav: tab('directory', ['Directory'], ['CategoryResults', { category: 'Holistic Business' }], ['SubcategoryResults', { category: 'Holistic Business', subcategory: 'Massage', city: 'Near me' }]) },

@@ -27,7 +27,7 @@ import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
 import { CategoryTiles } from '../components/CategoryTile';
-import { CityButton, CitySheet } from '../components/CityPicker';
+import { CityButton, CitySheet, RadiusButton, RadiusSheet } from '../components/CityPicker';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
 export const listingText = (l) => [l.name, l.kind, l.area, l.category, l.subcategory, ...(l.specialties || [])].join(' ').toLowerCase();
@@ -184,8 +184,25 @@ function useCity(initial) {
   const [city, setCity] = useState(initial || home || NEAR_ME);
   const [open, setOpen] = useState(false);
   const pick = (k) => { setCity(k); setOpen(false); fb.haptic('selection'); };
-  const sheet = <CitySheet visible={open} value={city} home={home} onPick={pick} onClose={() => setOpen(false)} />;
-  return { city, setCity, openSheet: () => setOpen(true), sheet, setOpen };
+  // The radius: any distance until one is picked.
+  const { params } = useRoute().route;
+  const [radius, setRadius] = useState(params.radius || null);
+  const [radiusOpen, setRadiusOpen] = useState(false);
+  const pickRadius = (r) => { setRadius(r); setRadiusOpen(false); fb.haptic('selection'); };
+  const sheet = (
+    <>
+      <CitySheet visible={open} value={city} home={home} onPick={pick} onClose={() => setOpen(false)} />
+      <RadiusSheet visible={radiusOpen} value={radius} onPick={pickRadius} onClose={() => setRadiusOpen(false)} />
+    </>
+  );
+  // The City picker with the Radius pill at its right.
+  const row = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <CityButton value={city} onPress={() => setOpen(true)} />
+      <RadiusButton value={radius} onPress={() => setRadiusOpen(true)} />
+    </View>
+  );
+  return { city, setCity, radius, setRadius, row, openSheet: () => setOpen(true), sheet, setOpen };
 }
 
 function ListingList({ items, keyPrefix, onOpen }) {
@@ -213,17 +230,18 @@ function DirectoryLayout({ category, subcategory }) {
   const [query, setQuery] = useState(params.query || '');
   const sub = subcategory || null;
   const c2 = useCity(params.city);
-  const { city } = c2;
+  const { city, radius } = c2;
   useEffect(() => { if (params.openCity) c2.setOpen(true); }, []);
   const [state, retry] = useLoad(app.network);
 
   const q = searchTerm(query);
   const results = useMemo(() => {
     let list = inCity(app.listings, city);
+    if (radius) list = list.filter((l) => milesOf(l.distance) <= radius);
     if (category) list = list.filter((l) => l.category === category);
     if (sub) list = list.filter((l) => l.subcategory === sub);
     return q ? list.filter((l) => listingText(l).includes(q)) : list;
-  }, [q, category, sub, city, app.listings]);
+  }, [q, category, sub, city, radius, app.listings]);
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
   const place = city === NEAR_ME ? 'near you' : `in ${city}`;
   const tiles = sub ? null : category
@@ -238,7 +256,9 @@ function DirectoryLayout({ category, subcategory }) {
     body = <EmptyState testID="directory-empty" illustration={images.illustrations.path} title="No places near you yet" message="We’re still adding places in your area." action={app.practitioner ? null : 'Change location'} onAction={() => { nav.switchTab('profile'); nav.navigate('EditProfile'); }} />;
   } else if (!results.length) {
     const what = sub || (category ? CATEGORY_NOUNS[category] : 'places');
-    body = q
+    body = radius && !q
+      ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing within ${radius} mi`} message="Try a wider distance." action="Show any distance" onAction={() => c2.setRadius(null)} />
+      : q
       ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word." action="Clear search" onAction={() => setQuery('')} />
       : sub
         ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing in ${what} ${place} yet`} message="We’re still adding places in your area." action={city === NEAR_ME ? null : 'Show places near me'} onAction={() => c2.setCity(NEAR_ME)} />
@@ -268,7 +288,7 @@ function DirectoryLayout({ category, subcategory }) {
             {tiles}
           </View>
           <View style={{ gap: 12 }}>
-            {app.listings.length > 0 && <CityButton value={city} onPress={c2.openSheet} />}
+            {app.listings.length > 0 && c2.row}
             {!!sub && <ResultsMap testID="subcategory-map" places={state === 'ready' ? results : []} onOpen={open} />}
             {body}
           </View>
