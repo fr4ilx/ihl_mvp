@@ -13,7 +13,9 @@ import { CATEGORY_ART } from '../data';
 
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
-// art: a watercolor in place of the icon circle, 48pt with no circle. The four categories have one so far.
+// art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
+// 200pt, the watercolor at 128pt centered on top and the label in Body M Bold centered under it, so the 2 by 2 grid
+// takes about half the screen.
 export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   return (
@@ -25,7 +27,8 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
       accessibilityLabel={label}
       style={({ pressed }) => [
         {
-          flex: 1, minHeight: 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 12,
+          flex: 1, minHeight: art ? 200 : 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
+          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : 12,
           backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
           ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
         },
@@ -33,13 +36,15 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
       ]}
     >
       {art ? (
-        <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 48, height: 48 }} />
+        <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 128, height: 128 }} />
       ) : (
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
         <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
       </View>
       )}
-      <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>
+      {art
+        ? <Text numberOfLines={2} style={[type('BodyM', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
+        : <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>}
     </Pressable>
   );
 }

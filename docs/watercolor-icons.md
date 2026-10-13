@@ -48,7 +48,7 @@ photorealistic, 3D render, glossy, vector, flat cartoon, black outlines, text, l
 
 ### Directory categories
 
-Done and approved, October 13, 2026. On the Directory tiles at 48pt: `assets/img/wc_cat_*.webp`, 1024 masters in `assets/watercolor`. Use Holistic Business as the style reference for the rest.
+Done and approved, October 13, 2026. On the Directory tiles at 128pt: `assets/img/wc_cat_*.webp`, 1024 masters in `assets/watercolor`. Use Holistic Business as the style reference for the rest.
 
 | Tile | Slug | Subject |
 |---|---|---|
