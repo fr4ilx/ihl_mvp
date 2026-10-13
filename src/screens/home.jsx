@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images } from '../data';
+import { LISTINGS, images, categoryOf } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -27,9 +27,10 @@ import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
 import CategoryChips from '../components/CategoryChips';
+import SubcategorySheet from '../components/SubcategorySheet';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
-export const listingText = (l) => [l.name, l.kind, l.area, l.category, ...(l.specialties || [])].join(' ').toLowerCase();
+export const listingText = (l) => [l.name, l.kind, l.area, l.category, l.subcategory, ...(l.specialties || [])].join(' ').toLowerCase();
 // A search may start with # like a tag.
 export const searchTerm = (query) => query.trim().replace(/^#+/, '').trim().toLowerCase();
 
@@ -171,7 +172,8 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
+// The filter button next to Search opens the Subcategories sheet, and a Narrow down link on the count line opens it
+// too. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -181,16 +183,22 @@ export function Directory() {
   const { params } = useRoute().route;
   const [query, setQuery] = useState(params.query || '');
   const [cat, setCat] = useState(params.category || 'All');
+  const [sub, setSub] = useState(params.subcategory || null);
+  const [sheet, setSheet] = useState(!!params.openSubcategories);
   const [state, retry] = useLoad(app.network);
-  const pickCategory = (k) => { setCat(k); fb.haptic('selection'); };
+  // A new category drops the subcategory. Picking a subcategory picks its category too.
+  const pickCategory = (k) => { setCat(k); setSub(null); fb.haptic('selection'); };
+  const pickSub = (k) => { setSub(k); if (k) setCat(categoryOf(k)); setSheet(false); fb.haptic('selection'); };
+  const clearAll = () => { setCat('All'); setSub(null); };
 
   const q = searchTerm(query);
   const results = useMemo(() => {
     let list = app.listings;
     if (cat !== 'All') list = list.filter((l) => l.category === cat);
+    if (sub) list = list.filter((l) => l.subcategory === sub);
     if (q) list = list.filter((l) => listingText(l).includes(q));
     return list;
-  }, [q, cat, app.listings]);
+  }, [q, cat, sub, app.listings]);
 
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
 
@@ -202,19 +210,19 @@ export function Directory() {
     body = <EmptyState testID="directory-empty" illustration={images.illustrations.path} title="No places near you yet" message="We’re still adding places in your area." action={app.practitioner ? null : 'Change location'} onAction={() => { nav.switchTab('profile'); nav.navigate('EditProfile'); }} />;
   } else if (!results.length) {
     body = q
-      ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word or pick a category." action="Clear search" onAction={() => { setQuery(''); setCat('All'); }} />
-      : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`No ${CATEGORY_NOUNS[cat][1]} near you yet`} message="We’re still adding places in your area." action="Show all places" onAction={() => setCat('All')} />;
+      ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word or pick a category." action="Clear search" onAction={() => { setQuery(''); clearAll(); }} />
+      : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={sub ? `No places in ${sub} yet` : `No ${CATEGORY_NOUNS[cat][1]} near you yet`} message="We’re still adding places in your area." action="Show all places" onAction={clearAll} />;
   } else {
     const list = (
       <View style={{ gap: 12 }}>
         {results.map((l, i) => (
-          <View key={cat + l.id} {...enter(i)}>
+          <View key={cat + sub + l.id} {...enter(i)}>
             <ListingCard testID={`listing-${l.id}`} item={l} showSave={false} onPress={() => open(l)} />
           </View>
         ))}
       </View>
     );
-    body = cat === 'All' && !q ? (
+    body = cat === 'All' && !sub && !q ? (
       <View style={{ gap: 12 }}>
         <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Near you</Text>
         {list}
@@ -225,7 +233,10 @@ export function Directory() {
   // come to you or take bookings, so no pin.
   const places = q && state === 'ready' ? results.filter((l) => l.category === 'Food' || l.category === 'Shop') : [];
   const n = results.length;
-  const countLabel = q ? `${n} ${n === 1 ? 'result' : 'results'}${cat === 'All' ? '' : ` in ${cat}`}` : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} near you`;
+  const where = sub || (cat === 'All' ? '' : cat);
+  const countLabel = q ? `${n} ${n === 1 ? 'result' : 'results'}${where ? ` in ${where}` : ''}`
+    : sub ? `${n} ${n === 1 ? 'place' : 'places'} in ${sub}`
+      : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} near you`;
   const showCount = state === 'ready' && app.listings.length > 0 && n > 0 && !!countLabel;
 
   return (
@@ -244,12 +255,22 @@ export function Directory() {
       ) : (
         <>
           <View style={{ gap: 12 }}>
-            <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+              </View>
+              <IconButton testID="open-subcategories" icon="filter-list" variant={sub ? 'filled' : 'outline'} accessibilityLabel={sub ? `Narrow down, ${sub}` : 'Narrow down'} onPress={() => setSheet(true)} />
+            </View>
             <CategoryChips value={cat} onPick={pickCategory} />
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
-                {cat !== 'All' && <TextLink testID="clear-category" label="Clear" onPress={() => { setCat('All'); fb.haptic('selection'); }} />}
+                {cat !== 'All' && (
+                  <View style={{ flexDirection: 'row', gap: 16 }}>
+                    {!sub && <TextLink testID="narrow-down" label="Narrow down" onPress={() => setSheet(true)} />}
+                    <TextLink testID="clear-category" label="Clear" onPress={() => { clearAll(); fb.haptic('selection'); }} />
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -262,6 +283,7 @@ export function Directory() {
         </>
       )}
     </Screen>
+    <SubcategorySheet visible={sheet} category={cat} value={sub} onPick={pickSub} onClose={() => setSheet(false)} />
     </>
   );
 }
