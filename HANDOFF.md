@@ -308,7 +308,8 @@ The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, C
 | Specialties (step 2) | practice.jsx | setup | Empty, Focus areas only (Continue shows "Pick at least one from What you offer."), 10 picked (an 11th shows a Snackbar) |
 | Where people find you (step 3) | practice.jsx | setup | Empty, Errors, City sheet, map preview once both fields are in |
 | Home | home.jsx | query | Loading, Offline, Nothing here yet, Search results, No results, Check-in sheet, Checked in, Steady earned, New member |
-| Directory | home.jsx | query, city | Loading, Offline (no search or menu, like Figma), a category tile picked, Subcategories sheet for one category and for all, a subcategory picked, a subcategory with nothing in it, Services with nothing in it, Search results (a # tag works too), No listings, No places near you yet, a category with no places |
+| Directory | home.jsx | query, city | Loading, Offline (no search or tiles, like Figma), Show places in, Near me, No places in a city, Search results (a # tag works too), No listings, No places near you yet |
+| Category page | home.jsx | category, subcategory, city | All of the category, a subcategory picked, Nothing in a subcategory, a category with nothing in it (Services) |
 | Listing profile | home.jsx | id | Saved and not saved, photos that swipe with a "1 of 3" pill (a photo opens the Photo viewer), Specialties and Approach as Tag chips, I was here and You've been here, a stage or badge earned by a visit, member offer (locked for a Seedling), Book, no website, About with Show more and Show less, Get directions action sheet, share sheet |
 | Tag results | home.jsx | tag | Loading, Offline, No places with the tag yet |
 | Saved | home.jsx | | Loading, Offline, Nothing saved |
