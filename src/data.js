@@ -98,17 +98,23 @@ export const CATEGORIES = ['All', 'Holistic Business', 'Food', 'Shop', 'Services
 // Subcategories under each, 4 to 6, from the filter button next to Search on Directory. A draft until IHL sends the
 // final list. Each listing has one subcategory.
 export const SUBCATEGORIES = {
-  'Holistic Business': ['Massage', 'Acupuncture', 'Herbalism', 'Nutrition', 'Chiropractic', 'Yoga and movement'],
+  'Holistic Business': ['Integrative and Functional Medicine', 'Alternative Health Professionals', 'Movement and Manual Therapy', 'Mental Health and Energy Work'],
   Food: ['Farms', 'Markets', 'Bakeries and cafés', 'Restaurants', 'Grocers'],
   Shop: ['Apothecary', 'Supplements', 'Skin care', 'Teas and herbs'],
-  Services: ['Fitness', 'Classes', 'Coaching', 'Birth and baby'],
+  Services: ['Holistic Vet', 'Birth and Family Services', 'Wellness Spa', 'Coaching and Personal', 'Professional Services', 'Facilities'],
 };
-// The icon on each subcategory's tile.
+// A third level under some subcategories: their page shows these as tiles, and each opens the map page.
+// A listing in one of them has `subtype` too.
+export const SUBTYPES = {
+  'Alternative Health Professionals': ['Herbalism', 'TCM and Ayurveda', 'Naturopath', 'Homeopath'],
+};
+// The icon on each subcategory's and subtype's tile.
 export const SUBCATEGORY_ICONS = {
-  Massage: 'user-love', Acupuncture: 'healthcare', Herbalism: 'leaf', Nutrition: 'apple-fruit', Chiropractic: 'walking', 'Yoga and movement': 'yoga',
+  'Integrative and Functional Medicine': 'healthcare', 'Alternative Health Professionals': 'leaf', 'Movement and Manual Therapy': 'walking', 'Mental Health and Energy Work': 'brain',
   Farms: 'farm', Markets: 'cart', 'Bakeries and cafés': 'coffee-cup', Restaurants: 'cutlery', Grocers: 'shopping-bag',
   Apothecary: 'flask', Supplements: 'pharmacy-cross-tag', 'Skin care': 'soap', 'Teas and herbs': 'leaf',
-  Fitness: 'gym', Classes: 'graduation-cap', Coaching: 'chat-lines', 'Birth and baby': 'stroller',
+  'Holistic Vet': 'heart', 'Birth and Family Services': 'stroller', 'Wellness Spa': 'bathroom', 'Coaching and Personal': 'chat-lines', 'Professional Services': 'suitcase', Facilities: 'building',
+  Herbalism: 'leaf', 'TCM and Ayurveda': 'potion', Naturopath: 'flower', Homeopath: 'droplet',
 };
 // Directory's city picker: Near me, then Indiana's 10 largest cities. It opens on the city in the person's profile.
 export const NEAR_ME = 'Near me';
@@ -133,7 +139,7 @@ export const milesOf = (distance = '') => parseFloat(distance) || 999;
 // Whether a listing is claimed lives in the store (unclaimed), so the claim flow can start before Dana claims hers.
 export const LISTINGS = [
   {
-    id: 'wildroot', name: 'Wildroot Herbal Co.', kind: 'Herbalist', area: 'Broad Ripple', category: 'Holistic Business', subcategory: 'Herbalism',
+    id: 'wildroot', name: 'Wildroot Herbal Co.', kind: 'Herbalist', area: 'Broad Ripple', category: 'Holistic Business', subcategory: 'Alternative Health Professionals', subtype: 'Herbalism',
     distance: '2.1 mi away', hours: 'Open until 6:00 PM', days: 'Tue to Sat', time: '10:00 AM to 6:00 PM', photo: photoTea, photos: [photoTea, photoHerbs, photoSeedlings], sponsored: true,
     about: 'Sarah grows and dries most of her herbs on a small plot in Broad Ripple. She blends teas for sleep, digestion and calm, and teaches a kitchen workshop each month. Stop in on Saturdays for a free tasting.',
     services: ['Herbal consultation', 'Custom tea blend', 'Kitchen workshop'],
@@ -157,7 +163,7 @@ export const LISTINGS = [
     address: '2432 Conservatory Dr', city: 'Garfield Park, Indianapolis', phone: '(317) 555-0119',
   },
   {
-    id: 'stillwaters', name: 'Still Waters Acupuncture', kind: 'Acupuncture', area: 'Carmel', category: 'Holistic Business', subcategory: 'Acupuncture',
+    id: 'stillwaters', name: 'Still Waters Acupuncture', kind: 'Acupuncture', area: 'Carmel', category: 'Holistic Business', subcategory: 'Alternative Health Professionals', subtype: 'TCM and Ayurveda',
     distance: '9 mi away', hours: 'Open until 7:00 PM', days: 'Tue to Sat', time: '9:00 AM to 7:00 PM', photo: photoHerbs, sponsored: true,
     about: 'Gentle acupuncture for back pain, sleep and stress, in a quiet room with warm blankets. First visits run a little longer so there is time to talk. Parking is right by the door.',
     services: ['First visit', 'Follow up', 'Cupping'],
@@ -165,7 +171,7 @@ export const LISTINGS = [
     address: '210 W Main St', city: 'Carmel, IN', phone: '(317) 555-0164',
   },
   {
-    id: 'rooted', name: 'Rooted Nutrition', kind: 'Dietitian', area: 'Fishers', category: 'Holistic Business', subcategory: 'Nutrition',
+    id: 'rooted', name: 'Rooted Nutrition', kind: 'Dietitian', area: 'Fishers', category: 'Holistic Business', subcategory: 'Integrative and Functional Medicine',
     distance: '11 mi away', hours: 'Open until 4:00 PM', days: 'Mon to Fri', time: '8:00 AM to 4:00 PM', photo: photoSeedlings,
     about: 'A registered dietitian who helps with blood sugar, heart health and simple weekly meal plans you will actually cook. Visits can be in person or by video, and a grocery walk is part of the plan.',
     services: ['First consult', 'Meal plan', 'Grocery walk'],
@@ -173,7 +179,7 @@ export const LISTINGS = [
     address: '8900 E 116th St', city: 'Fishers, IN', phone: '(317) 555-0132',
   },
   {
-    id: 'quietmind', name: 'Quiet Mind Massage', kind: 'Massage', area: 'Irvington', category: 'Holistic Business', subcategory: 'Massage',
+    id: 'quietmind', name: 'Quiet Mind Massage', kind: 'Massage', area: 'Irvington', category: 'Holistic Business', subcategory: 'Movement and Manual Therapy',
     distance: '5 mi away', hours: 'Open until 8:00 PM', days: 'Wed to Sun', time: '11:00 AM to 8:00 PM', photo: photoFriends, photos: [photoFriends, photoHerbs, photoSeedlings],
     about: 'Relaxing and therapeutic massage with extra time for stiff shoulders and hips. Tables adjust for easy on and off, and the studio is on the ground floor with no steps.',
     services: ['60 minute massage', '90 minute massage', 'Chair massage'],

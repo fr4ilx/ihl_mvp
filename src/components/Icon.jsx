@@ -9,7 +9,7 @@ import {
   BadgeCheck, Gift, CalendarCheck, ChatBubbleQuestion, Megaphone, MailOpen, ArrowDown, ShieldCheck,
   Group, Apple as AppleFruit, SoilAlt, Leaf, Flower, Tree, PineTree, AfricanTree, Crown, Compass, Farm, UserLove, SunLight,
   EmojiTalkingHappy, Emoji, EmojiQuite, EmojiSad, Yoga, Walking, Flash, Medal, User, HomeUser, Brain,
-  FilterList, Tools, Healthcare, Cart, CoffeeCup, Cutlery, ShoppingBag, Flask, PharmacyCrossTag, Soap, Gym, GraduationCap, ChatLines, Stroller,
+  FilterList, Tools, Healthcare, Cart, CoffeeCup, Cutlery, ShoppingBag, Flask, PharmacyCrossTag, Soap, Gym, GraduationCap, ChatLines, Stroller, Suitcase, Building, Droplet, Bathroom, Potion,
 } from 'iconoir-react/regular';
 import {
   Bookmark as BookmarkSolid, Heart as HeartSolid, CheckCircle as CheckCircleSolid, WarningCircle as WarningCircleSolid,
@@ -44,7 +44,7 @@ const REGULAR = {
   yoga: Yoga, walking: Walking, flash: Flash, medal: Medal, user: User, 'home-user': HomeUser, brain: Brain,
   'filter-list': FilterList, tools: Tools, healthcare: Healthcare, cart: Cart, 'coffee-cup': CoffeeCup, cutlery: Cutlery,
   'shopping-bag': ShoppingBag, flask: Flask, 'pharmacy-cross-tag': PharmacyCrossTag, soap: Soap, gym: Gym, 'graduation-cap': GraduationCap,
-  'chat-lines': ChatLines, stroller: Stroller,
+  'chat-lines': ChatLines, stroller: Stroller, suitcase: Suitcase, building: Building, droplet: Droplet, bathroom: Bathroom, potion: Potion,
 };
 const SOLID = {
   bookmark: BookmarkSolid, heart: HeartSolid, 'check-circle': CheckCircleSolid, 'warning-circle': WarningCircleSolid,

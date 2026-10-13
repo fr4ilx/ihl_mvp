@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBCATEGORY_ICONS } from '../data';
+import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBTYPES, SUBCATEGORY_ICONS } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -30,7 +30,7 @@ import { CategoryTiles } from '../components/CategoryTile';
 import { CityButton, CitySheet, RadiusButton, RadiusSheet } from '../components/CityPicker';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
-export const listingText = (l) => [l.name, l.kind, l.area, l.category, l.subcategory, ...(l.specialties || [])].join(' ').toLowerCase();
+export const listingText = (l) => [l.name, l.kind, l.area, l.category, l.subcategory, l.subtype, ...(l.specialties || [])].join(' ').toLowerCase();
 // A search may start with # like a tag.
 export const searchTerm = (query) => query.trim().replace(/^#+/, '').trim().toLowerCase();
 
@@ -220,15 +220,18 @@ function ListingList({ items, keyPrefix, onOpen }) {
 // Directory, a category page and a subcategory page share one layout, with no title bar: Search with the Saved
 // bookmark at its right, then the City picker and the places in that city. On Directory four category tiles sit under
 // Search and each opens its category page. A category page adds a back button left of Search, and its tiles are the
-// subcategories, each opening its subcategory page. A subcategory page has no tiles and shows the map, with a pin for
-// every place in the list, between the City picker and the list.
-function DirectoryLayout({ category, subcategory }) {
+// subcategories, each opening its subcategory page. A subcategory with a third level (Alternative Health
+// Professionals) shows those as tiles, each opening its own page. The last level has no tiles and shows the map, with
+// a pin for every place in the list, between the City picker and the list.
+function DirectoryLayout({ category, subcategory, subtype }) {
   const nav = useNav();
   const app = useApp();
   const fb = useFeedback();
   const { params } = useRoute().route;
   const [query, setQuery] = useState(params.query || '');
   const sub = subcategory || null;
+  const kinds = sub && !subtype ? SUBTYPES[sub] : null;
+  const leaf = !!sub && !kinds;
   const c2 = useCity(params.city);
   const { city, radius } = c2;
   useEffect(() => { if (params.openCity) c2.setOpen(true); }, []);
@@ -240,11 +243,15 @@ function DirectoryLayout({ category, subcategory }) {
     if (radius) list = list.filter((l) => milesOf(l.distance) <= radius);
     if (category) list = list.filter((l) => l.category === category);
     if (sub) list = list.filter((l) => l.subcategory === sub);
+    if (subtype) list = list.filter((l) => l.subtype === subtype);
     return q ? list.filter((l) => listingText(l).includes(q)) : list;
-  }, [q, category, sub, city, radius, app.listings]);
+  }, [q, category, sub, subtype, city, radius, app.listings]);
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
   const place = city === NEAR_ME ? 'near you' : `in ${city}`;
-  const tiles = sub ? null : category
+  const icons = (list) => list.map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }));
+  const tiles = kinds
+    ? <CategoryTiles testPrefix="subtype-tile" items={icons(kinds)} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubtypeResults', { category, subcategory: sub, subtype: k, city }); }} />
+    : sub ? null : category
     ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }))} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubcategoryResults', { category, subcategory: k, city }); }} />
     : <CategoryTiles onPick={(k) => { fb.haptic('selection'); nav.navigate('CategoryResults', { category: k, city }); }} />;
 
@@ -255,7 +262,7 @@ function DirectoryLayout({ category, subcategory }) {
     // Nothing listed near the person yet (Content: Empty in the review panel).
     body = <EmptyState testID="directory-empty" illustration={images.illustrations.path} title="No places near you yet" message="We’re still adding places in your area." action={app.practitioner ? null : 'Change location'} onAction={() => { nav.switchTab('profile'); nav.navigate('EditProfile'); }} />;
   } else if (!results.length) {
-    const what = sub || (category ? CATEGORY_NOUNS[category] : 'places');
+    const what = subtype || sub || (category ? CATEGORY_NOUNS[category] : 'places');
     body = radius && !q
       ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing within ${radius} mi`} message="Try a wider distance." action="Show any distance" onAction={() => c2.setRadius(null)} />
       : q
@@ -269,7 +276,7 @@ function DirectoryLayout({ category, subcategory }) {
 
   return (
     <>
-    <Screen testID={sub ? 'screen-subcategory' : category ? 'screen-category' : 'screen-directory'} bodyTop={12} statusFill bottom={category ? null : <TabBar active="directory" onChange={nav.switchTab} />}>
+    <Screen testID={subtype ? 'screen-subtype' : sub ? 'screen-subcategory' : category ? 'screen-category' : 'screen-directory'} bodyTop={12} statusFill bottom={category ? null : <TabBar active="directory" onChange={nav.switchTab} />}>
       {state === 'error' ? (
         // Figma Offline: no search or filters, the message sits lower (y 260). With no title bar the body starts at y 74.
         <View style={{ paddingTop: 186 }}>
@@ -281,7 +288,7 @@ function DirectoryLayout({ category, subcategory }) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               {!!category && <IconButton testID="nav-back" icon="nav-arrow-left" variant="outline" accessibilityLabel="Back" onPress={nav.goBack} />}
               <View style={{ flex: 1 }}>
-                <SearchField testID="directory-search" value={query} onChangeText={setQuery} placeholder={category ? `Search ${sub || category}` : undefined} />
+                <SearchField testID="directory-search" value={query} onChangeText={setQuery} placeholder={category ? `Search ${subtype || sub || category}` : undefined} />
               </View>
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
@@ -289,7 +296,7 @@ function DirectoryLayout({ category, subcategory }) {
           </View>
           <View style={{ gap: 12 }}>
             {app.listings.length > 0 && c2.row}
-            {!!sub && <ResultsMap testID="subcategory-map" places={state === 'ready' ? results : []} onOpen={open} />}
+            {leaf && <ResultsMap testID="subcategory-map" places={state === 'ready' ? results : []} onOpen={open} />}
             {body}
           </View>
         </>
@@ -311,7 +318,12 @@ export function CategoryResults() {
 
 export function SubcategoryResults() {
   const { params } = useRoute().route;
-  return <DirectoryLayout category={params.category || 'Holistic Business'} subcategory={params.subcategory || 'Massage'} />;
+  return <DirectoryLayout category={params.category || 'Holistic Business'} subcategory={params.subcategory || 'Movement and Manual Therapy'} />;
+}
+
+export function SubtypeResults() {
+  const { params } = useRoute().route;
+  return <DirectoryLayout category={params.category || 'Holistic Business'} subcategory={params.subcategory || 'Alternative Health Professionals'} subtype={params.subtype || 'Herbalism'} />;
 }
 
 export function ListingProfile() {
