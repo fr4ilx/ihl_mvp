@@ -98,25 +98,13 @@ export const CATEGORIES = ['All', 'Holistic Business', 'Food', 'Shop', 'Services
 // Subcategories under each, 4 to 6, from the filter button next to Search on Directory. A draft until IHL sends the
 // final list. Each listing has one subcategory.
 export const SUBCATEGORIES = {
-  'Holistic Business': [
-    { id: 'Massage', icon: 'user-love' }, { id: 'Acupuncture', icon: 'healthcare' }, { id: 'Herbalism', icon: 'leaf' },
-    { id: 'Nutrition', icon: 'apple-fruit' }, { id: 'Chiropractic', icon: 'walking' }, { id: 'Yoga and movement', icon: 'yoga' },
-  ],
-  Food: [
-    { id: 'Farms', icon: 'farm' }, { id: 'Markets', icon: 'cart' }, { id: 'Bakeries and cafés', icon: 'coffee-cup' },
-    { id: 'Restaurants', icon: 'cutlery' }, { id: 'Grocers', icon: 'shopping-bag' },
-  ],
-  Shop: [
-    { id: 'Apothecary', icon: 'flask' }, { id: 'Supplements', icon: 'pharmacy-cross-tag' }, { id: 'Skin care', icon: 'soap' },
-    { id: 'Teas and herbs', icon: 'leaf' },
-  ],
-  Services: [
-    { id: 'Fitness', icon: 'gym' }, { id: 'Classes', icon: 'graduation-cap' }, { id: 'Coaching', icon: 'chat-lines' },
-    { id: 'Birth and baby', icon: 'stroller' },
-  ],
+  'Holistic Business': ['Massage', 'Acupuncture', 'Herbalism', 'Nutrition', 'Chiropractic', 'Yoga and movement'],
+  Food: ['Farms', 'Markets', 'Bakeries and cafés', 'Restaurants', 'Grocers'],
+  Shop: ['Apothecary', 'Supplements', 'Skin care', 'Teas and herbs'],
+  Services: ['Fitness', 'Classes', 'Coaching', 'Birth and baby'],
 };
 // The category a subcategory belongs to.
-export const categoryOf = (sub) => Object.keys(SUBCATEGORIES).find((k) => SUBCATEGORIES[k].some((x) => x.id === sub));
+export const categoryOf = (sub) => Object.keys(SUBCATEGORIES).find((k) => SUBCATEGORIES[k].includes(sub));
 
 // Detail rows on a listing: address + area, days + opening times, phone + "Call or text" (Figma: Listing profile).
 // sponsored: a paid partner. Home shows them in the Sponsored reel, always labeled. Services are names only, no prices.

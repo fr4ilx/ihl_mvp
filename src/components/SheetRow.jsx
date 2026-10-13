@@ -5,7 +5,8 @@
 // Selected (one choice in Topics or Categories): the row fills with bg/color-selected and its edge turns
 // border/color-brand-subtle, the circle turns bg/color-brand with the icon in icon/color-on-brand, the label turns
 // Bold and a check in icon/color-brand closes the row.
-// Pressing a row that is not selected shows bg/color-sheet-raised under it.
+// Pressing a row that is not selected shows bg/color-sheet-raised under it. Without an icon the row is text only
+// (the Subcategories sheet).
 import React from 'react';
 import { View, Text, Pressable } from '../rn';
 import { useTheme, type } from '../theme';
@@ -28,9 +29,11 @@ export default function SheetRow({ icon, label, meta, selected, onPress, role = 
           : { backgroundColor: pressed ? c('bg/color-sheet-raised') : 'transparent', borderColor: c('border/color-default') },
       ]}
     >
+      {!!icon && (
       <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-sheet-raised') }}>
         <Icon name={icon} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
       </View>
+      )}
       <View style={{ flex: 1 }}>
         <Text style={[type('BodyM', selected ? 'bold' : 'medium'), { color: c('text/color-primary') }]}>{label}</Text>
         {!!meta && <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{meta}</Text>}

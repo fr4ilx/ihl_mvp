@@ -26,7 +26,6 @@ export default function FilterSheet({ visible, title, options, value, onPick, on
         {!!favoriteKind && <Text testID={`${testPrefix}-favorites-hint`} style={[type('BodyS'), { color: c('text/color-secondary') }]}>Tap a heart to keep a favorite on top.</Text>}
         <SheetRows accessibilityRole="radiogroup" accessibilityLabel={title}>
           {ordered.map((o) => {
-            const fav = favs.includes(o.value);
             return (
               <SheetRow
                 key={o.value}
@@ -35,18 +34,7 @@ export default function FilterSheet({ visible, title, options, value, onPick, on
                 label={o.label}
                 selected={value === o.value}
                 onPress={() => onPick(o.value)}
-                trailing={favoriteKind && o !== first ? (
-                  <Pressable
-                    testID={`${testPrefix}-favorite-${o.value}`}
-                    accessibilityRole="switch"
-                    aria-checked={fav}
-                    accessibilityLabel={`Favorite ${o.label}`}
-                    onPress={() => { app.toggleFavorite(favoriteKind, o.value); fb.haptic('selection'); }}
-                    style={({ pressed }) => [{ width: 48, height: 48, marginVertical: -4, marginRight: -8, alignItems: 'center', justifyContent: 'center' }, pressed && { opacity: 0.6 }]}
-                  >
-                    <Icon name="heart" solid={fav} size={24} color={c(fav ? 'icon/color-brand' : 'icon/color-secondary')} />
-                  </Pressable>
-                ) : null}
+                trailing={favoriteKind && o !== first ? <FavoriteButton kind={favoriteKind} value={o.value} label={o.label} testID={`${testPrefix}-favorite-${o.value}`} /> : null}
               />
             );
           })}
@@ -55,3 +43,27 @@ export default function FilterSheet({ visible, title, options, value, onPick, on
     </Sheet>
   );
 }
+
+// The 48pt heart at the end of a Sheet row. Tapping it keeps the sheet open and makes the row a favorite, which moves
+// to the top. Tapping again puts it back.
+export function FavoriteButton({ kind, value, label, testID }) {
+  const { c } = useTheme();
+  const app = useApp();
+  const fb = useFeedback();
+  const fav = (app.favorites[kind] || []).includes(value);
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityRole="switch"
+      aria-checked={fav}
+      accessibilityLabel={`Favorite ${label}`}
+      onPress={() => { app.toggleFavorite(kind, value); fb.haptic('selection'); }}
+      style={({ pressed }) => [{ width: 48, height: 48, marginVertical: -4, marginRight: -8, alignItems: 'center', justifyContent: 'center' }, pressed && { opacity: 0.6 }]}
+    >
+      <Icon name="heart" solid={fav} size={24} color={c(fav ? 'icon/color-brand' : 'icon/color-secondary')} />
+    </Pressable>
+  );
+}
+
+// Favorites first, newest first, then the rest in their usual order.
+export const favoritesFirst = (values, favs) => [...favs.filter((v) => values.includes(v)), ...values.filter((v) => !favs.includes(v))];

@@ -160,7 +160,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
   const [practice, setPractice] = useState(() => freshPractice(seed));
   const [saved, setSaved] = useState(() => (empty ? [] : startSaved));
   // Favorite topics (Community) and categories (Directory), set with the heart on a row of the Topics or Categories sheet.
-  const [favorites, setFavorites] = useState({ topic: [], category: [] });
+  const [favorites, setFavorites] = useState({ topic: [], category: [], subcategory: [] });
   const [posts, setPosts] = useState(() => clone(POSTS).filter((p) => !(seed && seed.withoutTopic === p.topic)));
   const [unclaimed, setUnclaimed] = useState(() => (seed && seed.unclaimed) || DEFAULT_UNCLAIMED);
   // The member's own Ask the Experts questions (askQuestion). Not the practitioner's Questions for you below.
