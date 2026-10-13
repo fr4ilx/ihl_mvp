@@ -19,7 +19,6 @@ import TextLink from '../components/TextLink';
 import Reel from '../components/Reel';
 import ThreadRow from '../components/ThreadRow';
 import MapsSheet from '../components/MapsSheet';
-import ResultsMap from '../components/ResultsMap';
 import ShareSheet from '../components/ShareSheet';
 import PhotoPager from '../components/PhotoPager';
 import ListingSections, { ListingActions } from '../components/ListingSections';
@@ -173,7 +172,7 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: no title bar. Search with the Saved bookmark at its right, then every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// Four Category tiles, two to a row, pick the category. The sliders button next to Search opens the Subcategories sheet.
+// Four Category tiles, two to a row, pick the category.
 // Tapping the selected tile again shows every place.
 // The bookmark opens Saved.
 export function Directory() {
@@ -234,8 +233,6 @@ export function Directory() {
     );
     body = list;
   }
-  // The map: half the screen, a pin for every place in the list once it has loaded.
-  const places = state === 'ready' ? results : [];
 
   return (
     <>
@@ -257,15 +254,13 @@ export function Directory() {
               <View style={{ flex: 1 }}>
                 <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
               </View>
-              <IconButton testID="open-subcategories" icon="sliders" variant={sub ? 'filled' : 'outline'} accessibilityLabel={sub ? `Filter, ${sub}` : 'Filter'} onPress={() => setSheet(true)} />
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
             <CategoryTiles value={cat} onPick={pickCategory} />
           </View>
-          {/* The city picker takes Near you's place, over the map and the list. */}
+          {/* The city picker takes Near you's place, over the list. */}
           <View style={{ gap: 12 }}>
             {app.listings.length > 0 && <CityButton value={city} onPress={() => setCitySheet(true)} />}
-            <ResultsMap testID="directory-map" places={places} onOpen={open} />
             {body}
           </View>
         </>
