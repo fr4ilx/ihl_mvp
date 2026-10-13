@@ -233,9 +233,8 @@ export function Directory() {
     );
     body = list;
   }
-  // The map: only on a search, and only for places you visit to buy (Food, Shop). Holistic businesses and services
-  // come to you or take bookings, so no pin.
-  const places = q && state === 'ready' ? results.filter((l) => l.category === 'Food' || l.category === 'Shop') : [];
+  // The map: half the screen, a pin for every place in the list once it has loaded.
+  const places = state === 'ready' ? results : [];
 
   return (
     <>
@@ -264,11 +263,7 @@ export function Directory() {
           {/* The city picker takes Near you's place, over the map and the list. */}
           <View style={{ gap: 12 }}>
             {app.listings.length > 0 && <CityButton value={city} onPress={() => setCitySheet(true)} />}
-            {places.length > 0 && (
-              <View key={q} {...enter(0)}>
-                <ResultsMap testID="directory-map" places={places} onOpen={open} />
-              </View>
-            )}
+            <ResultsMap testID="directory-map" places={places} onOpen={open} />
             {body}
           </View>
         </>
