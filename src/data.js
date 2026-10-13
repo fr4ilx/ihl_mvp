@@ -103,6 +103,17 @@ export const SUBCATEGORIES = {
   Shop: ['Apothecary', 'Supplements', 'Skin care', 'Teas and herbs'],
   Services: ['Fitness', 'Classes', 'Coaching', 'Birth and baby'],
 };
+// Directory's city picker: Near me, then Indiana's 10 largest cities. It opens on the city in the person's profile.
+export const NEAR_ME = 'Near me';
+export const INDIANA_CITIES = ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel', 'Fishers', 'Bloomington', 'Hammond', 'Gary', 'Lafayette'];
+// The town in a place line: "Broad Ripple, Indianapolis" is Indianapolis, "Carmel, IN" is Carmel.
+export const townOf = (place = '') => {
+  const parts = place.split(',').map((x) => x.trim()).filter(Boolean);
+  if (!parts.length) return '';
+  return parts[parts.length - 1] === 'IN' ? parts[0] : parts[parts.length - 1];
+};
+// Miles from "2.1 mi away", so Near me can list the closest first.
+export const milesOf = (distance = '') => parseFloat(distance) || 999;
 // The category a subcategory belongs to.
 export const categoryOf = (sub) => Object.keys(SUBCATEGORIES).find((k) => SUBCATEGORIES[k].includes(sub));
 

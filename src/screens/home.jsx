@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images, categoryOf } from '../data';
+import { LISTINGS, images, categoryOf, NEAR_ME, townOf, milesOf } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -28,6 +28,7 @@ import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
 import CategoryChips from '../components/CategoryChips';
 import SubcategorySheet from '../components/SubcategorySheet';
+import { CityButton, CitySheet } from '../components/CityPicker';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
 export const listingText = (l) => [l.name, l.kind, l.area, l.category, l.subcategory, ...(l.specialties || [])].join(' ').toLowerCase();
@@ -184,6 +185,11 @@ export function Directory() {
   const [cat, setCat] = useState(params.category || 'All');
   const [sub, setSub] = useState(params.subcategory || null);
   const [sheet, setSheet] = useState(!!params.openSubcategories);
+  // The city opens on the one in the person's profile, or Near me when there is none.
+  const home = townOf(app.me.location);
+  const [city, setCity] = useState(params.city || home || NEAR_ME);
+  const [citySheet, setCitySheet] = useState(!!params.openCity);
+  const pickCity = (k) => { setCity(k); setCitySheet(false); fb.haptic('selection'); };
   const [state, retry] = useLoad(app.network);
   // A new category drops the subcategory. Picking a subcategory picks its category too.
   const pickCategory = (k) => { setCat(k); setSub(null); fb.haptic('selection'); };
@@ -193,14 +199,18 @@ export function Directory() {
   const q = searchTerm(query);
   const results = useMemo(() => {
     let list = app.listings;
+    // Near me lists the closest first. A city lists its places in their usual order.
+    list = city === NEAR_ME ? [...list].sort((a, b) => milesOf(a.distance) - milesOf(b.distance)) : list.filter((l) => townOf(l.city) === city);
     if (cat !== 'All') list = list.filter((l) => l.category === cat);
     if (sub) list = list.filter((l) => l.subcategory === sub);
     if (q) list = list.filter((l) => listingText(l).includes(q));
     return list;
-  }, [q, cat, sub, app.listings]);
+  }, [q, cat, sub, city, app.listings]);
 
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
 
+  // How lines and empty states name the place: "near you" or "in Carmel".
+  const place = city === NEAR_ME ? 'near you' : `in ${city}`;
   let body;
   if (state === 'loading') {
     body = <View style={{ gap: 12 }}><RowSkeleton /><RowSkeleton /><RowSkeleton /></View>;
@@ -210,23 +220,18 @@ export function Directory() {
   } else if (!results.length) {
     body = q
       ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word or pick a category." action="Clear search" onAction={() => { setQuery(''); clearAll(); }} />
-      : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={sub ? `No places in ${sub} yet` : `No ${CATEGORY_NOUNS[cat][1]} near you yet`} message="We’re still adding places in your area." action="Show all places" onAction={clearAll} />;
+      : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={sub ? `No places in ${sub} yet` : `No ${cat === 'All' ? 'places' : CATEGORY_NOUNS[cat][1]} ${place} yet`} message="We’re still adding places in your area." action={cat === 'All' ? 'Show places near me' : 'Show all places'} onAction={cat === 'All' ? () => setCity(NEAR_ME) : clearAll} />;
   } else {
     const list = (
       <View style={{ gap: 12 }}>
         {results.map((l, i) => (
-          <View key={cat + sub + l.id} {...enter(i)}>
+          <View key={city + cat + sub + l.id} {...enter(i)}>
             <ListingCard testID={`listing-${l.id}`} item={l} showSave={false} onPress={() => open(l)} />
           </View>
         ))}
       </View>
     );
-    body = cat === 'All' && !sub && !q ? (
-      <View style={{ gap: 12 }}>
-        <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Near you</Text>
-        {list}
-      </View>
-    ) : list;
+    body = list;
   }
   // The map: only on a search, and only for places you visit to buy (Food, Shop). Holistic businesses and services
   // come to you or take bookings, so no pin.
@@ -235,7 +240,7 @@ export function Directory() {
   const where = sub || (cat === 'All' ? '' : cat);
   const countLabel = q ? `${n} ${n === 1 ? 'result' : 'results'}${where ? ` in ${where}` : ''}`
     : sub ? `${n} ${n === 1 ? 'place' : 'places'} in ${sub}`
-      : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} near you`;
+      : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} ${place}`;
   const showCount = state === 'ready' && app.listings.length > 0 && n > 0 && !!countLabel;
 
   return (
@@ -268,16 +273,21 @@ export function Directory() {
               </View>
             )}
           </View>
-          {places.length > 0 && (
-            <View key={q} {...enter(0)}>
-              <ResultsMap testID="directory-map" places={places} onOpen={open} />
-            </View>
-          )}
-          {body}
+          {/* The city picker takes Near you's place, over the map and the list. */}
+          <View style={{ gap: 12 }}>
+            {app.listings.length > 0 && <CityButton value={city} onPress={() => setCitySheet(true)} />}
+            {places.length > 0 && (
+              <View key={q} {...enter(0)}>
+                <ResultsMap testID="directory-map" places={places} onOpen={open} />
+              </View>
+            )}
+            {body}
+          </View>
         </>
       )}
     </Screen>
     <SubcategorySheet visible={sheet} category={cat} value={sub} onPick={pickSub} onClose={() => setSheet(false)} />
+    <CitySheet visible={citySheet} value={city} home={home} onPick={pickCity} onClose={() => setCitySheet(false)} />
     </>
   );
 }
