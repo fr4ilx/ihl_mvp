@@ -262,7 +262,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
       // Returns { earned, grew } like checkIn.
       visit: (listing) => {
         if ((me.visited || []).includes(listing.id)) return {};
-        const farm = listing.category === 'Farms' || listing.category === 'Food';
+        const farm = listing.category === 'Food';
         const explorer = (me.progress.explorer || 0) + 1;
         const farmfriend = (me.progress.farmfriend || 0) + (farm ? 1 : 0);
         const won = BADGES.find((b) => !me.badges[b.id] && ((b.id === 'explorer' && explorer >= b.goal) || (b.id === 'farmfriend' && farmfriend >= b.goal)));

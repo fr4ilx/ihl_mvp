@@ -8,7 +8,7 @@ import {
   Shop, Circle, Sparks, MinusCircle, MediaImagePlus, Copy, Trash, Page,
   BadgeCheck, Gift, CalendarCheck, ChatBubbleQuestion, Megaphone, MailOpen, ArrowDown, ShieldCheck,
   Group, Apple as AppleFruit, SoilAlt, Leaf, Flower, Tree, PineTree, AfricanTree, Crown, Compass, Farm, UserLove, SunLight,
-  EmojiTalkingHappy, Emoji, EmojiQuite, EmojiSad, Yoga, Walking, Flash, Medal, User, HomeUser, Brain,
+  EmojiTalkingHappy, Emoji, EmojiQuite, EmojiSad, Yoga, Walking, Flash, Medal, User, HomeUser, Brain, Tools,
 } from 'iconoir-react/regular';
 import {
   Bookmark as BookmarkSolid, Heart as HeartSolid, CheckCircle as CheckCircleSolid, WarningCircle as WarningCircleSolid,
@@ -40,7 +40,7 @@ const REGULAR = {
   group: Group, 'apple-fruit': AppleFruit, 'soil-alt': SoilAlt, leaf: Leaf, flower: Flower, tree: Tree, 'pine-tree': PineTree,
   'african-tree': AfricanTree, crown: Crown, compass: Compass, farm: Farm, 'user-love': UserLove, 'sun-light': SunLight,
   'emoji-talking-happy': EmojiTalkingHappy, emoji: Emoji, 'emoji-quite': EmojiQuite, 'emoji-sad': EmojiSad,
-  yoga: Yoga, walking: Walking, flash: Flash, medal: Medal, user: User, 'home-user': HomeUser, brain: Brain,
+  yoga: Yoga, walking: Walking, flash: Flash, medal: Medal, user: User, 'home-user': HomeUser, brain: Brain, tools: Tools,
 };
 const SOLID = {
   bookmark: BookmarkSolid, heart: HeartSolid, 'check-circle': CheckCircleSolid, 'warning-circle': WarningCircleSolid,

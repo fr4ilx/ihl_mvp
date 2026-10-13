@@ -93,7 +93,8 @@ export const INTERESTS = [
 ];
 export const interestArt = Object.fromEntries(INTERESTS.map((i) => [i.id, i.art]));
 
-export const CATEGORIES = ['All', 'Practitioners', 'Farms', 'Food', 'Shops'];
+// The four broad Directory categories. IHL adds subcategories under each later.
+export const CATEGORIES = ['All', 'Holistic Business', 'Food', 'Shop', 'Services'];
 
 // Detail rows on a listing: address + area, days + opening times, phone + "Call or text" (Figma: Listing profile).
 // sponsored: a paid partner. Home shows them in the Sponsored reel, always labeled. Services are names only, no prices.
@@ -106,7 +107,7 @@ export const CATEGORIES = ['All', 'Practitioners', 'Farms', 'Food', 'Shops'];
 // Whether a listing is claimed lives in the store (unclaimed), so the claim flow can start before Dana claims hers.
 export const LISTINGS = [
   {
-    id: 'wildroot', name: 'Wildroot Herbal Co.', kind: 'Herbalist', area: 'Broad Ripple', category: 'Practitioners',
+    id: 'wildroot', name: 'Wildroot Herbal Co.', kind: 'Herbalist', area: 'Broad Ripple', category: 'Holistic Business',
     distance: '2.1 mi away', hours: 'Open until 6:00 PM', days: 'Tue to Sat', time: '10:00 AM to 6:00 PM', photo: photoTea, photos: [photoTea, photoHerbs, photoSeedlings], sponsored: true,
     about: 'Sarah grows and dries most of her herbs on a small plot in Broad Ripple. She blends teas for sleep, digestion and calm, and teaches a kitchen workshop each month. Stop in on Saturdays for a free tasting.',
     services: ['Herbal consultation', 'Custom tea blend', 'Kitchen workshop'],
@@ -114,7 +115,7 @@ export const LISTINGS = [
     address: '6280 N College Ave', city: 'Broad Ripple, Indianapolis', phone: '(317) 555-0142',
   },
   {
-    id: 'traders', name: 'Traders Point Creamery', kind: 'Farm', area: 'Zionsville', category: 'Farms',
+    id: 'traders', name: 'Traders Point Creamery', kind: 'Farm', area: 'Zionsville', category: 'Food',
     distance: '14 mi away', hours: 'Open until 5:00 PM', days: 'Every day', time: '9:00 AM to 5:00 PM', photo: photoFriends, photos: [photoFriends, photoSeedlings], sponsored: true,
     about: 'An organic dairy farm with grass fed cows, a farm store and a Friday market. Families come for the milk and stay for the walks around the pasture. The dairy bar serves ice cream made the same morning.',
     services: ['Farm tour', 'Friday market', 'Cheese tasting'],
@@ -130,7 +131,7 @@ export const LISTINGS = [
     address: '2432 Conservatory Dr', city: 'Garfield Park, Indianapolis', phone: '(317) 555-0119',
   },
   {
-    id: 'stillwaters', name: 'Still Waters Acupuncture', kind: 'Acupuncture', area: 'Carmel', category: 'Practitioners',
+    id: 'stillwaters', name: 'Still Waters Acupuncture', kind: 'Acupuncture', area: 'Carmel', category: 'Holistic Business',
     distance: '9 mi away', hours: 'Open until 7:00 PM', days: 'Tue to Sat', time: '9:00 AM to 7:00 PM', photo: photoHerbs, sponsored: true,
     about: 'Gentle acupuncture for back pain, sleep and stress, in a quiet room with warm blankets. First visits run a little longer so there is time to talk. Parking is right by the door.',
     services: ['First visit', 'Follow up', 'Cupping'],
@@ -138,7 +139,7 @@ export const LISTINGS = [
     address: '210 W Main St', city: 'Carmel, IN', phone: '(317) 555-0164',
   },
   {
-    id: 'rooted', name: 'Rooted Nutrition', kind: 'Dietitian', area: 'Fishers', category: 'Practitioners',
+    id: 'rooted', name: 'Rooted Nutrition', kind: 'Dietitian', area: 'Fishers', category: 'Holistic Business',
     distance: '11 mi away', hours: 'Open until 4:00 PM', days: 'Mon to Fri', time: '8:00 AM to 4:00 PM', photo: photoSeedlings,
     about: 'A registered dietitian who helps with blood sugar, heart health and simple weekly meal plans you will actually cook. Visits can be in person or by video, and a grocery walk is part of the plan.',
     services: ['First consult', 'Meal plan', 'Grocery walk'],
@@ -146,7 +147,7 @@ export const LISTINGS = [
     address: '8900 E 116th St', city: 'Fishers, IN', phone: '(317) 555-0132',
   },
   {
-    id: 'quietmind', name: 'Quiet Mind Massage', kind: 'Massage', area: 'Irvington', category: 'Practitioners',
+    id: 'quietmind', name: 'Quiet Mind Massage', kind: 'Massage', area: 'Irvington', category: 'Holistic Business',
     distance: '5 mi away', hours: 'Open until 8:00 PM', days: 'Wed to Sun', time: '11:00 AM to 8:00 PM', photo: photoFriends, photos: [photoFriends, photoHerbs, photoSeedlings],
     about: 'Relaxing and therapeutic massage with extra time for stiff shoulders and hips. Tables adjust for easy on and off, and the studio is on the ground floor with no steps.',
     services: ['60 minute massage', '90 minute massage', 'Chair massage'],
@@ -155,7 +156,7 @@ export const LISTINGS = [
     address: '5625 E Washington St', city: 'Irvington, Indianapolis', phone: '(317) 555-0150',
   },
   {
-    id: 'apothecary', name: 'Fountain Square Apothecary', kind: 'Shop', area: 'Fountain Square', category: 'Shops',
+    id: 'apothecary', name: 'Fountain Square Apothecary', kind: 'Shop', area: 'Fountain Square', category: 'Shop',
     distance: '4 mi away', hours: 'Open until 6:00 PM', days: 'Tue to Sun', time: '10:00 AM to 6:00 PM', photo: photoHerbs,
     about: 'Loose teas, salves and bulk herbs, weighed out while you wait. The owner will happily explain every jar and write down how to brew it. Small tins make easy gifts.',
     services: ['Loose tea', 'Calendula salve', 'Bulk herbs'],
@@ -354,7 +355,7 @@ export const KNOWN_PLACES = ['broad ripple', 'indianapolis', 'carmel', 'fishers'
 // A practitioner account runs one listing: a practice, farm, food spot or shop.
 // Type picks the Directory category. Kind is the line people see on cards ("Massage  ·  Irvington").
 export const PRACTICE_TYPES = ['Practice', 'Farm', 'Food', 'Shop'];
-export const TYPE_CATEGORY = { Practice: 'Practitioners', Farm: 'Farms', Food: 'Food', Shop: 'Shops' };
+export const TYPE_CATEGORY = { Practice: 'Holistic Business', Farm: 'Food', Food: 'Food', Shop: 'Shop' };
 // Figma: the type cards on Your practice reuse the Interest card with these Interest illustrations.
 export const TYPE_ART = { Practice: intMeditation, Farm: intFarms, Food: intNutrition, Shop: intMarkets };
 // Practice setup runs as a stepper, one part of the listing per step. Services and Member offer are optional.

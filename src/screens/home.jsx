@@ -26,7 +26,7 @@ import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
-import CategoriesSheet from '../components/CategoriesSheet';
+import { CategoryTiles } from '../components/CategoryTile';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
 export const listingText = (l) => [l.name, l.kind, l.area, l.category, ...(l.specialties || [])].join(' ').toLowerCase();
@@ -167,11 +167,11 @@ export function Home() {
   );
 }
 
-// What a category's count line calls its places, one and many: "1 farm near you", "4 practitioners near you".
-const CATEGORY_NOUNS = { Practitioners: ['practitioner', 'practitioners'], Farms: ['farm', 'farms'], Food: ['food spot', 'food spots'], Shops: ['shop', 'shops'] };
+// What a category's count line calls its places, one and many: "1 shop near you", "4 holistic businesses near you".
+const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
-// Directory: every listing, with search and a menu button that opens the Categories sheet, like Topics on Community.
-// While a category is on, the button is Filled and a line under the search counts the places with a Clear link.
+// Directory: every listing, with search and four Category tiles under it (Holistic Business, Food, Shop, Services).
+// While a category is on, its tile is selected and a line under the tiles counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -181,9 +181,8 @@ export function Directory() {
   const { params } = useRoute().route;
   const [query, setQuery] = useState(params.query || '');
   const [cat, setCat] = useState(params.category || 'All');
-  const [sheet, setSheet] = useState(!!params.openCategories);
   const [state, retry] = useLoad(app.network);
-  const pickCategory = (k) => { setCat(k); setSheet(false); fb.haptic('selection'); };
+  const pickCategory = (k) => { setCat(k); fb.haptic('selection'); };
 
   const q = searchTerm(query);
   const results = useMemo(() => {
@@ -222,8 +221,9 @@ export function Directory() {
       </View>
     ) : list;
   }
-  // The map: only on a search, and only for places (Farms, Food, Shops). Practitioners offer services, so no pin.
-  const places = q && state === 'ready' ? results.filter((l) => l.category !== 'Practitioners') : [];
+  // The map: only on a search, and only for places you visit to buy (Food, Shop). Holistic businesses and services
+  // come to you or take bookings, so no pin.
+  const places = q && state === 'ready' ? results.filter((l) => l.category === 'Food' || l.category === 'Shop') : [];
   const n = results.length;
   const countLabel = q ? `${n} ${n === 1 ? 'result' : 'results'}${cat === 'All' ? '' : ` in ${cat}`}` : cat === 'All' ? '' : `${n} ${CATEGORY_NOUNS[cat][n === 1 ? 0 : 1]} near you`;
   const showCount = state === 'ready' && app.listings.length > 0 && n > 0 && !!countLabel;
@@ -244,12 +244,8 @@ export function Directory() {
       ) : (
         <>
           <View style={{ gap: 12 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ flex: 1 }}>
-                <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
-              </View>
-              <IconButton testID="open-categories" icon="menu" variant={cat === 'All' ? 'outline' : 'filled'} accessibilityLabel={cat === 'All' ? 'Categories' : `Categories, ${cat}`} onPress={() => setSheet(true)} />
-            </View>
+            <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+            <CategoryTiles value={cat} onPick={pickCategory} />
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
@@ -266,7 +262,6 @@ export function Directory() {
         </>
       )}
     </Screen>
-    <CategoriesSheet visible={sheet} value={cat} onPick={pickCategory} onClose={() => setSheet(false)} />
     </>
   );
 }
