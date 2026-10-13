@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images, categoryOf, NEAR_ME, townOf, milesOf } from '../data';
+import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBCATEGORY_ICONS } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -26,7 +26,6 @@ import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
 import { CategoryTiles } from '../components/CategoryTile';
-import SubcategorySheet from '../components/SubcategorySheet';
 import { CityButton, CitySheet } from '../components/CityPicker';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
@@ -168,49 +167,68 @@ export function Home() {
   );
 }
 
-// What a category's count line calls its places, one and many: "1 shop near you", "4 holistic businesses near you".
-const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
+// What empty states call a category's places: "No shops in Carmel yet".
+const CATEGORY_NOUNS = { 'Holistic Business': 'holistic businesses', Food: 'food spots', Shop: 'shops', Services: 'services' };
 
-// Directory: no title bar. Search with the Saved bookmark at its right, then every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// Four Category tiles, two to a row, pick the category.
-// Tapping the selected tile again shows every place.
-// The bookmark opens Saved.
-export function Directory() {
-  const { c } = useTheme();
+// The places in a city, or every place closest first for Near me.
+const inCity = (listings, city) => (city === NEAR_ME
+  ? [...listings].sort((a, b) => milesOf(a.distance) - milesOf(b.distance))
+  : listings.filter((l) => townOf(l.city) === city));
+
+// The city picker's state, shared by Directory and a category page. It opens on the profile city, or Near me.
+function useCity(initial) {
+  const app = useApp();
+  const fb = useFeedback();
+  const home = townOf(app.me.location);
+  const [city, setCity] = useState(initial || home || NEAR_ME);
+  const [open, setOpen] = useState(false);
+  const pick = (k) => { setCity(k); setOpen(false); fb.haptic('selection'); };
+  const sheet = <CitySheet visible={open} value={city} home={home} onPick={pick} onClose={() => setOpen(false)} />;
+  return { city, setCity, openSheet: () => setOpen(true), sheet, setOpen };
+}
+
+function ListingList({ items, keyPrefix, onOpen }) {
+  return (
+    <View style={{ gap: 12 }}>
+      {items.map((l, i) => (
+        <View key={keyPrefix + l.id} {...enter(i)}>
+          <ListingCard testID={`listing-${l.id}`} item={l} showSave={false} onPress={() => onOpen(l)} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+// Directory and a category page share one layout, with no title bar: Search with the Saved bookmark at its right,
+// tiles two to a row, then the City picker and the places in that city. On Directory the tiles are the four
+// categories and each opens its category page. On a category page a back button sits left of Search, the tiles are
+// its subcategories and picking one narrows the list in place. Tapping the selected tile again shows the whole
+// category.
+function DirectoryLayout({ category }) {
   const nav = useNav();
   const app = useApp();
   const fb = useFeedback();
   const { params } = useRoute().route;
   const [query, setQuery] = useState(params.query || '');
-  const [cat, setCat] = useState(params.category || 'All');
   const [sub, setSub] = useState(params.subcategory || null);
-  const [sheet, setSheet] = useState(!!params.openSubcategories);
-  // The city opens on the one in the person's profile, or Near me when there is none.
-  const home = townOf(app.me.location);
-  const [city, setCity] = useState(params.city || home || NEAR_ME);
-  const [citySheet, setCitySheet] = useState(!!params.openCity);
-  const pickCity = (k) => { setCity(k); setCitySheet(false); fb.haptic('selection'); };
+  const c2 = useCity(params.city);
+  const { city } = c2;
+  useEffect(() => { if (params.openCity) c2.setOpen(true); }, []);
   const [state, retry] = useLoad(app.network);
-  // A new category drops the subcategory. Picking a subcategory picks its category too.
-  const pickCategory = (k) => { setCat(k); setSub(null); fb.haptic('selection'); };
-  const pickSub = (k) => { setSub(k); if (k) setCat(categoryOf(k)); setSheet(false); fb.haptic('selection'); };
-  const clearAll = () => { setCat('All'); setSub(null); };
 
   const q = searchTerm(query);
   const results = useMemo(() => {
-    let list = app.listings;
-    // Near me lists the closest first. A city lists its places in their usual order.
-    list = city === NEAR_ME ? [...list].sort((a, b) => milesOf(a.distance) - milesOf(b.distance)) : list.filter((l) => townOf(l.city) === city);
-    if (cat !== 'All') list = list.filter((l) => l.category === cat);
+    let list = inCity(app.listings, city);
+    if (category) list = list.filter((l) => l.category === category);
     if (sub) list = list.filter((l) => l.subcategory === sub);
-    if (q) list = list.filter((l) => listingText(l).includes(q));
-    return list;
-  }, [q, cat, sub, city, app.listings]);
-
+    return q ? list.filter((l) => listingText(l).includes(q)) : list;
+  }, [q, category, sub, city, app.listings]);
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
-
-  // How lines and empty states name the place: "near you" or "in Carmel".
   const place = city === NEAR_ME ? 'near you' : `in ${city}`;
+  const tiles = category
+    ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }))} value={sub} onPick={(k) => { setSub(k); fb.haptic('selection'); }} />
+    : <CategoryTiles onPick={(k) => { fb.haptic('selection'); nav.navigate('CategoryResults', { category: k, city }); }} />;
+
   let body;
   if (state === 'loading') {
     body = <View style={{ gap: 12 }}><RowSkeleton /><RowSkeleton /><RowSkeleton /></View>;
@@ -218,30 +236,19 @@ export function Directory() {
     // Nothing listed near the person yet (Content: Empty in the review panel).
     body = <EmptyState testID="directory-empty" illustration={images.illustrations.path} title="No places near you yet" message="We’re still adding places in your area." action={app.practitioner ? null : 'Change location'} onAction={() => { nav.switchTab('profile'); nav.navigate('EditProfile'); }} />;
   } else if (!results.length) {
+    const what = sub || (category ? CATEGORY_NOUNS[category] : 'places');
     body = q
-      ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word or pick a category." action="Clear search" onAction={() => { setQuery(''); clearAll(); }} />
-      : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={sub ? `No places in ${sub} yet` : `No ${cat === 'All' ? 'places' : CATEGORY_NOUNS[cat][1]} ${place} yet`} message="We’re still adding places in your area." action={cat === 'All' ? 'Show places near me' : 'Show all places'} onAction={cat === 'All' ? () => setCity(NEAR_ME) : clearAll} />;
+      ? <EmptyState testID="directory-no-results" illustration={images.illustrations.noResults} title={`No listings for “${query.trim()}”`} message="Try another word." action="Clear search" onAction={() => setQuery('')} />
+      : sub
+        ? <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`Nothing in ${what} yet`} message={`We’re still adding places ${place}.`} action="Show all" onAction={() => setSub(null)} />
+        : <EmptyState testID="directory-no-results" illustration={images.illustrations.path} title={`No ${what} ${place} yet`} message="We’re still adding places in your area." action={city === NEAR_ME ? null : 'Show places near me'} onAction={() => c2.setCity(NEAR_ME)} />;
   } else {
-    const list = (
-      <View style={{ gap: 12 }}>
-        {results.map((l, i) => (
-          <View key={city + cat + sub + l.id} {...enter(i)}>
-            <ListingCard testID={`listing-${l.id}`} item={l} showSave={false} onPress={() => open(l)} />
-          </View>
-        ))}
-      </View>
-    );
-    body = list;
+    body = <ListingList items={results} keyPrefix={city + sub} onOpen={open} />;
   }
 
   return (
     <>
-    <Screen
-      testID="screen-directory"
-      bodyTop={12}
-      statusFill
-      bottom={<TabBar active="directory" onChange={nav.switchTab} />}
-    >
+    <Screen testID={category ? 'screen-category' : 'screen-directory'} bodyTop={12} statusFill bottom={category ? null : <TabBar active="directory" onChange={nav.switchTab} />}>
       {state === 'error' ? (
         // Figma Offline: no search or filters, the message sits lower (y 260). With no title bar the body starts at y 74.
         <View style={{ paddingTop: 186 }}>
@@ -251,25 +258,33 @@ export function Directory() {
         <>
           <View style={{ gap: 12 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              {!!category && <IconButton testID="nav-back" icon="nav-arrow-left" variant="outline" accessibilityLabel="Back" onPress={nav.goBack} />}
               <View style={{ flex: 1 }}>
-                <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+                <SearchField testID="directory-search" value={query} onChangeText={setQuery} placeholder={category ? `Search ${category}` : undefined} />
               </View>
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
-            <CategoryTiles value={cat} onPick={pickCategory} />
+            {tiles}
           </View>
-          {/* The city picker takes Near you's place, over the list. */}
           <View style={{ gap: 12 }}>
-            {app.listings.length > 0 && <CityButton value={city} onPress={() => setCitySheet(true)} />}
+            {app.listings.length > 0 && <CityButton value={city} onPress={c2.openSheet} />}
             {body}
           </View>
         </>
       )}
     </Screen>
-    <SubcategorySheet visible={sheet} category={cat} value={sub} onPick={pickSub} onClose={() => setSheet(false)} />
-    <CitySheet visible={citySheet} value={city} home={home} onPick={pickCity} onClose={() => setCitySheet(false)} />
+    {c2.sheet}
     </>
   );
+}
+
+export function Directory() {
+  return <DirectoryLayout />;
+}
+
+export function CategoryResults() {
+  const { params } = useRoute().route;
+  return <DirectoryLayout category={params.category || 'Holistic Business'} />;
 }
 
 export function ListingProfile() {

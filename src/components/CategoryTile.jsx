@@ -3,7 +3,7 @@
 // a 40pt bg/color-brand-subtle circle with the icon in icon/color-brand, then the label in Body S Medium, which may
 // wrap to two lines. Selected fills the tile with bg/color-selected, a 2pt border/color-brand edge, the circle in
 // bg/color-brand with the icon in icon/color-on-brand and the label in Bold, so the state never rests on color alone.
-// Tapping the selected tile again shows every place.
+// On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
 import { View, Text, Pressable } from '../rn';
 import { useTheme, type } from '../theme';
@@ -11,7 +11,7 @@ import Icon from './Icon';
 
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
-export default function CategoryTile({ label, selected, onPress, testID }) {
+export default function CategoryTile({ label, icon, selected, onPress, testID }) {
   const { c } = useTheme();
   return (
     <Pressable
@@ -30,21 +30,25 @@ export default function CategoryTile({ label, selected, onPress, testID }) {
       ]}
     >
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
-        <Icon name={CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
+        <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
       </View>
       <Text numberOfLines={2} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>
     </Pressable>
   );
 }
 
-// The 2 by 2 grid of tiles.
-export function CategoryTiles({ value, onPick }) {
-  const keys = Object.keys(CATEGORY_ICONS);
-  const tile = (k) => <CategoryTile key={k} testID={`category-tile-${k}`} label={k} selected={value === k} onPress={() => onPick(value === k ? 'All' : k)} />;
+// Tiles two to a row. items: [{ label, icon }]. Directory's four categories by default.
+export function CategoryTiles({ items = Object.keys(CATEGORY_ICONS).map((k) => ({ label: k, icon: CATEGORY_ICONS[k] })), value, onPick, testPrefix = 'category-tile' }) {
+  const rows = [];
+  for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
   return (
-    <View testID="category-tiles" style={{ gap: 12 }}>
-      <View style={{ flexDirection: 'row', gap: 12 }}>{keys.slice(0, 2).map(tile)}</View>
-      <View style={{ flexDirection: 'row', gap: 12 }}>{keys.slice(2).map(tile)}</View>
+    <View testID={`${testPrefix}s`} style={{ gap: 12 }}>
+      {rows.map((row, r) => (
+        <View key={r} style={{ flexDirection: 'row', gap: 12 }}>
+          {row.map((it) => <CategoryTile key={it.label} testID={`${testPrefix}-${it.label}`} label={it.label} icon={it.icon} selected={value === it.label} onPress={() => onPick(value === it.label ? null : it.label)} />)}
+          {row.length === 1 && <View style={{ flex: 1 }} />}
+        </View>
+      ))}
     </View>
   );
 }

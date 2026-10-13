@@ -103,6 +103,13 @@ export const SUBCATEGORIES = {
   Shop: ['Apothecary', 'Supplements', 'Skin care', 'Teas and herbs'],
   Services: ['Fitness', 'Classes', 'Coaching', 'Birth and baby'],
 };
+// The icon on each subcategory's tile.
+export const SUBCATEGORY_ICONS = {
+  Massage: 'user-love', Acupuncture: 'healthcare', Herbalism: 'leaf', Nutrition: 'apple-fruit', Chiropractic: 'walking', 'Yoga and movement': 'yoga',
+  Farms: 'farm', Markets: 'cart', 'Bakeries and cafés': 'coffee-cup', Restaurants: 'cutlery', Grocers: 'shopping-bag',
+  Apothecary: 'flask', Supplements: 'pharmacy-cross-tag', 'Skin care': 'soap', 'Teas and herbs': 'leaf',
+  Fitness: 'gym', Classes: 'graduation-cap', Coaching: 'chat-lines', 'Birth and baby': 'stroller',
+};
 // Directory's city picker: Near me, then Indiana's 10 largest cities. It opens on the city in the person's profile.
 export const NEAR_ME = 'Near me';
 export const INDIANA_CITIES = ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel', 'Fishers', 'Bloomington', 'Hammond', 'Gary', 'Lafayette'];
@@ -114,8 +121,6 @@ export const townOf = (place = '') => {
 };
 // Miles from "2.1 mi away", so Near me can list the closest first.
 export const milesOf = (distance = '') => parseFloat(distance) || 999;
-// The category a subcategory belongs to.
-export const categoryOf = (sub) => Object.keys(SUBCATEGORIES).find((k) => SUBCATEGORIES[k].includes(sub));
 
 // Detail rows on a listing: address + area, days + opening times, phone + "Call or text" (Figma: Listing profile).
 // sponsored: a paid partner. Home shows them in the Sponsored reel, always labeled. Services are names only, no prices.
