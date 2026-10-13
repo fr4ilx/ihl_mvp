@@ -14,7 +14,7 @@ import { CATEGORY_ART } from '../data';
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
 // art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
-// 200pt, the watercolor at 128pt centered on top and the label in Body M Bold centered under it, so the 2 by 2 grid
+// 200pt, the watercolor at 128pt centered on top and the label in Body M centered under it, so the 2 by 2 grid
 // takes about half the screen.
 export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
@@ -43,7 +43,7 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
       </View>
       )}
       {art
-        ? <Text numberOfLines={2} style={[type('BodyM', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
+        ? <Text numberOfLines={2} style={[type('BodyM'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
         : <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>}
     </Pressable>
   );
