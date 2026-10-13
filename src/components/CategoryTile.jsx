@@ -6,13 +6,15 @@
 // bg/color-brand with the icon in icon/color-on-brand and the label in Bold, so the state never rests on color alone.
 // On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
-import { View, Text, Pressable } from '../rn';
+import { View, Text, Pressable, Image } from '../rn';
 import { useTheme, type, elevation } from '../theme';
 import Icon from './Icon';
+import { CATEGORY_ART } from '../data';
 
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
-export default function CategoryTile({ label, icon, selected, onPress, testID }) {
+// art: a watercolor in place of the icon circle, 48pt with no circle. The four categories have one so far.
+export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   return (
     <Pressable
@@ -30,9 +32,13 @@ export default function CategoryTile({ label, icon, selected, onPress, testID })
         pressed && { transform: [{ scale: 0.97 }] },
       ]}
     >
+      {art ? (
+        <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 48, height: 48 }} />
+      ) : (
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
         <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
       </View>
+      )}
       <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>
     </Pressable>
   );

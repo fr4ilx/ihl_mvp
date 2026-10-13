@@ -33,6 +33,12 @@ import grpFarms from '../assets/img/grp_farms.webp';
 import grpForaging from '../assets/img/grp_foraging.webp';
 import grpBookclub from '../assets/img/grp_bookclub.webp';
 import grpParenting from '../assets/img/grp_parenting.webp';
+// Watercolor art for the Directory categories (docs/watercolor-icons.md). Masters live in assets/watercolor.
+import wcHolistic from '../assets/img/wc_cat_holistic.webp';
+import wcFood from '../assets/img/wc_cat_food.webp';
+import wcShop from '../assets/img/wc_cat_shop.webp';
+import wcServices from '../assets/img/wc_cat_services.webp';
+export const CATEGORY_ART = { 'Holistic Business': wcHolistic, Food: wcFood, Shop: wcShop, Services: wcServices };
 // Figma: Medallion art. Full color for earned, a grey copy for in progress and locked.
 import artSeedling from '../assets/img/art_seedling.webp';
 import artSeedlingGrey from '../assets/img/art_seedling_grey.webp';
