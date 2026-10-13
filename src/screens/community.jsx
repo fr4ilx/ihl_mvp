@@ -12,6 +12,7 @@ import { TOPICS, images } from '../data';
 import Screen, { BottomBar } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
+import NewPostButton from '../components/NewPostButton';
 import Chip from '../components/Chip';
 import PostCard from '../components/PostCard';
 import Reply from '../components/Reply';
@@ -129,8 +130,9 @@ export function Community() {
       <Screen
         testID="screen-community"
         bodyTop={12}
-        nav={<NavBar kind="title" title="Community" actions={[{ icon: 'plus', variant: 'filled', onPress: () => nav.openModal('NewPost'), accessibilityLabel: 'New post', testID: 'new-post' }]} />}
-        bottom={<TabBar active="community" onChange={nav.switchTab} />}
+        statusFill
+        bottomSpace={186}
+        bottom={<><NewPostButton onPress={() => nav.openModal('NewPost')} /><TabBar active="community" onChange={nav.switchTab} /></>}
       >
         <View style={{ gap: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
