@@ -29,7 +29,7 @@ export function CityButton({ value, onPress }) {
 export function CitySheet({ visible, value, home, onPick, onClose }) {
   const cities = home && !INDIANA_CITIES.includes(home) ? [home, ...INDIANA_CITIES] : INDIANA_CITIES;
   return (
-    <Sheet visible={visible} onClose={onClose} title="Show places in" testID="city-sheet">
+    <Sheet visible={visible} onClose={onClose} title="Show places in" testID="city-sheet" fit>
       <View accessibilityRole="radiogroup" accessibilityLabel="Show places in" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {[NEAR_ME, ...cities].map((x) => <Chip key={x} testID={`city-${x}`} label={x} small selected={value === x} onPress={() => onPick(x)} />)}
       </View>
@@ -70,7 +70,7 @@ export function RadiusButton({ value, onPress }) {
 
 export function RadiusSheet({ visible, value, onPick, onClose }) {
   return (
-    <Sheet visible={visible} onClose={onClose} title="How far" testID="radius-sheet">
+    <Sheet visible={visible} onClose={onClose} title="How far" testID="radius-sheet" fit>
       <View accessibilityRole="radiogroup" accessibilityLabel="How far" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {RADII.map((r) => <Chip key={r || 'any'} testID={`radius-${r || 'any'}`} label={r ? `${r} mi` : 'Any distance'} small selected={value === r} onPress={() => onPick(r)} />)}
       </View>

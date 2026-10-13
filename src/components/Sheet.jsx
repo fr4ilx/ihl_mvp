@@ -28,7 +28,8 @@ export const SHEET_CONTENT = 402 - 2 * 16;
 // height: PAGE_SHEET_HEIGHT for a page sheet. surface: bg/color-canvas when the sheet previews a screen, so what is
 // on it looks the way it does on that screen (controls then keep their canvas look instead of bg/color-sheet-raised).
 // A canvas sheet adds a 1pt border/color-glass rim along its top, so it still lifts off the dimmed screen in Dark.
-export default function Sheet({ visible, onClose, title, subtitle, closeTestID, footer, center, scroll = true, height = SHEET_HEIGHT, surface = 'bg/color-sheet', testID, children }) {
+// fit: as tall as its content instead of three quarters of the screen, for a short set of choices (City, How far).
+export default function Sheet({ visible, onClose, title, subtitle, closeTestID, footer, center, scroll = true, fit, height = SHEET_HEIGHT, surface = 'bg/color-sheet', testID, children }) {
   const { c, reduceMotion } = useTheme();
   const [mounted, setMounted] = useState(visible);
   const [shown, setShown] = useState(false);
@@ -47,7 +48,7 @@ export default function Sheet({ visible, onClose, title, subtitle, closeTestID, 
       <View
         testID="sheet"
         style={{
-          position: 'absolute', left: 0, right: 0, bottom: 0, height,
+          position: 'absolute', left: 0, right: 0, bottom: 0, height: fit ? undefined : height,
           backgroundColor: sheet, borderTopLeftRadius: 40, borderTopRightRadius: 40, overflow: 'hidden',
           ...(surface === 'bg/color-sheet' ? null : { borderWidth: 1, borderBottomWidth: 0, borderColor: c('border/color-glass') }),
           paddingTop: 12, paddingBottom: 48, boxShadow: elevation.overlay,
@@ -69,7 +70,9 @@ export default function Sheet({ visible, onClose, title, subtitle, closeTestID, 
             {/* The hairline under the title once content scrolls under it, as on the Waiver sheet. */}
             <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, bottom: -1, height: 1, backgroundColor: c('border/color-subtle'), opacity: under ? 1 : 0, transition: `opacity ${motion.navFill.duration}ms` }} />
           </View>
-          {scroll ? (
+          {fit ? (
+            <View style={[...body, !title && { paddingTop: 0 }]}>{children}</View>
+          ) : scroll ? (
             <View style={{ flex: 1, minHeight: 0 }}>
               <ScrollView
                 style={{ flex: 1, minHeight: 0 }}
