@@ -1,4 +1,4 @@
-// Directory map. Half the screen tall (437pt on the 874pt iPhone 17), the content width with radius/16, under the
+// Directory map. 280pt tall, about a third of the 874pt iPhone 17, the content width with radius/16, under the
 // City picker and over the list. One brand pin per place in the list, so it follows the city, the category, the
 // subcategory and the search. A pin opens that listing. The drawing uses the bg/color-map-* tokens so it flips with
 // Light and Dark.
@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Pressable, Svg, Rect, Path, Circle } from '../rn';
 import { useTheme } from '../theme';
 
-export const RESULTS_MAP_H = 437;
+export const RESULTS_MAP_H = 280;
 // Where pins land on the drawing, as a share of the box. The prototype has no coordinates, the app uses each address.
 const SPOTS = [[0.5, 0.42], [0.24, 0.3], [0.76, 0.5], [0.38, 0.74], [0.64, 0.22], [0.14, 0.6], [0.84, 0.8]];
 
