@@ -172,8 +172,7 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// The filter button next to Search opens the Subcategories sheet, and a Narrow down link on the count line opens it
-// too. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
+// The filter button next to Search opens the Subcategories sheet. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -265,12 +264,7 @@ export function Directory() {
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
-                {cat !== 'All' && (
-                  <View style={{ flexDirection: 'row', gap: 16 }}>
-                    {!sub && <TextLink testID="narrow-down" label="Narrow down" onPress={() => setSheet(true)} />}
-                    <TextLink testID="clear-category" label="Clear" onPress={() => { clearAll(); fb.haptic('selection'); }} />
-                  </View>
-                )}
+                {cat !== 'All' && <TextLink testID="clear-category" label="Clear" onPress={() => { clearAll(); fb.haptic('selection'); }} />}
               </View>
             )}
           </View>
