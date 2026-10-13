@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "prototype",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["-e", "const h=require('http'),f=require('fs'),p=require('path'),d=p.resolve('dist');h.createServer((q,r)=>{const u=decodeURIComponent(q.url.split(/[?#]/)[0]);const fp=p.join(d,u==='/'?'index.html':u);if(!fp.startsWith(d))return r.writeHead(403).end();f.readFile(fp,(e,b)=>{if(e)return r.writeHead(404).end('Not found');r.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});r.end(b)})}).listen(4173,()=>console.log('http://localhost:4173'))"],
+      "port": 4173
+    }
+  ]
+}

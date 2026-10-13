@@ -1,0 +1,20 @@
+{
+  "name": "ihl-prototype",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Indy Holistic Living interactive prototype. React components shaped like React Native, bundled into one offline HTML file.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch"
+  },
+  "dependencies": {
+    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/mrs-saint-delafield": "^5.3.0",
+    "@fontsource/pt-sans": "^5.3.0",
+    "@fontsource/tenor-sans": "^5.3.0",
+    "esbuild": "^0.28.2",
+    "iconoir-react": "^7.12.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
