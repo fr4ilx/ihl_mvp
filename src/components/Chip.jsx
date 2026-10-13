@@ -5,7 +5,7 @@ import { Pressable, Text, StyleSheet } from '../rn';
 import { useTheme, type, useRaised, useOnSheet } from '../theme';
 import Icon from './Icon';
 
-export default function Chip({ label, selected, showCheck, onPress, testID }) {
+export default function Chip({ label, selected, showCheck, onPress, testID, style }) {
   const { c } = useTheme();
   const raised = useRaised();
   const onSheet = useOnSheet();
@@ -22,6 +22,7 @@ export default function Chip({ label, selected, showCheck, onPress, testID }) {
         selected
           ? { backgroundColor: c('bg/color-brand') }
           : { backgroundColor: c(raised), borderWidth: onSheet ? 0 : 1, borderColor: c('border/color-control-subtle') },
+        style,
         pressed && { transform: [{ scale: 0.95 }] },
       ]}
     >

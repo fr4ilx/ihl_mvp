@@ -26,7 +26,7 @@ import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
 import CheckInSheet from '../components/CheckInSheet';
-import { CategoryTiles } from '../components/CategoryTile';
+import CategoryChips from '../components/CategoryChips';
 
 // What search matches on a listing: its name, kind, area, category and its specialties.
 export const listingText = (l) => [l.name, l.kind, l.area, l.category, ...(l.specialties || [])].join(' ').toLowerCase();
@@ -170,8 +170,8 @@ export function Home() {
 // What a category's count line calls its places, one and many: "1 shop near you", "4 holistic businesses near you".
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
-// Directory: every listing, with search and four Category tiles under it (Holistic Business, Food, Shop, Services).
-// While a category is on, its tile is selected and a line under the tiles counts the places with a Clear link.
+// Directory: every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
+// While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -245,7 +245,7 @@ export function Directory() {
         <>
           <View style={{ gap: 12 }}>
             <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
-            <CategoryTiles value={cat} onPick={pickCategory} />
+            <CategoryChips value={cat} onPick={pickCategory} />
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
