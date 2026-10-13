@@ -172,7 +172,7 @@ export function Home() {
 const CATEGORY_NOUNS = { 'Holistic Business': ['holistic business', 'holistic businesses'], Food: ['food spot', 'food spots'], Shop: ['shop', 'shops'], Services: ['service', 'services'] };
 
 // Directory: every listing, with search and four category Chips under it (Holistic Business, Food, Shop, Services).
-// The filter button next to Search opens the Subcategories sheet. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
+// The Filter pill at the start of the chip row opens the Subcategories sheet. While a category is on, its chip is selected and a line under the chips counts the places with a Clear link.
 // The bookmark opens Saved.
 export function Directory() {
   const { c } = useTheme();
@@ -254,13 +254,8 @@ export function Directory() {
       ) : (
         <>
           <View style={{ gap: 12 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ flex: 1 }}>
-                <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
-              </View>
-              <IconButton testID="open-subcategories" icon="filter-list" variant={sub ? 'filled' : 'outline'} accessibilityLabel={sub ? `Narrow down, ${sub}` : 'Narrow down'} onPress={() => setSheet(true)} />
-            </View>
-            <CategoryChips value={cat} onPick={pickCategory} />
+            <SearchField testID="directory-search" value={query} onChangeText={setQuery} />
+            <CategoryChips value={cat} onPick={pickCategory} filterOn={!!sub} filterLabel={sub ? `Filter, ${sub}` : 'Filter'} onFilter={() => setSheet(true)} />
             {showCount && (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text testID="directory-count" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{countLabel}</Text>
