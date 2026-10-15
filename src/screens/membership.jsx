@@ -1,6 +1,6 @@
 // Grove membership: JoinGrove (the paywall, a full screen modal) and Membership (a Grove member's plan, from My Profile).
 // Seedling is free: up to 3 groups. Grove is $89.00 a year or $11.11 a month: every group, Ask the Experts, member
-// offers. In the app StoreKit sells it (RevenueCat or react-native-iap) and the App Store draws the
+// offers and seasonal quests. In the app StoreKit sells it (RevenueCat or react-native-iap) and the App Store draws the
 // purchase sheet. App Review 3.1.2 asks for the price, the length, what it unlocks, Restore purchases, and links to
 // the Terms of Use and Privacy Policy on this screen.
 import React, { useState } from 'react';
@@ -24,6 +24,7 @@ const REASONS = {
   groups: 'Seedling members join up to 3 groups.',
   experts: 'Ask the Experts is part of Grove.',
   offers: 'Member offers are part of Grove.',
+  quests: 'Seasonal quests are part of Grove.',
 };
 export const renewsOn = (plan) => (plan === 'monthly' ? 'November 4, 2026' : 'October 4, 2027');
 const finePrint = (p) => `Charged to your Apple Account. Renews every ${p.per} at ${p.price} until you cancel. Cancel anytime in Settings, at least a day before it renews.`;
@@ -50,7 +51,7 @@ export function JoinGrove() {
         <View className="fx-fade-up" style={{ alignItems: 'center', gap: 8 }}>
           <Medallion icon="tree" size={96} halo />
           <Text style={[type('H2', 'bold'), { color: c('text/color-primary'), textAlign: 'center', marginTop: 8 }]}>Welcome to Grove</Text>
-          <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>Thank you for supporting local wellness. Every group, Ask the Experts and member offers are open to you.</Text>
+          <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>Thank you for supporting local wellness. Every group, Ask the Experts, member offers and the Fall Harvest Quest are open to you.</Text>
         </View>
       </Screen>
     );

@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBTYPES, SUBCATEGORY_ICONS, SUBCATEGORY_ART } from '../data';
+import { LISTINGS, QUEST, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBTYPES, SUBCATEGORY_ICONS, SUBCATEGORY_ART } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -25,6 +25,7 @@ import PhotoPager from '../components/PhotoPager';
 import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
+import { QuestCard } from '../components/Journey';
 import CheckInSheet from '../components/CheckInSheet';
 import { CategoryTiles } from '../components/CategoryTile';
 import { CityButton, CitySheet, RadiusButton, RadiusSheet } from '../components/CityPicker';
@@ -57,6 +58,7 @@ export function Home() {
     setCheckIn(false);
     setTimeout(() => celebrate(fb, r, { message: 'Checked in for this week', bottom: SNACK.tabBar }), 360);
   };
+  const questDone = QUEST.steps.filter((x) => app.questDone(x.id)).length;
   // Review panel only: open scrolled to the week cards, or check in on its own to show an award.
   const scroll = useRef();
   useScrollTo(scroll, params.scrollTo);
@@ -134,6 +136,7 @@ export function Home() {
           <View testID="home-week" {...enter(1)}>
             <View style={{ gap: 12 }}>
               <StreakCard weeks={app.me.weeks} streak={app.streak} onCheckIn={() => { fb.haptic('light'); setCheckIn(true); }} />
+              <QuestCard done={questDone} locked={!app.grove} onPress={() => (app.grove ? nav.navigate('Quest') : nav.openModal('JoinGrove', { reason: 'quests' }))} />
             </View>
           </View>
         )}

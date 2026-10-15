@@ -1,9 +1,9 @@
-// The journey pieces. Figma: Journey card, Stage row, Badge tile, and Badge row.
+// The journey pieces. Figma: Journey card, Stage row, Badge tile, Badge row and Quest card.
 // Stages and badges always show their name and state in words next to the Medallion, never by color alone.
 import React from 'react';
 import { View, Text, Image, Pressable } from '../rn';
 import { useTheme, type, elevation } from '../theme';
-import { STAGES } from '../data';
+import { STAGES, QUEST } from '../data';
 import Icon from './Icon';
 import Badge from './Badge';
 import Medallion from './Medallion';
@@ -105,3 +105,32 @@ export function BadgeRow({ badges, onPress, testID = 'badge-row' }) {
     : <View testID={testID} style={style}>{inner}</View>;
 }
 
+// Figma: Quest card (Locked No, Yes). The season's quest on Home: the quest art on a 72pt bg/color-accent-subtle tile,
+// the name in H5 Bold, "1 of 3 done  ·  Ends Dec 20" and a Progress bar, then a chevron. For a Seedling it reads
+// "For Grove members" with the Grove badge, and opens the paywall.
+export function QuestCard({ done, locked, onPress, testID = 'quest-card' }) {
+  const { c } = useTheme();
+  const total = QUEST.steps.length;
+  return (
+    <Pressable testID={testID} onPress={onPress} accessibilityLabel={`${QUEST.name}, ${locked ? 'for Grove members' : `${done} of ${total} done`}`} style={({ pressed }) => [card(c), { flexDirection: 'row', alignItems: 'center', gap: 16 }, pressed && pressedScale]}>
+      <View style={{ width: 72, height: 72, borderRadius: 16, backgroundColor: c('bg/color-accent-subtle'), alignItems: 'center', justifyContent: 'center' }}>
+        <Image source={QUEST.art} resizeMode="contain" style={{ width: 60, height: 60 }} />
+      </View>
+      <View style={{ flex: 1, gap: 4 }}>
+        <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>{QUEST.name}</Text>
+        {locked ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <Badge label="Grove" tone="accent" icon="lock" />
+            <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>Ends {QUEST.ends}</Text>
+          </View>
+        ) : (
+          <>
+            <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{done === total ? 'All done' : `${done} of ${total} done`}  ·  Ends {QUEST.ends}</Text>
+            <ProgressBar value={done} max={total} style={{ marginTop: 4 }} />
+          </>
+        )}
+      </View>
+      <Icon name="nav-arrow-right" size={20} color={c('icon/color-secondary')} />
+    </Pressable>
+  );
+}

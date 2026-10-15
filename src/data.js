@@ -62,6 +62,8 @@ import wcSubTcm from '../assets/img/wc_sub_tcm.webp';
 import wcSubNaturopath from '../assets/img/wc_sub_naturopath.webp';
 import wcSubHomeopath from '../assets/img/wc_sub_homeopath.webp';
 export const CATEGORY_ART = { 'Holistic Business': wcHolistic, Food: wcFood, Shop: wcShop, Services: wcServices };
+// Figma: Quest art / Fall Harvest Quest.
+import questFall from '../assets/img/quest_fall.webp';
 // Figma: Medallion art. Full color for earned, a grey copy for in progress and locked.
 import artSeedling from '../assets/img/art_seedling.webp';
 import artSeedlingGrey from '../assets/img/art_seedling_grey.webp';
@@ -83,6 +85,8 @@ import artWelcomer from '../assets/img/art_welcomer.webp';
 import artWelcomerGrey from '../assets/img/art_welcomer_grey.webp';
 import artSteady from '../assets/img/art_steady.webp';
 import artSteadyGrey from '../assets/img/art_steady_grey.webp';
+import artHarvest from '../assets/img/art_harvest.webp';
+import artHarvestGrey from '../assets/img/art_harvest_grey.webp';
 
 export const images = {
   logo,
@@ -108,6 +112,7 @@ export const MEDALLION_ART = {
   farm: { art: artFarmFriend, grey: artFarmFriendGrey },
   'user-love': { art: artWelcomer, grey: artWelcomerGrey },
   'sun-light': { art: artSteady, grey: artSteadyGrey },
+  'apple-fruit': { art: artHarvest, grey: artHarvestGrey },
 };
 
 export const INTERESTS = [
@@ -423,7 +428,8 @@ export const ME = {
   groups: ['welcome', 'experts', 'herbal', 'bookclub'],
   stage: 'sprout', posts: 6,
   weeks: [false, false, true, true, true, false], mood: null,
-  badges: { seedling: 'Sep 14', farmfriend: 'Sep 28' }, progress: { explorer: 6, welcomer: 2, steady: 3 },
+  badges: { seedling: 'Sep 14', farmfriend: 'Sep 28' }, progress: { explorer: 6, welcomer: 2, harvest: 1, steady: 3 },
+  quest: { farm: true },
 };
 
 export const GENDERS = ['Woman', 'Man', 'Non-binary', 'Prefer not to say'];
@@ -549,6 +555,7 @@ export const GROVE_PERKS = [
   { id: 'groups', icon: 'community', title: 'Every group', text: 'Join and post in all of them, not just 3.' },
   { id: 'experts', icon: 'chat-bubble-question', title: 'Ask the Experts', text: 'Verified local practitioners answer.' },
   { id: 'offers', icon: 'gift', title: 'Member offers', text: 'Thank you offers from local businesses.' },
+  { id: 'quests', icon: 'medal', title: 'Seasonal quests', text: 'Visit, try and share, then earn the season’s badge.' },
 ];
 
 // ---------- Your journey ----------
@@ -567,6 +574,7 @@ export const BADGES = [
   { id: 'explorer', name: 'Explorer', icon: 'compass', how: 'Visit 10 places in the Directory.', goal: 10, unit: 'places' },
   { id: 'farmfriend', name: 'Farm Friend', icon: 'farm', how: 'Visit 3 local farms or markets.', goal: 3, unit: 'farms' },
   { id: 'welcomer', name: 'Welcomer', icon: 'user-love', how: 'Greet 5 new members in the Welcome Circle.', goal: 5, unit: 'members' },
+  { id: 'harvest', name: 'Harvest 2026', icon: 'apple-fruit', how: 'Finish the Fall Harvest Quest.', goal: 3, unit: 'steps' },
   { id: 'steady', name: 'Steady', icon: 'sun-light', how: 'Check in 4 weeks in a row.', goal: 4, unit: 'weeks' },
 ];
 
@@ -577,6 +585,17 @@ export const MOODS = [
   { id: 'okay', label: 'Okay', icon: 'emoji-quite' },
   { id: 'hard', label: 'Hard', icon: 'emoji-sad' },
 ];
+
+// The season's quest. Grove members take part. Steps are marked done by the member.
+export const QUEST = {
+  id: 'fall-2026', name: 'Fall Harvest Quest', art: questFall, dates: 'Sep 22 to Dec 20', ends: 'Dec 20', badge: 'harvest',
+  about: 'Three small ways to enjoy the season close to home.',
+  steps: [
+    { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby.', action: 'Find a farm' },
+    { id: 'practitioner', title: 'Visit a practitioner', text: 'Try a class, a massage or a consult near you.', action: 'Find one' },
+    { id: 'share', title: 'Share a reflection', text: 'Post what you tried and how it felt.', action: 'Write a post' },
+  ],
+};
 
 // Onboarding quiz: three questions that set the Home feed and suggest groups.
 // Each answer is a tile with an Iconoir glyph, two to a row. Answers are kept with the member and never shown to others.

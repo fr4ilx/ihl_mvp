@@ -1,4 +1,4 @@
-// Figma: Progress bar. A 6pt bar for progress toward a badge or the next stage: bg/color-brand for what is
+// Figma: Progress bar. A 6pt bar for progress toward a badge, the next stage or the quest: bg/color-brand for what is
 // done over border/color-default, like Step progress. The words next to it ("6 of 10 places") carry the value, so the
 // bar never stands alone. React Native: a View with a width percentage, animated with withTiming over 360 ms.
 import React from 'react';

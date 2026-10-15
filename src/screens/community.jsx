@@ -37,7 +37,7 @@ import Toggle from '../components/Toggle';
 import { SettingRow } from '../components/Rows';
 import { GroupTile, FindGroupsTile, GroupArt } from '../components/Groups';
 import { BadgeRow } from '../components/Journey';
-import { STAGES, BADGES } from '../data';
+import { STAGES, BADGES, QUEST } from '../data';
 import { enter } from './home';
 
 // More on a post opens the iOS action sheet. Your own post: Delete post. Someone else's: Report post and Block, which
@@ -369,6 +369,8 @@ export function NewPost() {
   // No topic until the person picks one. Opening from a topic's empty feed starts on that topic.
   // In a group the post has no topic: "Posting in" names the group instead.
   const group = p.group ? app.groups.find((g) => g.id === p.group) : null;
+  // From the quest, the post is the Share a reflection step.
+  const quest = p.quest === 'share';
   const [topic, setTopic] = useState(p.topic && p.topic !== 'All' ? p.topic : null);
   const [text, setText] = useState(p.text || '');
   const [photos, setPhotos] = useState(p.photos || []);
@@ -405,8 +407,10 @@ export function NewPost() {
       fb.haptic('success');
       // A group post shows up on the group's page, under the modal.
       if (group) { nav.closeModal(); setTimeout(() => celebrate(fb, { grew: created.grew }, { message: 'Your post is live', bottom: SNACK.none }), 420); return; }
-      nav.closeModalAndPush('community', 'Conversation', { postId: created.id, justPosted: !created.grew });
-      if (created.grew) setTimeout(() => celebrate(fb, { grew: created.grew }), 700);
+      const won = quest ? app.completeQuestStep('share') : null;
+      const award = won || created.grew;
+      nav.closeModalAndPush('community', 'Conversation', { postId: created.id, justPosted: !award });
+      if (award) setTimeout(() => celebrate(fb, { earned: won, grew: created.grew }), 700);
     }, 1200);
   }
   const addPicked = (picked) => {
@@ -449,6 +453,12 @@ export function NewPost() {
               {TOPICS.filter((t) => t !== 'All').map((t) => <Chip key={t} label={t} selected={topic === t} onPress={() => { setTopic(t); fb.haptic('selection'); }} />)}
             </View>
             <FieldError testID="topic-error" message={shown.topic} />
+          </View>
+        )}
+        {quest && (
+          <View testID="quest-note" style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 12, backgroundColor: c('bg/color-accent-subtle') }}>
+            <Icon name="medal" size={24} color={c('icon/color-accent')} />
+            <Text style={[type('BodyS'), { color: c('text/color-primary'), flex: 1 }]}>This post finishes a step of the {QUEST.name}.</Text>
           </View>
         )}
         {/* 220pt, or 176pt when the Promotion row is there too, so its line stays clear of Post. */}

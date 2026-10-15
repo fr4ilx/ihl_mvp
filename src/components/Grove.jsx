@@ -1,6 +1,6 @@
 // Grove membership pieces. Figma: Perk row, Plan card and Membership card.
-// Seedling is the free membership: up to 3 groups. Grove is paid: every group, Ask the Experts, member offers.
-// Prices come from StoreKit in the app.
+// Seedling is the free membership: up to 3 groups. Grove is paid: every group, Ask the Experts, member offers and the
+// seasonal quests. Prices come from StoreKit in the app.
 import React from 'react';
 import { View, Text, Pressable } from '../rn';
 import { useTheme, type, elevation } from '../theme';

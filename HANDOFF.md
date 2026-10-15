@@ -57,7 +57,7 @@ The prototype holds two versions of the app (section 7, V1 and V2). V1 is the MV
 | `src/components/` | One file per Figma component, plus `ShowMoreText` (About on a listing), `DashedBorder` (the dashed Edit and add tiles), `FilterSheet` (the shell Topics and Categories share), `ListingSections` (a listing's sections, shared by Listing profile and Check your listing), `PhotoPager` (the listing photos) and `ListingReviewSheet` (Check your listing) | Yes, see section 5 |
 | `src/screens/` | Every screen, grouped by flow | Yes, one route file per screen |
 | `src/screens/index.js` | Screen registry: components, motion and haptics per screen, and what Empty and Offline change there | Reference only |
-| `src/app/store.jsx` | Sample data store: `v2` (true in V2, section 7), `me` (with `role`, `tier`, `stage`, `weeks`, `badges`, `progress`), `saved`, `listings`, `feed`, `post(id)`, `postsBy(personId)`, likes, replies and replies to replies. Membership and groups: `grove`, `groups`, `groupPosts`, `suggestedGroups`, `canJoin`, `joinGroup`, `leaveGroup`, `subscribe`. Journey: `journey`, `badges`, `streak`, `checkIn`, `visit`. Ask the Experts: `myQuestions`, `askQuestion`, `resendQuestion`. For a practitioner: `practice`, `myListing`, `claimListing`, `requestClaim`, `setRole`, `startPractice`, `updatePractice`, `submitPractice`, `requestFeature`, `questions`, `promo` | Replace with the real API later. Keep the method names |
+| `src/app/store.jsx` | Sample data store: `v2` (true in V2, section 7), `me` (with `role`, `tier`, `stage`, `weeks`, `badges`, `progress`, `quest`), `saved`, `listings`, `feed`, `post(id)`, `postsBy(personId)`, likes, replies and replies to replies. Membership and groups: `grove`, `groups`, `groupPosts`, `suggestedGroups`, `canJoin`, `joinGroup`, `leaveGroup`, `subscribe`. Journey: `journey`, `badges`, `streak`, `checkIn`, `visit`. Ask the Experts: `myQuestions`, `askQuestion`, `resendQuestion`. For a practitioner: `practice`, `myListing`, `claimListing`, `requestClaim`, `setRole`, `startPractice`, `updatePractice`, `submitPractice`, `requestFeature`, `questions`, `promo` | Replace with the real API later. Keep the method names |
 | `src/app/feedback.jsx` | Snackbar host, `haptic(kind)`, `award(item)` (the Badge sheet for a badge or stage just earned) and `celebrate(fb, result, snack)` | Yes, swap the haptic call for expo-haptics |
 | `src/app/appearance.jsx` | Dark mode: the app follows the phone until the person flips the switch on My Profile or My Practice, then stays Light or Dark | Yes, save the choice with AsyncStorage |
 | `src/app/form.jsx` | `useForm()`: main buttons stay on, the first tap with something missing shows every message and scrolls to the first, then each message goes once it is fixed | Yes, swap the scroll step (section 5) |
@@ -66,7 +66,7 @@ The prototype holds two versions of the app (section 7, V1 and V2). V1 is the MV
 | `src/rn.jsx` | Web stand-ins for React Native primitives | No. Import from `react-native` |
 | `src/data.js` | Sample listings, people, posts and images | Reference and seed data |
 | `src/showcase/`, `src/main.jsx`, `src/styles.css`, `scripts/` | The review page and build | No |
-| `assets/img/` | Photos, interest illustrations, empty state illustrations, the role art on Which one are you? (`role_*`), a cover for each group (`grp_*`), Medallion art for the stages and badges (`art_*` in full color, `art_*_grey` for one not earned yet), logo (PNG and WebP). All from the Figma file | Yes |
+| `assets/img/` | Photos, interest illustrations, empty state illustrations, the role art on Which one are you? (`role_*`), a cover for each group (`grp_*`), the Fall Harvest Quest art, Medallion art for the stages and badges (`art_*` in full color, `art_*_grey` for one not earned yet), logo (PNG and WebP). All from the Figma file | Yes |
 | `assets/tokens.figma.json` | Raw token export from Figma | Source for `tokens.js` |
 | `assets/app-icon/` | The app icon: Light, Dark and Tinted 1024 PNGs, SVG masters, Icon Composer layers | Yes, see its README |
 
@@ -214,7 +214,8 @@ app/
   (tabs)/_layout.tsx          Tabs with the custom glass TabBar: Home, Directory, Community, then My Profile
                               or My Practice by role (hide the other with href: null)
     home/_layout.tsx          Stack
-      index.tsx               Home: Sponsored reel, weekly check-in, Top discussions
+      index.tsx               Home: Sponsored reel, weekly check-in, Quest card, Top discussions
+      quest.tsx               Fall Harvest Quest (Grove)
       listing/[id].tsx        Listing profile (re-exports the Directory screen)
       tag/[tag].tsx           Tag results (re-exports the Directory screen)
       post/[postId].tsx       Conversation (re-exports the Community screen)
@@ -261,13 +262,13 @@ app/
       privacy.tsx             Privacy (re-exports the profile screen)
       listing/[id].tsx        Their listing as seekers see it
       tag/[tag].tsx           Tag results
-  new-post.tsx                presentation 'fullScreenModal'. group param
+  new-post.tsx                presentation 'fullScreenModal'. group and quest params
   ask-question.tsx            presentation 'fullScreenModal'. edit param for Needs changes
   join-grove.tsx              presentation 'fullScreenModal', the paywall. reason param
   photo-viewer.tsx            presentation 'transparentModal', animation 'fade'
 ```
 
-V1 leaves out quiz-goals, quiz-care, seedling, groups, group/[id], membership, journey, badges, ask-question and join-grove. Its interests.tsx is the last onboarding step and goes to preparing.
+V1 leaves out quiz-goals, quiz-care, seedling, quest, groups, group/[id], membership, journey, badges, ask-question and join-grove. Its interests.tsx is the last onboarding step and goes to preparing.
 
 | Prototype call | expo-router |
 | --- | --- |
@@ -287,7 +288,7 @@ V1 leaves out quiz-goals, quiz-care, seedling, groups, group/[id], membership, j
 | `nav.enterApp({ role: 'practitioner', tab: 'profile' })` | `router.replace('/(tabs)/practice')` |
 | `nav.signOut()` | `router.replace('/(auth)/welcome')` |
 
-The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, Conversation, Member profile, Groups, a group, Your journey, Badges, Membership, Edit profile, Edit interests, Privacy, the practice editors and Get featured). Tapping the active tab pops its stack to the top.
+The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, Conversation, Member profile, Groups, a group, Quest, Your journey, Badges, Membership, Edit profile, Edit interests, Privacy, the practice editors and Get featured). Tapping the active tab pops its stack to the top.
 
 ## 7. Screens
 
@@ -308,7 +309,7 @@ The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, C
 | Your practice (step 1) | practice.jsx | setup | Empty, Errors (name and type) |
 | Specialties (step 2) | practice.jsx | setup | Empty, Focus areas only (Continue shows "Pick at least one from What you offer."), 10 picked (an 11th shows a Snackbar) |
 | Where people find you (step 3) | practice.jsx | setup | Empty, Errors, City sheet, map preview once both fields are in |
-| Home | home.jsx | query | Loading, Offline, Nothing here yet, Search results, No results, Check-in sheet, Checked in, Steady earned, New member |
+| Home | home.jsx | query | Loading, Offline, Nothing here yet, Search results, No results, Check-in sheet, Checked in, Steady earned, Quest for Grove (Seedling), New member |
 | Directory | home.jsx | query, city | Loading, Offline (no search or tiles, like Figma), Show places in, Near me, No places in a city, Search results (a # tag works too), No listings, No places near you yet |
 | Category page | home.jsx | category, city | Its subcategory tiles and places, a category with nothing in it (Services) |
 | Subcategory page | home.jsx | category, subcategory, city | The map with a pin per place, Nothing in a subcategory, Alternative Health Professionals with its four tiles |
@@ -318,11 +319,12 @@ The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, C
 | Saved | home.jsx | | Loading, Offline, Nothing saved |
 | Community | community.jsx | topic, query, options, block | Your groups, No groups yet, Loading, Couldn't load, No posts yet, Topics sheet, Topic picked, Search results, No results, No posts in a topic, Post options, Block alert, a blocked member's posts gone |
 | Groups | groups.jsx | | Grove, Seedling (2 of 3 free groups), 3 of 3 (Join opens the paywall), Suggested for you |
+| Quest | journey.jsx | | 1 of 3, 2 of 3, Share a reflection, Harvest 2026 earned, All done |
 | Group | groups.jsx | id | Joined, Not joined, Leave alert, No posts yet. Ask the Experts: Your questions (In review, Published, Needs changes), Seedling (Grove badge) |
 | Ask the Experts | groups.jsx | edit | Empty, Filled, Sent for review Snackbar, Errors (topic, question), Edit a question with IHL's note (Send again with no change shows "Edit your question to send it again.") |
 | Conversation | community.jsx | postId, justPosted, replyTo | No replies yet, Reply posted, Couldn't send, Replying to (a reply to a reply), the group a post lives in, See more (the next 5 replies), Share sheet, post options. The post and its replies share one card, the Reply bar sits under it |
 | Member profile | community.jsx | personId | Stage, bio and badges, Hasn't posted yet |
-| New post | community.jsx | group | Empty, Errors (topic, text or a photo), Choose photos with nothing picked and with 3 picked, up to 5 photos, Posting, Couldn't post, Posting in a group |
+| New post | community.jsx | group | Empty, Errors (topic, text or a photo), Choose photos with nothing picked and with 3 picked, up to 5 photos, Posting, Couldn't post, Posting in a group, the quest note |
 | Photo viewer | community.jsx | photos, index | From a post photo or a listing photo |
 | Join Grove | membership.jsx | reason | Yearly or Monthly picked, App Store sheet (system), Welcome to Grove. The plans sit right under the title, in view with Join, then What you get |
 | Membership | membership.jsx | | A Grove member's plan, Manage subscription |
@@ -392,13 +394,14 @@ The other params you see in `scenarios.js` (`email`, `password`, `confirm`, `nam
 
 - After About you a seeker answers three questions, one screen each with Step progress at the top right of the nav bar (a bar and "1 of 3", VoiceOver reads "Question 1 of 3"): What can we help with? (eight Select tiles, two to a row), What are you into? (the Interest cards) and Who do you care for? (four Select tiles). Each needs one pick ("Pick at least one."), the last button reads Finish. The answers set Home and the suggested groups, and nobody else sees them.
 - Finish opens You're a Seedling: the Seedling badge with its breathing halo, "Your first badge", one line and the six stages ahead as a path. Continue runs Preparing. Every member starts as a Seedling on the free Seedling membership.
-- Seedling membership: up to 3 groups. Grove, $89.00 a year (Save 33%) or $11.11 a month: every group, Ask the Experts and member offers. Join Grove opens from Join Grove on My Profile, Join on a fourth group, Ask a question, and a locked member offer. The line under the title says why it opened, and that perk leads the list. Yearly is picked first. The button carries the price ("Join for $89.00 a year"). Under the plans: the renewal terms, Restore purchases, Terms of Use and Privacy Policy (App Review Guideline 3.1.2). Subscribe on the App Store sheet shows Welcome to Grove, and Grove joins Ask the Experts for the member.
+- Seedling membership: up to 3 groups. Grove, $89.00 a year (Save 33%) or $11.11 a month: every group, Ask the Experts, member offers and seasonal quests. Join Grove opens from Join Grove on My Profile, Join on a fourth group, Ask a question, a locked member offer and the Quest card. The line under the title says why it opened, and that perk leads the list. Yearly is picked first. The button carries the price ("Join for $89.00 a year"). Under the plans: the renewal terms, Restore purchases, Terms of Use and Privacy Policy (App Review Guideline 3.1.2). Subscribe on the App Store sheet shows Welcome to Grove, and Grove joins Ask the Experts for the member.
 - Groups are forum spaces on top of the four topics: Welcome Circle, Ask the Experts, Herbal Medicine, Gut Health and Nutrition, Local Farms, Foraging, Book Club and Natural Parenting. A group's posts live on its page, never in the Community feed, and carry no topic. Community shows Your groups as tiles in a row with Find groups at the end, or a Join a group card before any. Groups lists yours, up to 3 Suggested for you from the quiz (a new member gets the Welcome Circle first) and the rest. Join confirms with "You joined Book Club". Joined on a group asks "Leave Book Club?" with the iOS alert. The plus on a joined group opens New post with Posting in and the group's name.
 - Ask the Experts: a Grove member asks with a topic and the question, reminded to leave out names, medicines and health records. Send for review shows "Sent for review" and the question In review under Your questions. IHL then publishes it in the group (Published, with the answer count, opens the conversation) or sends it back (Needs changes, with IHL's note and Edit question). Edit reopens it with the note, and Send again with no change shows "Edit your question to send it again." Verified practitioners answer with the Expert badge.
 - Weekly check-in on Home: once a week is enough, there is no daily streak. Weeks start on Sunday. The card shows the last six weeks over the Sunday each starts on, then Check in, which opens How was your week? (Great, Good, Okay, Hard, "Only you see this."). Afterward the card reads "You checked in this week". Four weeks in a row earns Steady.
-- I was here on a listing marks a visit, once per place, for members only. It counts toward Sprout, Explorer (10 places), and Farm Friend (3 farms or markets). "Visit saved" confirms, or the Badge sheet opens when it earns something.
+- I was here on a listing marks a visit, once per place, for members only. It counts toward Sprout, Explorer (10 places), and Farm Friend (3 farms or markets) and, for Grove, the quest. "Visit saved" confirms, or the Badge sheet opens when it earns something.
 - Stages: Seedling (make your account), Sprout (a bio, a reply, a visit), Root (check in 4 weeks in a row, share 10 posts), Grove (join Grove, post in all 4 topics), Forest (check in 12 weeks in a row, share 25 posts), Oak (take part for a year). A member grows one stage at a time as soon as every step is done, and the Badge sheet says "You reached Sprout".
-- Badges: Seedling, Explorer, Farm Friend, Welcomer (greet 5 new members in the Welcome Circle) and Steady. A badge in progress shows "6 of 10 places". Member profiles show the stage, the bio and the earned badges. Nothing ranks members against each other.
+- Badges: Seedling, Explorer, Farm Friend, Welcomer (greet 5 new members in the Welcome Circle), Harvest 2026 (finish the Fall Harvest Quest) and Steady. A badge in progress shows "6 of 10 places". Member profiles show the stage, the bio and the earned badges. Nothing ranks members against each other.
+- Fall Harvest Quest, Sep 22 to Dec 20, for Grove: Visit a farm or market (Find a farm opens the Directory on Food), Visit a practitioner (Find one opens it on Holistic Business) and Share a reflection (Write a post opens New post with a note that it finishes the step). All three earn Harvest 2026. A Seedling sees the Quest card with the Grove badge.
 - Award moments use one Badge sheet: the Medallion at 96 with its halo, "New badge" or "New stage", the title, one line and Done, with a success haptic. When one action earns a stage and a badge, the stage shows.
 
 ### Practitioner accounts
@@ -417,7 +420,7 @@ The other params you see in `scenarios.js` (`email`, `password`, `confirm`, `nam
 - Get featured is a request, nothing is paid in the app. Send request returns to My Practice with "Request sent", and the Feature card shows "Requested  ·  3 months" until the IHL team sets it up. Featured shows the end date and See it on Home, and the practice card leads the Home reel, labeled Sponsored.
 - Questions for you: once live, My Practice lists the Ask the Experts questions that match the practice's specialties. The practitioner answers as the practice ("Answer as Quiet Mind Massage"), and the answer shows the Expert badge.
 - Promotions: New post has a Promotion toggle for offers, sales and events, 1 a day and 3 in any 7 days ("2 of 3 left this week", or when the next one opens). A promotion carries the Promotion badge. Replies and answers have no limit.
-- A practitioner never sees a save button on their own listing, on the listing profile or in the Home reel, and has no check-in or membership.
+- A practitioner never sees a save button on their own listing, on the listing profile or in the Home reel, and has no check-in, quest or membership.
 - A practitioner posts and replies as their practice: the practice name, its cover photo as the avatar and the Practitioner badge. New post shows Posting as above Topic.
 
 ### V1 and V2
@@ -427,7 +430,7 @@ The review panel switches between two versions of one app (section 9). V2 is eve
 - Onboarding: About you goes to What are you into?, with no question count, and Finish runs Preparing. No other quiz questions and no You're a Seedling.
 - No Seedling or Grove: no Membership card, Join Grove or App Store sheet. Member offers are open to everyone.
 - No groups: Community has the topics and the feed only, with no Your groups row or Groups screen. Published Ask the Experts questions show in the feed with their Ask the Experts badge, and practitioners answer them from Questions for you. Asking one is V2.
-- No journey: no This week (the check-in) on Home, no I was here on a listing, no Your journey or Badges on My Profile, no bio on Edit profile, and no stage, badges or bio on a member profile.
+- No journey: no This week (check-in and quest) on Home, no I was here on a listing, no Your journey or Badges on My Profile, no bio on Edit profile, and no stage, badges or bio on a member profile.
 - Both versions have the practitioner flows, replies to a reply, Specialties and Tag results.
 
 ## 8. Motion and haptics

@@ -12,7 +12,7 @@
 // practice.feature: null, { status: 'requested', length } or { status: 'live', length, until } (shown in the Home reel).
 // unclaimed: imported listings nobody manages yet. Claimed listings carry the Verified Local Business badge.
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ME, POSTS, PEOPLE, LISTINGS, WEEK, TYPE_CATEGORY, SAMPLE_PRACTICE, TODAY, GROUPS, FREE_GROUPS, STAGES, BADGES, MY_QUESTIONS, GROUP_HINTS, SPECIALTIES, FOCUS_AREAS, kindOf, moreReplies } from '../data';
+import { ME, POSTS, PEOPLE, LISTINGS, WEEK, TYPE_CATEGORY, SAMPLE_PRACTICE, TODAY, GROUPS, FREE_GROUPS, STAGES, BADGES, QUEST, MY_QUESTIONS, GROUP_HINTS, SPECIALTIES, FOCUS_AREAS, kindOf, moreReplies } from '../data';
 
 const AppContext = createContext(null);
 export const useApp = () => useContext(AppContext);
@@ -145,7 +145,7 @@ function practiceFrom(l) {
 const NEW_MEMBER = {
   name: '', short: '', dob: '', location: '', neighborhood: '', gender: null, photo: null, bio: '', interests: [], goals: [], care: [],
   tier: 'seedling', plan: null, renews: null, groups: [], stage: 'seedling', posts: 0, replied: false, visited: [],
-  weeks: [false, false, false, false, false, false], mood: null, badges: { seedling: 'Today' }, progress: {},
+  weeks: [false, false, false, false, false, false], mood: null, badges: { seedling: 'Today' }, progress: {}, quest: {},
 };
 export const initialsOf = (name) => (name || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
 const shortOf = (name) => { const [first, ...rest] = (name || '').trim().split(/\s+/); return rest.length ? `${first} ${rest[rest.length - 1][0].toUpperCase()}.` : first || ''; };
@@ -224,7 +224,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
       questions,
       promo: practice ? promoStatus(practice.promos) : null,
       // ---------- Membership, groups, journey ----------
-      // member: a seeker. Tiers, the journey, and check-ins are theirs.
+      // member: a seeker. Tiers, the journey, check-ins and quests are theirs.
       member: !practitioner,
       grove,
       groups: GROUPS.map((g) => ({ ...g, joined: joined.includes(g.id) })),
@@ -258,16 +258,27 @@ export function AppProvider({ children, network = 'online', content = 'full', se
         const grew = change((m) => ({ ...m, weeks, mood, progress: { ...m.progress, steady: Math.min(n, 4) }, badges: earned ? { ...m.badges, steady: 'Today' } : m.badges }));
         return { streak: n, earned, grew };
       },
-      // I was here on a listing: counts toward Sprout, Explorer and Farm Friend.
+      // I was here on a listing: counts toward Sprout, Explorer, Farm Friend and, for Grove, the quest.
       // Returns { earned, grew } like checkIn.
       visit: (listing) => {
         if ((me.visited || []).includes(listing.id)) return {};
         const farm = listing.category === 'Food';
         const explorer = (me.progress.explorer || 0) + 1;
         const farmfriend = (me.progress.farmfriend || 0) + (farm ? 1 : 0);
-        const won = BADGES.find((b) => !me.badges[b.id] && ((b.id === 'explorer' && explorer >= b.goal) || (b.id === 'farmfriend' && farmfriend >= b.goal)));
-        const grew = change((m) => ({ ...m, visited: [...(m.visited || []), listing.id], progress: { ...m.progress, explorer, farmfriend }, badges: won ? { ...m.badges, [won.id]: 'Today' } : m.badges }));
+        const quest = { ...me.quest, ...(grove && farm ? { farm: true } : {}), ...(grove && listing.category === 'Holistic Business' ? { practitioner: true } : {}) };
+        const harvest = QUEST.steps.filter((x) => quest[x.id]).length;
+        const won = BADGES.find((b) => !me.badges[b.id] && ((b.id === 'explorer' && explorer >= b.goal) || (b.id === 'farmfriend' && farmfriend >= b.goal) || (b.id === 'harvest' && harvest >= b.goal)));
+        const grew = change((m) => ({ ...m, visited: [...(m.visited || []), listing.id], quest, progress: { ...m.progress, explorer, farmfriend, harvest }, badges: won ? { ...m.badges, [won.id]: 'Today' } : m.badges }));
         return { earned: won || null, grew };
+      },
+      questDone: (step) => !!(me.quest && me.quest[step]),
+      // Returns the Harvest badge when this step finishes the quest.
+      completeQuestStep: (step) => {
+        const quest = { ...me.quest, [step]: true };
+        const n = QUEST.steps.filter((x) => quest[x.id]).length;
+        const won = n === QUEST.steps.length && !me.badges.harvest ? BADGES.find((b) => b.id === 'harvest') : null;
+        change((m) => ({ ...m, quest, progress: { ...m.progress, harvest: n }, badges: won ? { ...m.badges, harvest: 'Today' } : m.badges }));
+        return won;
       },
       visited: (id) => (me.visited || []).includes(id),
       // Ask the Experts: every question goes to IHL first. Needs changes comes back with a note, then Send again.

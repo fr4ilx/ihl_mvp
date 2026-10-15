@@ -1,4 +1,4 @@
-// Your journey: Journey (stages) and Badges. From My Profile.
+// Your journey: Journey (stages), Badges and Quest (the season's quest). From My Profile and the Quest card on Home.
 // The journey grows from Seedling to Oak by taking part: check-ins, replies, posts and visits (I was here on a listing).
 // Nothing here ranks members against each other.
 import React, { useRef, useState } from 'react';
@@ -6,7 +6,7 @@ import { View, Text, Image } from '../rn';
 import { useTheme, type, elevation } from '../theme';
 import { useNav, useRoute } from '../app/nav';
 import { useApp } from '../app/store';
-import { STAGES } from '../data';
+import { STAGES, QUEST } from '../data';
 import Screen from '../components/Screen';
 import NavBar from '../components/NavBar';
 import Button from '../components/Button';
@@ -89,5 +89,69 @@ export function Badges() {
       </Screen>
       <BadgeSheet visible={!!open} item={open || last.current} onClose={() => setOpen(null)} />
     </>
+  );
+}
+
+// Figma: Quest step (Done No, Yes). One step of the quest: a 32pt circle with its number (border/color-strong ring)
+// or a check on bg/color-success once done, the step in Body M Bold and one line, then its action
+// (Secondary, Medium), or the Done badge.
+function QuestStep({ step, n, done, onGo }) {
+  const { c } = useTheme();
+  return (
+    <View testID={`quest-step-${step.id}`} style={{ flexDirection: 'row', gap: 12, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised') }}>
+      <View style={{ width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: done ? c('bg/color-success') : 'transparent', borderWidth: done ? 0 : 1.5, borderColor: c('border/color-strong') }}>
+        {done
+          ? <Icon name="check" size={18} strokeWidth={2} color={c('text/color-on-status')} />
+          : <Text style={[type('BodyS', 'bold'), { color: c('text/color-primary') }]}>{n}</Text>}
+      </View>
+      <View style={{ flex: 1, gap: 4, paddingTop: 3 }}>
+        <Text style={[type('BodyM', 'bold'), { color: c('text/color-primary') }]}>{step.title}</Text>
+        <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{step.text}</Text>
+        <View style={{ marginTop: 8 }}>
+          {done
+            ? <Badge testID={`quest-done-${step.id}`} label="Done" tone="success" icon="check-circle" />
+            : <Button testID={`quest-go-${step.id}`} label={step.action} hierarchy="secondary" size="medium" onPress={onGo} />}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+export function Quest() {
+  const { c } = useTheme();
+  const nav = useNav();
+  const app = useApp();
+  const total = QUEST.steps.length;
+  const done = QUEST.steps.filter((s) => app.questDone(s.id)).length;
+  const harvest = app.badges.find((b) => b.id === QUEST.badge);
+  // Each step leads to where it happens. A visit counts with I was here on the listing.
+  const go = (id) => {
+    if (id === 'farm') nav.openTab('directory', 'CategoryResults', { category: 'Food' });
+    if (id === 'practitioner') nav.openTab('directory', 'CategoryResults', { category: 'Holistic Business' });
+    if (id === 'share') nav.openModal('NewPost', { quest: 'share' });
+  };
+  return (
+    <Screen testID="screen-quest" nav={<NavBar kind="back" onBack={nav.goBack} />} bodyGap={24}>
+      <View style={{ alignItems: 'center', gap: 8, padding: 24, borderRadius: 20, backgroundColor: c('bg/color-accent-subtle') }}>
+        <Image source={QUEST.art} resizeMode="contain" style={{ width: 128, height: 128 }} />
+        <Text style={[type('H2', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{QUEST.name}</Text>
+        <Text style={[type('BodyS', 'bold'), { color: c('text/color-accent') }]}>{QUEST.dates}</Text>
+        <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>{QUEST.about}</Text>
+      </View>
+      <View style={{ gap: 8 }}>
+        <Text testID="quest-progress" style={[type('BodyS', 'bold'), { color: c('text/color-primary') }]}>{done === total ? 'All done' : `${done} of ${total} done`}</Text>
+        <ProgressBar value={done} max={total} />
+      </View>
+      <View style={{ gap: 12 }}>
+        {QUEST.steps.map((s, i) => <QuestStep key={s.id} step={s} n={i + 1} done={app.questDone(s.id)} onGo={() => go(s.id)} />)}
+      </View>
+      <View testID="quest-reward" style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised') }}>
+        <Medallion icon={harvest.icon} size={64} state={harvest.earned ? 'earned' : 'progress'} />
+        <View style={{ flex: 1, gap: 4 }}>
+          <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>{harvest.name} badge</Text>
+          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{harvest.earned ? `You earned it ${harvest.earned === 'Today' ? 'today' : `on ${harvest.earned}`}.` : `Finish all three by ${QUEST.ends} to earn it.`}</Text>
+        </View>
+      </View>
+    </Screen>
   );
 }

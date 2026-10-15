@@ -52,9 +52,12 @@ const SEEDLING_TWO = { me: { tier: 'seedling', plan: null, renews: null, groups:
 const FRESH = { me: { tier: 'seedling', plan: null, renews: null, groups: ['welcome'], stage: 'seedling', replied: true, visited: [], posts: 1, weeks: [false, false, false, false, false, true], badges: { seedling: 'Oct 1' }, progress: { explorer: 0 }, quest: {} } };
 // Right after sign up: the quiz answers, no groups, no check-ins yet.
 const NEW_SEEKER = { me: { tier: 'seedling', plan: null, renews: null, groups: [], stage: 'seedling', bio: '', replied: false, visited: [], posts: 0, goals: ['Better sleep', 'Meeting people'], interests: ['Herbs', 'Gardening'], care: ['Myself', 'Kids or grandkids'], weeks: [false, false, false, false, false, false], badges: { seedling: 'Today' }, progress: {}, quest: {} } };
-const CHECKED = { me: { weeks: [false, false, true, true, true, true], mood: 'good', progress: { explorer: 6, welcomer: 2, steady: 4 }, badges: { seedling: 'Sep 14', farmfriend: 'Sep 28', steady: 'Oct 4' } } };
+const CHECKED = { me: { weeks: [false, false, true, true, true, true], mood: 'good', progress: { explorer: 6, welcomer: 2, harvest: 1, steady: 4 }, badges: { seedling: 'Sep 14', farmfriend: 'Sep 28', steady: 'Oct 4' } } };
+const QUEST_TWO = { me: { quest: { farm: true, practitioner: true }, progress: { explorer: 7, welcomer: 2, harvest: 2, steady: 3 } } };
+const QUEST_DONE = { me: { quest: { farm: true, practitioner: true, share: true }, progress: { explorer: 7, welcomer: 2, harvest: 3, steady: 3 }, badges: { seedling: 'Sep 14', farmfriend: 'Sep 28', harvest: 'Oct 4' } } };
 const QUIZ_STACK = [['Welcome'], ['SignUp'], SEEKER, ['AboutYou', { ...ABOUT, location: 'Broad Ripple, Indianapolis' }]];
 const GOALS = ['Better sleep', 'Joint comfort', 'Meeting people'];
+const REFLECTION = 'Picked up apples and squash at Garfield Park Market, then a massage at Quiet Mind. A good week close to home.';
 const QUESTION = 'What helps with stiff hands in the morning? Mine ache until about ten.';
 const GROUP_POST = 'Finished chapter two on the porch this morning. The part about gifts stayed with me all day.';
 const SUB_REPLY = 'Would linden help with sleep too?';
@@ -111,11 +114,17 @@ export const FLOWS = [
       { id: 'home-empty', label: 'Nothing here yet', state: true, content: 'empty', nav: tab('home', ['Home']) },
       { id: 'home-search', label: 'Search results', state: true, nav: tab('home', ['Home', { query: 'herb' }]) },
       { id: 'home-no-results', label: 'No results', state: true, nav: tab('home', ['Home', { query: 'Reiki' }]) },
-      { id: 'home-week', v: 2, label: 'Weekly check-in', nav: tab('home', ['Home', { scrollTo: 'home-week' }]) },
+      { id: 'home-week', v: 2, label: 'Check-in and quest', nav: tab('home', ['Home', { scrollTo: 'home-week' }]) },
       { id: 'home-new', v: 2, label: 'New member', state: true, seed: NEW_SEEKER, nav: tab('home', ['Home', { scrollTo: 'home-week' }]) },
       { id: 'home-checkin', v: 2, label: 'How was your week?', state: true, nav: tab('home', ['Home', { scrollTo: 'home-week', openCheckIn: true, mood: 'good' }]) },
       { id: 'home-checked', v: 2, label: 'Checked in', state: true, seed: CHECKED, nav: tab('home', ['Home', { scrollTo: 'home-week' }]) },
       { id: 'home-steady', v: 2, label: 'Steady earned', state: true, nav: tab('home', ['Home', { scrollTo: 'home-week', autoCheckIn: 'good' }]) },
+      { id: 'home-seedling', v: 2, label: 'Quest for Grove', state: true, seed: SEEDLING, nav: tab('home', ['Home', { scrollTo: 'home-week' }]) },
+      { id: 'quest', v: 2, label: 'Fall Harvest Quest', nav: tab('home', ['Home'], ['Quest']) },
+      { id: 'quest-two', v: 2, label: '2 of 3 done', state: true, seed: QUEST_TWO, nav: tab('home', ['Home'], ['Quest']) },
+      { id: 'quest-share', v: 2, label: 'Share a reflection', state: true, seed: QUEST_TWO, nav: modal(tab('home', ['Home'], ['Quest']), 'NewPost', { quest: 'share', topic: 'Food', text: REFLECTION }) },
+      { id: 'quest-earned', v: 2, label: 'Harvest 2026 earned', state: true, seed: QUEST_TWO, nav: modal(tab('home', ['Home'], ['Quest']), 'NewPost', { quest: 'share', topic: 'Food', text: REFLECTION, autoPost: true }) },
+      { id: 'quest-done', v: 2, label: 'Quest finished', state: true, seed: QUEST_DONE, nav: tab('home', ['Home'], ['Quest']) },
     ],
   },
   {
