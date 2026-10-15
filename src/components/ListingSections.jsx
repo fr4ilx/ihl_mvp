@@ -1,11 +1,10 @@
 // Everything on a listing under its photos, 40pt apart: the intro (kind and area, the name, distance and hours, the
-// Verified Local Business badge and I was here), the Member offer, About, Specialties, Approach, Services, Location and the
+// I was here and Add a review), the Member offer, About, Specialties, Approach, Services, Location and the
 // Detail rows. Listing profile shows it, and Check your listing shows the same thing before a practice is sent for
 // review. preview: nothing in it reacts to a tap (Check your listing), and About shows in full.
 import React from 'react';
 import { View, Text, Pressable } from '../rn';
 import { useTheme, type } from '../theme';
-import Badge from './Badge';
 import Button from './Button';
 import Icon from './Icon';
 import OfferCard from './OfferCard';
@@ -15,10 +14,12 @@ import { ServiceList } from './ServiceTag';
 import MapBox from './MapBox';
 import { DetailRow } from './Rows';
 import { FOCUS_AREAS } from '../data';
+import TextLink from './TextLink';
+import { Stars, RATING_WORDS } from './ReviewSheet';
 
 const noop = () => {};
 
-export default function ListingSections({ item, here, visited, onVisit, offerLocked, onUnlock, aboutOpen, onTag = noop, onMap = noop, onLink = noop, preview, style }) {
+export default function ListingSections({ item, here, visited, onVisit, reviewable, review, onReview, offerLocked, onUnlock, aboutOpen, onTag = noop, onMap = noop, onLink = noop, preview, style }) {
   const { c } = useTheme();
   const address = `${item.address}, ${item.city}`;
   const tags = item.specialties || [];
@@ -30,8 +31,6 @@ export default function ListingSections({ item, here, visited, onVisit, offerLoc
           <Text style={[type('H3', 'bold'), { color: c('text/color-primary') }]}>{item.name}</Text>
         </View>
         <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{item.distance}  ·  {item.hours}</Text>
-        {/* Figma: the Verified Local Business badge (Accent, badge-check) for a claimed, vetted listing. Not tappable. */}
-        {item.verified && <Badge testID="verified-badge" label="Verified Local Business" tone="accent" icon="badge-check" />}
         {/* Figma: I was here (Secondary, Medium, map-pin). Once marked: a Solid check-circle and "You’ve been here". */}
         {here && (visited ? (
           <View testID="visited" className="fx-fade-up" style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 48 }}>
@@ -40,6 +39,21 @@ export default function ListingSections({ item, here, visited, onVisit, offerLoc
           </View>
         ) : (
           <Button testID="i-was-here" label="I was here" hierarchy="secondary" size="medium" leadingIcon="map-pin" onPress={onVisit} />
+        ))}
+        {/* Figma: Review (Done No, Yes). In place of the Verified Local Business badge, which is off for now.
+            Empty: Add a review (Secondary, Medium, star) opens the Review sheet. Done: the member's stars, the rating in
+            words and Edit, with what they wrote under it in up to two lines. Only the member sees their own review here. */}
+        {reviewable && (review ? (
+          <Pressable testID="your-review" onPress={onReview} accessibilityRole="button" accessibilityLabel={`Your review, ${review.rating} of 5 stars, ${RATING_WORDS[review.rating]}. Edit`} className="fx-fade-up" style={{ gap: 4 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 48 }}>
+              <Stars value={review.rating} size={24} />
+              <Text style={[type('BodyM', 'bold'), { color: c('text/color-primary'), flex: 1 }]}>{RATING_WORDS[review.rating]}</Text>
+              <TextLink testID="review-edit" label="Edit" onPress={onReview} style={{ alignSelf: 'center' }} />
+            </View>
+            {!!review.text && <Text numberOfLines={2} style={[type('BodyS'), { color: c('text/color-secondary') }]}>{review.text}</Text>}
+          </Pressable>
+        ) : (
+          <Button testID="add-review" label="Add a review" hierarchy="secondary" size="medium" leadingIcon="star" onPress={onReview} />
         ))}
       </View>
       {!!item.offer && (

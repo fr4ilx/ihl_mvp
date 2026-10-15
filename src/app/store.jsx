@@ -167,6 +167,8 @@ export function AppProvider({ children, network = 'online', content = 'full', se
   const [asked, setAsked] = useState(() => clone((seed && seed.questions) || MY_QUESTIONS));
   // Members blocked from More on a post. Their posts and replies stop showing (App Review 1.2).
   const [blocked, setBlocked] = useState([]);
+  // The member's own reviews, by listing id: { rating 1 to 5, text }. One per place, editable.
+  const [reviews, setReviews] = useState(() => (seed && seed.reviews) || {});
   // While Empty is on, the full saved list waits here and comes back when you switch to Full.
   const stash = useRef(empty ? startSaved : null);
   const lastContent = useRef(content);
@@ -304,6 +306,8 @@ export function AppProvider({ children, network = 'online', content = 'full', se
           ? { id: 'jane', name: practice.name, initials: initialsOf(practice.name), photo: practice.photos[0] || null, practitioner: true, verified: practice.status === 'live', listingId: practice.listingId }
           : { ...PEOPLE.jane, name: me.short, initials: initialsOf(me.name), photo: me.photo, interests: me.interests, stage: me.stage, bio: me.bio, badges: Object.keys(me.badges || {}) })
         : PEOPLE[id] && PEOPLE[id].practitioner ? { ...PEOPLE[id], verified: !unclaimed.includes(PEOPLE[id].listingId) } : PEOPLE[id]),
+      review: (id) => reviews[id] || null,
+      addReview: (id, r) => setReviews((all) => ({ ...all, [id]: r })),
       isSaved: (id) => saved.includes(id),
       favorites,
       // Newest favorite first. Returns the new state.
@@ -372,7 +376,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
       // Returns the role so the app opens the right fourth tab.
       logIn: () => { const m = freshMe(seed); setMe(m); setPractice(freshPractice(seed)); setSaved(empty ? [] : startSaved); return m.role; },
     };
-  }, [me, practice, saved, favorites, posts, unclaimed, asked, blocked, network, content, empty, v2]);
+  }, [me, practice, saved, favorites, reviews, posts, unclaimed, asked, blocked, network, content, empty, v2]);
 
   return <AppContext.Provider value={api}>{children}</AppContext.Provider>;
 }

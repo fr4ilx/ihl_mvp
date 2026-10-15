@@ -153,6 +153,8 @@ export const FLOWS = [
       { id: 'listing-more', label: 'Show more', state: true, seed: { saved: SAVED_ALL }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', expanded: true, scrollTo: 'listing-about-section' }]) },
       { id: 'listing-visited', v: 2, label: 'You’ve been here', state: true, seed: { me: { visited: ['wildroot'] } }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
       { id: 'listing-sprout', v: 2, label: 'I was here, Sprout reached', state: true, seed: FRESH, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'traders', autoVisit: true }]) },
+      { id: 'listing-review', label: 'Add a review', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', openReview: true }]) },
+      { id: 'listing-reviewed', label: 'Your review', state: true, seed: { reviews: { wildroot: { rating: 5, text: 'Sarah blended a sleep tea for me and it works. Lovely shop, no rush.' } } }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
       { id: 'listing-booking', label: 'With a booking link', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'quietmind' }]) },
       { id: 'listing-offer-locked', v: 2, label: 'Member offer, Seedling', state: true, seed: SEEDLING, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'quietmind', scrollTo: 'listing-offer' }]) },
       { id: 'listing-no-website', label: 'No website', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'garfield' }]) },

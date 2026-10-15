@@ -10,6 +10,9 @@ import Badge from './Badge';
 import Icon from './Icon';
 import { usePop } from '../app/usePop';
 
+// The verified mark is off for now. Flip this back on to show it after the name again.
+const SHOW_VERIFIED = false;
+
 // The name with the verified mark right after its last word, inside the text so it wraps with the name.
 // React Native: a View inside Text is drawn inline with its bottom on the baseline, so nudge it down to center it.
 export function NameRow({ name, verified, style, lines, size = 20 }) {
@@ -17,7 +20,7 @@ export function NameRow({ name, verified, style, lines, size = 20 }) {
   return (
     <Text numberOfLines={lines} style={style}>
       {name}
-      {verified && (
+      {SHOW_VERIFIED && verified && (
         <>
           {'\u00A0'}
           <View testID="verified-mark" accessibilityLabel="Verified Local Business" style={{ width: size, height: size, transform: [{ translateY: Math.round(size * 0.15) }] }}>

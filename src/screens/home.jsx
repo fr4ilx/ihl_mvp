@@ -20,6 +20,7 @@ import TextLink from '../components/TextLink';
 import Reel from '../components/Reel';
 import ThreadRow from '../components/ThreadRow';
 import MapsSheet from '../components/MapsSheet';
+import ReviewSheet from '../components/ReviewSheet';
 import ShareSheet from '../components/ShareSheet';
 import PhotoPager from '../components/PhotoPager';
 import ListingSections, { ListingActions } from '../components/ListingSections';
@@ -345,6 +346,7 @@ export function ListingProfile() {
   const saved = app.isSaved(item.id);
   const [pop, setPop] = useState(false);
   const [maps, setMaps] = useState(!!params.openMaps);
+  const [reviewing, setReviewing] = useState(!!params.openReview);
   const [share, setShare] = useState(!!params.openShare);
   const [y, setY] = useState(0);
   const scroll = useRef();
@@ -370,6 +372,15 @@ export function ListingProfile() {
   // I was here (V2): a member marks a visit. It counts toward Sprout, Explorer and Farm Friend.
   const here = app.v2 && app.member && !item.mine;
   const visit = () => celebrate(fb, app.visit(item), { message: 'Visit saved', bottom: SNACK.listingBar });
+  // Add a review: a seeker, on someone else's listing, in both versions. One review per place, editable.
+  const reviewable = app.member && !item.mine;
+  const myReview = app.review(item.id);
+  const postReview = (r) => {
+    const editing = !!myReview;
+    app.addReview(item.id, r);
+    setReviewing(false);
+    fb.snack({ message: editing ? 'Review saved' : 'Review posted', bottom: SNACK.listingBar, hapticKind: 'success' });
+  };
   useEffect(() => { if (!params.autoVisit) return; const t = setTimeout(visit, 700); return () => clearTimeout(t); }, []);
   return (
     <View testID="screen-listing" style={[StyleSheet.absoluteFill, { backgroundColor: c('bg/color-canvas') }]}>
@@ -389,6 +400,9 @@ export function ListingProfile() {
           here={here}
           visited={app.visited(item.id)}
           onVisit={visit}
+          reviewable={reviewable}
+          review={myReview}
+          onReview={() => { fb.haptic('light'); setReviewing(true); }}
           offerLocked={app.v2 && app.member && !app.grove}
           onUnlock={() => nav.openModal('JoinGrove', { reason: 'offers' })}
           aboutOpen={!!params.expanded}
@@ -417,6 +431,7 @@ export function ListingProfile() {
       <BottomBar style={{ flexDirection: 'row', paddingBottom: 48 }}>
         <ListingActions item={item} onCall={() => fb.haptic('light')} onLink={openLink} />
       </BottomBar>
+      <ReviewSheet visible={reviewing} name={item.name} initial={myReview} onClose={() => setReviewing(false)} onPost={postReview} />
       <MapsSheet visible={maps} address={address} onPick={openIn} onClose={() => setMaps(false)} />
       <ShareSheet visible={share} title={item.name} subtitle="Indy Holistic Living" photo={item.photo} onClose={() => setShare(false)}
         onPick={(to) => { setShare(false); fb.snack({ message: to === 'Copy' ? 'Link copied' : `Opening ${to}`, tone: to === 'Copy' ? 'success' : 'info', bottom: SNACK.listingBar, hapticKind: 'light' }); }} />
