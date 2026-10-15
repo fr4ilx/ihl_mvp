@@ -5,11 +5,11 @@
 // label turns Bold and a Solid check-circle sits in the top right corner. On a sheet the idle tile uses
 // bg/color-sheet-raised with no edge. single: a radio (the mood), otherwise a checkbox (quiz answers).
 import React from 'react';
-import { View, Text, Pressable } from '../rn';
+import { View, Text, Pressable, Image } from '../rn';
 import { useTheme, type, useRaised, useOnSheet } from '../theme';
 import Icon from './Icon';
 
-export default function SelectTile({ label, icon, iconSize = 24, selected, onPress, single, testID }) {
+export default function SelectTile({ label, icon, art, iconSize = 24, selected, onPress, single, testID }) {
   const { c } = useTheme();
   const raised = useRaised();
   const onSheet = useOnSheet();
@@ -28,9 +28,14 @@ export default function SelectTile({ label, icon, iconSize = 24, selected, onPre
         pressed && { transform: [{ scale: 0.96 }] },
       ]}
     >
-      <View style={{ width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? raised : 'bg/color-brand-subtle') }}>
-        <Icon name={icon} size={iconSize} color={c('icon/color-brand')} />
-      </View>
+      {/* art: the watercolor at 56pt with no circle, in place of the icon. */}
+      {art ? (
+        <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 56, height: 56 }} />
+      ) : (
+        <View style={{ width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? raised : 'bg/color-brand-subtle') }}>
+          <Icon name={icon} size={iconSize} color={c('icon/color-brand')} />
+        </View>
+      )}
       <Text numberOfLines={1} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), textAlign: 'center', alignSelf: 'stretch' }]}>{label}</Text>
       {selected && (
         <View className="fx-check-in" style={{ position: 'absolute', top: 10, right: 10 }}>

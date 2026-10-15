@@ -2,7 +2,7 @@
 // Seedling is the free membership: up to 3 groups. Grove is paid: every group, Ask the Experts, member offers and the
 // seasonal quests. Prices come from StoreKit in the app.
 import React from 'react';
-import { View, Text, Pressable } from '../rn';
+import { View, Text, Pressable, Image } from '../rn';
 import { useTheme, type, elevation } from '../theme';
 import Icon from './Icon';
 import Badge from './Badge';
@@ -15,9 +15,13 @@ export function PerkRow({ perk: p }) {
   const { c } = useTheme();
   return (
     <View testID={`perk-${p.id}`} style={{ flexDirection: 'row', gap: 16, alignItems: 'flex-start' }}>
-      <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: c('bg/color-brand-subtle'), alignItems: 'center', justifyContent: 'center' }}>
-        <Icon name={p.icon} size={20} color={c('icon/color-brand')} />
-      </View>
+      {p.art ? (
+        <Image source={p.art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 48, height: 48 }} />
+      ) : (
+        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: c('bg/color-brand-subtle'), alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name={p.icon} size={20} color={c('icon/color-brand')} />
+        </View>
+      )}
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={[type('BodyM', 'bold'), { color: c('text/color-primary') }]}>{p.title}</Text>
         <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{p.text}</Text>

@@ -189,7 +189,7 @@ export function Quest() {
         {quest.steps.map((s, i) => <QuestStep key={s.id} step={s} n={i + 1} upcoming={!live} done={live && app.questDone(s.id)} onGo={() => go(s)} />)}
       </View>
       <View testID="quest-reward" style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card }}>
-        <Medallion icon={live ? badge.icon : quest.icon} size={64} state={earned ? 'earned' : 'progress'} />
+        <Medallion icon={quest.badgeIcon} size={64} state={earned ? 'earned' : 'progress'} />
         <View style={{ flex: 1, gap: 4 }}>
           <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>{quest.badgeName} badge</Text>
           <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{earned ? `You earned it ${earned === 'Today' ? 'today' : `on ${earned}`}.` : live ? `Finish all three by ${quest.ends} to earn it.` : `Finish all three between ${quest.starts} and ${quest.ends} to earn it.`}</Text>

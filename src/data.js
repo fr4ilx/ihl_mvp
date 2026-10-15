@@ -7,14 +7,14 @@ import photoFriends from '../assets/img/photo_friends.jpg';
 import photoSeedlings from '../assets/img/photo_seedlings.jpg';
 import logo from '../assets/img/logo.webp';
 import appIcon from '../assets/img/app_icon.png';
-import intHerbs from '../assets/img/int_herbs.webp';
-import intYoga from '../assets/img/int_yoga.webp';
-import intFarms from '../assets/img/int_farms.webp';
-import intNutrition from '../assets/img/int_nutrition.webp';
-import intSoundbaths from '../assets/img/int_soundbaths.webp';
-import intMarkets from '../assets/img/int_markets.webp';
-import intGardening from '../assets/img/int_gardening.webp';
-import intMeditation from '../assets/img/int_meditation.webp';
+import intHerbs from '../assets/img/wc_int_herbs.webp';
+import intYoga from '../assets/img/wc_int_yoga.webp';
+import intFarms from '../assets/img/wc_int_farms.webp';
+import intNutrition from '../assets/img/wc_int_nutrition.webp';
+import intSoundbaths from '../assets/img/wc_int_soundbaths.webp';
+import intMarkets from '../assets/img/wc_int_markets.webp';
+import intGardening from '../assets/img/wc_int_gardening.webp';
+import intMeditation from '../assets/img/wc_int_meditation.webp';
 import conPath from '../assets/img/con_path.webp';
 import conCare from '../assets/img/con_care.webp';
 import conCircle from '../assets/img/con_circle.webp';
@@ -63,30 +63,65 @@ import wcSubNaturopath from '../assets/img/wc_sub_naturopath.webp';
 import wcSubHomeopath from '../assets/img/wc_sub_homeopath.webp';
 export const CATEGORY_ART = { 'Holistic Business': wcHolistic, Food: wcFood, Shop: wcShop, Services: wcServices };
 // Figma: Quest art / Fall Harvest Quest.
-import questFall from '../assets/img/quest_fall.webp';
+import questFall from '../assets/img/wc_quest_fall.webp';
+import questWinter from '../assets/img/wc_quest_winter.webp';
+import questSpring from '../assets/img/wc_quest_spring.webp';
+import questSummer from '../assets/img/wc_quest_summer.webp';
 // Figma: Medallion art. Full color for earned, a grey copy for in progress and locked.
-import artSeedling from '../assets/img/art_seedling.webp';
-import artSeedlingGrey from '../assets/img/art_seedling_grey.webp';
-import artSprout from '../assets/img/art_sprout.webp';
-import artSproutGrey from '../assets/img/art_sprout_grey.webp';
-import artRoot from '../assets/img/art_root.webp';
-import artRootGrey from '../assets/img/art_root_grey.webp';
-import artGrove from '../assets/img/art_grove.webp';
-import artGroveGrey from '../assets/img/art_grove_grey.webp';
-import artForest from '../assets/img/art_forest.webp';
-import artForestGrey from '../assets/img/art_forest_grey.webp';
-import artOak from '../assets/img/art_oak.webp';
-import artOakGrey from '../assets/img/art_oak_grey.webp';
-import artExplorer from '../assets/img/art_explorer.webp';
-import artExplorerGrey from '../assets/img/art_explorer_grey.webp';
-import artFarmFriend from '../assets/img/art_farmfriend.webp';
-import artFarmFriendGrey from '../assets/img/art_farmfriend_grey.webp';
-import artWelcomer from '../assets/img/art_welcomer.webp';
-import artWelcomerGrey from '../assets/img/art_welcomer_grey.webp';
-import artSteady from '../assets/img/art_steady.webp';
-import artSteadyGrey from '../assets/img/art_steady_grey.webp';
-import artHarvest from '../assets/img/art_harvest.webp';
-import artHarvestGrey from '../assets/img/art_harvest_grey.webp';
+import artSeedling from '../assets/img/wc_stage_seedling.webp';
+import artSeedlingGrey from '../assets/img/wc_stage_seedling_grey.webp';
+import artSprout from '../assets/img/wc_stage_sprout.webp';
+import artSproutGrey from '../assets/img/wc_stage_sprout_grey.webp';
+import artRoot from '../assets/img/wc_stage_root.webp';
+import artRootGrey from '../assets/img/wc_stage_root_grey.webp';
+import artGrove from '../assets/img/wc_stage_grove.webp';
+import artGroveGrey from '../assets/img/wc_stage_grove_grey.webp';
+import artForest from '../assets/img/wc_stage_forest.webp';
+import artForestGrey from '../assets/img/wc_stage_forest_grey.webp';
+import artOak from '../assets/img/wc_stage_oak.webp';
+import artOakGrey from '../assets/img/wc_stage_oak_grey.webp';
+import artExplorer from '../assets/img/wc_badge_explorer.webp';
+import artExplorerGrey from '../assets/img/wc_badge_explorer_grey.webp';
+import artFarmFriend from '../assets/img/wc_badge_farmfriend.webp';
+import artFarmFriendGrey from '../assets/img/wc_badge_farmfriend_grey.webp';
+import artWelcomer from '../assets/img/wc_badge_welcomer.webp';
+import artWelcomerGrey from '../assets/img/wc_badge_welcomer_grey.webp';
+import artSteady from '../assets/img/wc_badge_steady.webp';
+import artSteadyGrey from '../assets/img/wc_badge_steady_grey.webp';
+import artHarvest from '../assets/img/wc_badge_harvest.webp';
+import artHarvestGrey from '../assets/img/wc_badge_harvest_grey.webp';
+import artWinter from '../assets/img/wc_badge_winter.webp';
+import artWinterGrey from '../assets/img/wc_badge_winter_grey.webp';
+import artSpring from '../assets/img/wc_badge_spring.webp';
+import artSpringGrey from '../assets/img/wc_badge_spring_grey.webp';
+import artSummer from '../assets/img/wc_badge_summer.webp';
+import artSummerGrey from '../assets/img/wc_badge_summer_grey.webp';
+// Watercolor art for the quiz answers, the check-in moods, the Grove perks and the first week steps.
+import wcGoalSleep from '../assets/img/wc_goal_sleep.webp';
+import wcGoalStress from '../assets/img/wc_goal_stress.webp';
+import wcGoalDigestion from '../assets/img/wc_goal_digestion.webp';
+import wcGoalJoints from '../assets/img/wc_goal_joints.webp';
+import wcGoalEnergy from '../assets/img/wc_goal_energy.webp';
+import wcGoalAging from '../assets/img/wc_goal_aging.webp';
+import wcGoalLocal from '../assets/img/wc_goal_local.webp';
+import wcGoalPeople from '../assets/img/wc_goal_people.webp';
+import wcCareMyself from '../assets/img/wc_care_myself.webp';
+import wcCarePartner from '../assets/img/wc_care_partner.webp';
+import wcCareKids from '../assets/img/wc_care_kids.webp';
+import wcCareParent from '../assets/img/wc_care_parent.webp';
+import wcMoodGreat from '../assets/img/wc_mood_great.webp';
+import wcMoodGood from '../assets/img/wc_mood_good.webp';
+import wcMoodOkay from '../assets/img/wc_mood_okay.webp';
+import wcMoodHard from '../assets/img/wc_mood_hard.webp';
+import wcPerkGroups from '../assets/img/wc_perk_groups.webp';
+import wcPerkExperts from '../assets/img/wc_perk_experts.webp';
+import wcPerkOffers from '../assets/img/wc_perk_offers.webp';
+import wcPerkQuests from '../assets/img/wc_perk_quests.webp';
+import wcStepJoin from '../assets/img/wc_step_join.webp';
+import wcStepHello from '../assets/img/wc_step_hello.webp';
+import wcStepReview from '../assets/img/wc_step_review.webp';
+import wcStepCheckin from '../assets/img/wc_step_checkin.webp';
+export const STEP_ART = { join: wcStepJoin, hello: wcStepHello, review: wcStepReview, checkin: wcStepCheckin };
 
 export const images = {
   logo,
@@ -113,6 +148,10 @@ export const MEDALLION_ART = {
   'user-love': { art: artWelcomer, grey: artWelcomerGrey },
   'sun-light': { art: artSteady, grey: artSteadyGrey },
   'apple-fruit': { art: artHarvest, grey: artHarvestGrey },
+  // The season badges for the quests ahead.
+  'badge-winter': { art: artWinter, grey: artWinterGrey },
+  'badge-spring': { art: artSpring, grey: artSpringGrey },
+  'badge-summer': { art: artSummer, grey: artSummerGrey },
 };
 
 export const INTERESTS = [
@@ -552,10 +591,10 @@ export const PLANS = [
   { id: 'monthly', label: 'Monthly', price: '$11.11', per: 'month', note: 'Cancel anytime' },
 ];
 export const GROVE_PERKS = [
-  { id: 'groups', icon: 'community', title: 'Every group', text: 'Join and post in all of them, not just 3.' },
-  { id: 'experts', icon: 'chat-bubble-question', title: 'Ask the Experts', text: 'Verified local practitioners answer.' },
-  { id: 'offers', icon: 'gift', title: 'Member offers', text: 'Thank you offers from local businesses.' },
-  { id: 'quests', icon: 'medal', title: 'Seasonal quests', text: 'Visit, try and share, then earn the season’s badge.' },
+  { id: 'groups', icon: 'community', art: wcPerkGroups, title: 'Every group', text: 'Join and post in all of them, not just 3.' },
+  { id: 'experts', icon: 'chat-bubble-question', art: wcPerkExperts, title: 'Ask the Experts', text: 'Verified local practitioners answer.' },
+  { id: 'offers', icon: 'gift', art: wcPerkOffers, title: 'Member offers', text: 'Thank you offers from local businesses.' },
+  { id: 'quests', icon: 'medal', art: wcPerkQuests, title: 'Seasonal quests', text: 'Visit, try and share, then earn the season’s badge.' },
 ];
 
 // ---------- Your journey ----------
@@ -580,19 +619,19 @@ export const BADGES = [
 
 // Weekly check-in moods. Once a week is enough, there is no daily streak.
 export const MOODS = [
-  { id: 'great', label: 'Great', icon: 'emoji-talking-happy' },
-  { id: 'good', label: 'Good', icon: 'emoji' },
-  { id: 'okay', label: 'Okay', icon: 'emoji-quite' },
-  { id: 'hard', label: 'Hard', icon: 'emoji-sad' },
+  { id: 'great', label: 'Great', icon: 'emoji-talking-happy', art: wcMoodGreat },
+  { id: 'good', label: 'Good', icon: 'emoji', art: wcMoodGood },
+  { id: 'okay', label: 'Okay', icon: 'emoji-quite', art: wcMoodOkay },
+  { id: 'hard', label: 'Hard', icon: 'emoji-sad', art: wcMoodHard },
 ];
 
 // The season's quests, one a quarter, Grove only, three steps each ending in that season's badge. The Fall Harvest Quest
 // runs now, the next three are ahead. A step done by reviewing a place counts with that place's first review.
 // together: the group goal, how many members finished it so far out of the goal. Nothing ranks members, it only adds up.
-// icon: the quest's art for now, an Iconoir glyph on the accent tint, until Steven paints the other three.
+// art: the watercolor for each season. badgeIcon: the season badge's Medallion art.
 export const QUESTS = [
   {
-    id: 'fall-2026', season: 'Fall', name: 'Fall Harvest Quest', art: questFall, icon: 'apple-fruit', dates: 'Sep 22 to Dec 20', starts: 'Sep 22', ends: 'Dec 20', badgeName: 'Harvest 2026', badge: 'harvest',
+    id: 'fall-2026', season: 'Fall', name: 'Fall Harvest Quest', art: questFall, badgeIcon: 'apple-fruit', icon: 'apple-fruit', dates: 'Sep 22 to Dec 20', starts: 'Sep 22', ends: 'Dec 20', badgeName: 'Harvest 2026', badge: 'harvest',
     about: 'Three small ways to enjoy the season close to home.', together: { done: 212, goal: 500 },
     steps: [
       { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby, then review it.', action: 'Find a farm', go: ['category', 'Food'] },
@@ -601,7 +640,7 @@ export const QUESTS = [
     ],
   },
   {
-    id: 'winter-2026', season: 'Winter', name: 'Winter Warmth Quest', icon: 'coffee-cup', dates: 'Dec 21 to Mar 19', starts: 'Dec 21', ends: 'Mar 19', badgeName: 'Winter Warmth 2026', badge: 'winter',
+    id: 'winter-2026', season: 'Winter', name: 'Winter Warmth Quest', art: questWinter, badgeIcon: 'badge-winter', icon: 'coffee-cup', dates: 'Dec 21 to Mar 19', starts: 'Dec 21', ends: 'Mar 19', badgeName: 'Winter Warmth 2026', badge: 'winter',
     about: 'Stay warm and well through the cold months.', together: { done: 0, goal: 500 },
     steps: [
       { id: 'shop', title: 'Visit a tea or herb shop', text: 'Find a blend for the cold months, then review it.', action: 'Find a shop', go: ['category', 'Shop'] },
@@ -610,7 +649,7 @@ export const QUESTS = [
     ],
   },
   {
-    id: 'spring-2027', season: 'Spring', name: 'Spring Renewal Quest', icon: 'flower', dates: 'Mar 20 to Jun 20', starts: 'Mar 20', ends: 'Jun 20', badgeName: 'Spring Renewal 2027', badge: 'spring',
+    id: 'spring-2027', season: 'Spring', name: 'Spring Renewal Quest', art: questSpring, badgeIcon: 'badge-spring', icon: 'flower', dates: 'Mar 20 to Jun 20', starts: 'Mar 20', ends: 'Jun 20', badgeName: 'Spring Renewal 2027', badge: 'spring',
     about: 'Wake up with the season and try something new.', together: { done: 0, goal: 500 },
     steps: [
       { id: 'farm', title: 'Visit a local farm', text: 'See what is coming up this spring, then review it.', action: 'Find a farm', go: ['category', 'Food'] },
@@ -619,7 +658,7 @@ export const QUESTS = [
     ],
   },
   {
-    id: 'summer-2027', season: 'Summer', name: 'Summer Roots Quest', icon: 'sun-light', dates: 'Jun 21 to Sep 21', starts: 'Jun 21', ends: 'Sep 21', badgeName: 'Summer Roots 2027', badge: 'summer',
+    id: 'summer-2027', season: 'Summer', name: 'Summer Roots Quest', art: questSummer, badgeIcon: 'badge-summer', icon: 'sun-light', dates: 'Jun 21 to Sep 21', starts: 'Jun 21', ends: 'Sep 21', badgeName: 'Summer Roots 2027', badge: 'summer',
     about: 'Get outside and meet the people who grow your food.', together: { done: 0, goal: 500 },
     steps: [
       { id: 'market', title: 'Visit a farmers market', text: 'Meet a grower, then review the market.', action: 'Find a market', go: ['category', 'Food'] },
@@ -634,12 +673,12 @@ export const QUEST = QUESTS[0];
 // Onboarding quiz: three questions that set the Home feed and suggest groups.
 // Each answer is a tile with an Iconoir glyph, two to a row. Answers are kept with the member and never shown to others.
 export const QUIZ_GOALS = [
-  { id: 'Better sleep', icon: 'half-moon' }, { id: 'Less stress', icon: 'yoga' },
-  { id: 'Easier digestion', icon: 'apple-fruit' }, { id: 'Joint comfort', icon: 'walking' },
-  { id: 'More energy', icon: 'flash' }, { id: 'Healthy aging', icon: 'heart' },
-  { id: 'Eating local', icon: 'farm' }, { id: 'Meeting people', icon: 'community' },
+  { id: 'Better sleep', icon: 'half-moon', art: wcGoalSleep }, { id: 'Less stress', icon: 'yoga', art: wcGoalStress },
+  { id: 'Easier digestion', icon: 'apple-fruit', art: wcGoalDigestion }, { id: 'Joint comfort', icon: 'walking', art: wcGoalJoints },
+  { id: 'More energy', icon: 'flash', art: wcGoalEnergy }, { id: 'Healthy aging', icon: 'heart', art: wcGoalAging },
+  { id: 'Eating local', icon: 'farm', art: wcGoalLocal }, { id: 'Meeting people', icon: 'community', art: wcGoalPeople },
 ];
 export const QUIZ_CARE = [
-  { id: 'Myself', icon: 'user' }, { id: 'My partner', icon: 'user-love' },
-  { id: 'Kids or grandkids', icon: 'group' }, { id: 'An aging parent', icon: 'home-user' },
+  { id: 'Myself', icon: 'user', art: wcCareMyself }, { id: 'My partner', icon: 'user-love', art: wcCarePartner },
+  { id: 'Kids or grandkids', icon: 'group', art: wcCareKids }, { id: 'An aging parent', icon: 'home-user', art: wcCareParent },
 ];

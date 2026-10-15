@@ -427,7 +427,7 @@ export function QuizGoals() {
   return (
     <QuizScreen testID="screen-quiz-goals" n={1} title="What can we help with?" sub="Pick any. Only you see your answers." picked={picked} onNext={() => { app.saveQuiz({ goals: QUIZ_GOALS.map((g) => g.id).filter((id) => picked.includes(id)) }); nav.navigate('Interests'); }}>
       <SelectGrid>
-        {QUIZ_GOALS.map((g) => <SelectTile key={g.id} testID={`goal-${g.id}`} label={g.id} icon={g.icon} selected={picked.includes(g.id)} onPress={() => toggle(g.id)} />)}
+        {QUIZ_GOALS.map((g) => <SelectTile key={g.id} testID={`goal-${g.id}`} label={g.id} icon={g.icon} art={g.art} selected={picked.includes(g.id)} onPress={() => toggle(g.id)} />)}
       </SelectGrid>
     </QuizScreen>
   );
@@ -461,7 +461,7 @@ export function QuizCare() {
   return (
     <QuizScreen testID="screen-quiz-care" n={3} title="Who do you care for?" sub="We’ll suggest groups for you." label="Finish" picked={picked} onNext={() => { app.saveQuiz({ care: QUIZ_CARE.map((g) => g.id).filter((id) => picked.includes(id)) }); nav.navigate('SeedlingAward'); }}>
       <SelectGrid>
-        {QUIZ_CARE.map((g) => <SelectTile key={g.id} testID={`care-${g.id}`} label={g.id} icon={g.icon} selected={picked.includes(g.id)} onPress={() => toggle(g.id)} />)}
+        {QUIZ_CARE.map((g) => <SelectTile key={g.id} testID={`care-${g.id}`} label={g.id} icon={g.icon} art={g.art} selected={picked.includes(g.id)} onPress={() => toggle(g.id)} />)}
       </SelectGrid>
     </QuizScreen>
   );

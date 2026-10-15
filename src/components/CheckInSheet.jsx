@@ -19,7 +19,7 @@ export default function CheckInSheet({ visible, onClose, onCheckIn, initialMood 
       footer={<Button testID="checkin-submit" label="Check in" fill onPress={() => form.submit(errors, () => onCheckIn(mood))} />}>
       <SelectGrid single>
         {MOODS.map((m) => (
-          <SelectTile key={m.id} testID={`mood-${m.id}`} single label={m.label} icon={m.icon} iconSize={28} selected={mood === m.id} onPress={() => { setMood(m.id); onPick && onPick(); }} />
+          <SelectTile key={m.id} testID={`mood-${m.id}`} single label={m.label} icon={m.icon} art={m.art} iconSize={28} selected={mood === m.id} onPress={() => { setMood(m.id); onPick && onPick(); }} />
         ))}
       </SelectGrid>
       <FieldError testID="checkin-error" message={form.shown(errors).mood} />
