@@ -1,38 +1,26 @@
 // Figma: Category tile (Selected: No, Yes). The four broad categories at the top of Directory, two to a row with a
 // 12pt gap, styled like the listing cards under them: a 72pt tile on bg/color-surface-raised, radius/20, Elevation/Card
 // and no edge,
-// a 40pt bg/color-brand-subtle circle with the icon (or, with thumb, a 48pt watercolor and no circle) in icon/color-brand, then the label in Body S Medium, which may
+// a 40pt bg/color-brand-subtle circle with the icon in icon/color-brand, then the label in Body S Medium, which may
 // wrap to three lines (four with a watercolor), and the tile grows to fit it. Selected fills the tile with bg/color-selected, a 2pt border/color-brand edge, the circle in
 // bg/color-brand with the icon in icon/color-on-brand and the label in Bold, so the state never rests on color alone.
 // On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
 import { View, Text, Pressable, Image } from '../rn';
-import { useTheme, type, elevation, withAlpha } from '../theme';
+import { useTheme, type, elevation } from '../theme';
 import Icon from './Icon';
 import { CATEGORY_ART } from '../data';
 
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
-// art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
-// 200pt, the label top left and the watercolor at 128pt in the bottom right corner, so the 2 by 2 grid
-// takes about half the screen.
-// The tile is painted like its art: a base wash with two soft blooms that bleed into each other, one behind the art and
-// one lighter in the opposite corner. Each tile takes one of four pairs of semantic tints by its label, so no two
-// neighbors match. Tokens only, so Light and Dark follow. In the app use LinearGradient layers or one pre-painted PNG.
-const WASHES = [['bg/color-brand-subtle', 'bg/color-warning-subtle'], ['bg/color-info-subtle', 'bg/color-brand-subtle'], ['bg/color-warning-subtle', 'bg/color-surface'], ['bg/color-success-subtle', 'bg/color-info-subtle']];
-const washOf = (label = '') => WASHES[[...label].reduce((n, ch) => n + ch.charCodeAt(0), 0) % WASHES.length];
-
+// art or thumb: a watercolor instead of the card. Just the painting with its name under it (see below).
 export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   const pic = art || thumb;
-  const [base, bloom] = washOf(label);
-  const wash = pic && !selected
-    ? `radial-gradient(ellipse 75% 65% at 78% 88%, ${c(bloom)} 0%, ${withAlpha(c(bloom), 0)} 100%), radial-gradient(ellipse 70% 55% at 12% 8%, ${withAlpha(c('bg/color-surface-raised'), 0.9)} 0%, ${withAlpha(c('bg/color-surface-raised'), 0)} 100%)`
-    : undefined;
-  // With a watercolor the tile is a corner layout: the label top left in Bold, the art bottom right, bleeding 8pt off the
-  // corner and clipped by the tile. A category is 200pt tall with 128pt art, a subcategory 148pt with 84pt art.
+  // With a watercolor the tile is just the art centered with its name under it, on the canvas with no card or wash.
+  // Selected is the only time it gets a surface: bg/color-selected with a 2pt border/color-brand edge and a Bold name.
+  // A category is 128pt art with the name in Body M, a subcategory 88pt art with the name in Body S.
   if (pic) {
-    const size = art ? 148 : 96;
     return (
       <Pressable
         testID={testID}
@@ -42,16 +30,14 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
         accessibilityLabel={label}
         style={({ pressed }) => [
           {
-            flex: 1, minHeight: art ? 200 : 156, padding: selected ? 14 : 16, paddingBottom: 0, borderRadius: 20, overflow: 'hidden',
-            backgroundColor: selected ? c('bg/color-selected') : c(base), backgroundImage: wash,
-            ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
+            flex: 1, padding: 8, borderRadius: 20, alignItems: 'center', gap: 4,
+            ...(selected ? { backgroundColor: c('bg/color-selected'), borderWidth: 2, borderColor: c('border/color-brand'), padding: 6 } : {}),
           },
           pressed && { transform: [{ scale: 0.97 }] },
         ]}
       >
-        <Text numberOfLines={art ? 2 : 4} style={[type(art ? 'H5' : 'BodyS', 'bold'), { color: c('text/color-primary') }]}>{label}</Text>
-        <View style={{ flex: 1 }} />
-        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: size, height: size, alignSelf: 'flex-end', marginRight: -12, marginBottom: -12 }} />
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88 }} />
+        <Text numberOfLines={art ? 2 : 3} style={[type(art ? 'BodyM' : 'BodyS', selected ? 'bold' : art ? 'medium' : 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
       </Pressable>
     );
   }
