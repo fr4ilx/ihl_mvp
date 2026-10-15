@@ -44,7 +44,7 @@ photorealistic, 3D render, glossy, vector, flat cartoon, black outlines, text, l
 
 ## Applied
 
-The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 44pt on a 56pt bg/color-brand-subtle wash circle. The goal, care, mood and perk sets are made and not placed yet.
+The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 84pt in the bottom right corner of a 148pt tile, with the name top left in Bold. The goal, care, mood and perk sets are made and not placed yet.
 
 ## The list
 

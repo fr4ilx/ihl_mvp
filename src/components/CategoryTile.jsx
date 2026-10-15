@@ -14,12 +14,37 @@ import { CATEGORY_ART } from '../data';
 export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-fruit', Shop: 'shop', Services: 'tools' };
 
 // art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
-// 200pt, the watercolor at 128pt centered on top and the label in Body M centered under it, so the 2 by 2 grid
+// 200pt, the label top left and the watercolor at 128pt in the bottom right corner, so the 2 by 2 grid
 // takes about half the screen.
 export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
-  // The wash the watercolor sits on. A selected tile is already tinted, so its wash turns to the raised surface.
-  const wash = c(selected ? 'bg/color-surface-raised' : 'bg/color-brand-subtle');
+  const pic = art || thumb;
+  // With a watercolor the tile is a corner layout: the label top left in Bold, the art bottom right, bleeding 8pt off the
+  // corner and clipped by the tile. A category is 200pt tall with 128pt art, a subcategory 148pt with 84pt art.
+  if (pic) {
+    const size = art ? 128 : 84;
+    return (
+      <Pressable
+        testID={testID}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        accessibilityLabel={label}
+        style={({ pressed }) => [
+          {
+            flex: 1, minHeight: art ? 200 : 148, padding: selected ? 14 : 16, paddingBottom: 0, borderRadius: 20, overflow: 'hidden',
+            backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
+            ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
+          },
+          pressed && { transform: [{ scale: 0.97 }] },
+        ]}
+      >
+        <Text numberOfLines={art ? 2 : 4} style={[type(art ? 'H5' : 'BodyS', 'bold'), { color: c('text/color-primary') }]}>{label}</Text>
+        <View style={{ flex: 1 }} />
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: size, height: size, alignSelf: 'flex-end', marginRight: -8, marginBottom: -8 }} />
+      </Pressable>
+    );
+  }
   return (
     <Pressable
       testID={testID}
@@ -29,30 +54,18 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
       accessibilityLabel={label}
       style={({ pressed }) => [
         {
-          flex: 1, minHeight: art ? 200 : thumb ? 80 : 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
-          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : thumb ? 10 : 12,
+          flex: 1, minHeight: 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
+          flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
           backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
           ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
         },
         pressed && { transform: [{ scale: 0.97 }] },
       ]}
     >
-      {art ? (
-        <View style={{ width: 144, height: 144, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: wash }}>
-          <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 120, height: 120 }} />
-        </View>
-      ) : thumb ? (
-        <View style={{ width: 56, height: 56, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: wash }}>
-          <Image source={thumb} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 44, height: 44 }} />
-        </View>
-      ) : (
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
         <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
       </View>
-      )}
-      {art
-        ? <Text numberOfLines={2} style={[type('BodyM'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
-        : <Text numberOfLines={thumb ? 4 : 3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>}
+      <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>
     </Pressable>
   );
 }
