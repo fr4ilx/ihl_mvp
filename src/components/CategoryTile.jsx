@@ -7,7 +7,7 @@
 // On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
 import { View, Text, Pressable, Image } from '../rn';
-import { useTheme, type, elevation } from '../theme';
+import { useTheme, type, elevation, withAlpha } from '../theme';
 import Icon from './Icon';
 import { CATEGORY_ART } from '../data';
 
@@ -16,13 +16,23 @@ export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-f
 // art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
 // 200pt, the label top left and the watercolor at 128pt in the bottom right corner, so the 2 by 2 grid
 // takes about half the screen.
+// The tile is painted like its art: a base wash with two soft blooms that bleed into each other, one behind the art and
+// one lighter in the opposite corner. Each tile takes one of four pairs of semantic tints by its label, so no two
+// neighbors match. Tokens only, so Light and Dark follow. In the app use LinearGradient layers or one pre-painted PNG.
+const WASHES = [['bg/color-brand-subtle', 'bg/color-warning-subtle'], ['bg/color-info-subtle', 'bg/color-brand-subtle'], ['bg/color-warning-subtle', 'bg/color-surface'], ['bg/color-success-subtle', 'bg/color-info-subtle']];
+const washOf = (label = '') => WASHES[[...label].reduce((n, ch) => n + ch.charCodeAt(0), 0) % WASHES.length];
+
 export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   const pic = art || thumb;
+  const [base, bloom] = washOf(label);
+  const wash = pic && !selected
+    ? `radial-gradient(ellipse 75% 65% at 78% 88%, ${c(bloom)} 0%, ${withAlpha(c(bloom), 0)} 100%), radial-gradient(ellipse 70% 55% at 12% 8%, ${withAlpha(c('bg/color-surface-raised'), 0.9)} 0%, ${withAlpha(c('bg/color-surface-raised'), 0)} 100%)`
+    : undefined;
   // With a watercolor the tile is a corner layout: the label top left in Bold, the art bottom right, bleeding 8pt off the
   // corner and clipped by the tile. A category is 200pt tall with 128pt art, a subcategory 148pt with 84pt art.
   if (pic) {
-    const size = art ? 128 : 84;
+    const size = art ? 148 : 96;
     return (
       <Pressable
         testID={testID}
@@ -32,8 +42,8 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
         accessibilityLabel={label}
         style={({ pressed }) => [
           {
-            flex: 1, minHeight: art ? 200 : 148, padding: selected ? 14 : 16, paddingBottom: 0, borderRadius: 20, overflow: 'hidden',
-            backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
+            flex: 1, minHeight: art ? 200 : 156, padding: selected ? 14 : 16, paddingBottom: 0, borderRadius: 20, overflow: 'hidden',
+            backgroundColor: selected ? c('bg/color-selected') : c(base), backgroundImage: wash,
             ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
           },
           pressed && { transform: [{ scale: 0.97 }] },
@@ -41,7 +51,7 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
       >
         <Text numberOfLines={art ? 2 : 4} style={[type(art ? 'H5' : 'BodyS', 'bold'), { color: c('text/color-primary') }]}>{label}</Text>
         <View style={{ flex: 1 }} />
-        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: size, height: size, alignSelf: 'flex-end', marginRight: -8, marginBottom: -8 }} />
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: size, height: size, alignSelf: 'flex-end', marginRight: -12, marginBottom: -12 }} />
       </Pressable>
     );
   }
