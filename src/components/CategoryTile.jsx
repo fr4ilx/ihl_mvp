@@ -17,8 +17,8 @@ export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-f
 export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   const pic = art || thumb;
-  // With a watercolor the tile is just the art centered with its name under it, on the canvas with no card or wash.
-  // Selected is the only time it gets a surface: bg/color-selected with a 2pt border/color-brand edge and a Bold name.
+  // With a watercolor the tile is a card (bg/color-surface-raised, radius/20, Elevation/Card, 16pt padding) with the art
+  // centered and its name under it, 8pt apart. Selected is bg/color-selected with a 2pt border/color-brand edge and a Bold name.
   // A category is 128pt art with the name in Body M, a subcategory 88pt art with the name in Body S.
   if (pic) {
     return (
@@ -30,13 +30,14 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
         accessibilityLabel={label}
         style={({ pressed }) => [
           {
-            flex: 1, padding: 8, borderRadius: 20, alignItems: 'center', gap: 0,
-            ...(selected ? { backgroundColor: c('bg/color-selected'), borderWidth: 2, borderColor: c('border/color-brand'), padding: 6 } : {}),
+            flex: 1, padding: selected ? 14 : 16, borderRadius: 20, alignItems: 'center', justifyContent: 'center', gap: 8,
+            backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
+            ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
           },
           pressed && { transform: [{ scale: 0.97 }] },
         ]}
       >
-        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88, marginBottom: art ? -14 : -10 }} />
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88, marginBottom: art ? -6 : -4 }} />
         <Text numberOfLines={art ? 2 : 3} style={[type(art ? 'BodyM' : 'BodyS', selected ? 'bold' : art ? 'medium' : 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
       </Pressable>
     );
@@ -71,9 +72,9 @@ export function CategoryTiles({ items = Object.keys(CATEGORY_ICONS).map((k) => (
   const rows = [];
   for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
   return (
-    <View testID={`${testPrefix}s`} style={{ gap: 12 }}>
+    <View testID={`${testPrefix}s`} style={{ gap: 16 }}>
       {rows.map((row, r) => (
-        <View key={r} style={{ flexDirection: 'row', gap: 12 }}>
+        <View key={r} style={{ flexDirection: 'row', gap: 16 }}>
           {row.map((it) => <CategoryTile key={it.label} testID={`${testPrefix}-${it.label}`} label={it.label} icon={it.icon} thumb={it.thumb} selected={value === it.label} onPress={() => onPick(value === it.label ? null : it.label)} />)}
           {row.length === 1 && <View style={{ flex: 1 }} />}
         </View>
