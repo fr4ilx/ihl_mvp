@@ -18,6 +18,8 @@ export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-f
 // takes about half the screen.
 export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
+  // The wash the watercolor sits on. A selected tile is already tinted, so its wash turns to the raised surface.
+  const wash = c(selected ? 'bg/color-surface-raised' : 'bg/color-brand-subtle');
   return (
     <Pressable
       testID={testID}
@@ -27,8 +29,8 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
       accessibilityLabel={label}
       style={({ pressed }) => [
         {
-          flex: 1, minHeight: art ? 200 : 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
-          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : thumb ? 8 : 12,
+          flex: 1, minHeight: art ? 200 : thumb ? 80 : 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
+          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : thumb ? 10 : 12,
           backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
           ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
         },
@@ -36,9 +38,13 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
       ]}
     >
       {art ? (
-        <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 128, height: 128 }} />
+        <View style={{ width: 144, height: 144, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: wash }}>
+          <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 120, height: 120 }} />
+        </View>
       ) : thumb ? (
-        <Image source={thumb} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 48, height: 48 }} />
+        <View style={{ width: 56, height: 56, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: wash }}>
+          <Image source={thumb} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 44, height: 44 }} />
+        </View>
       ) : (
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
         <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
