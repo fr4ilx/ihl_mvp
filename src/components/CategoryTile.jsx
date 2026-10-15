@@ -30,13 +30,13 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
         accessibilityLabel={label}
         style={({ pressed }) => [
           {
-            flex: 1, padding: 8, borderRadius: 20, alignItems: 'center', gap: 4,
+            flex: 1, padding: 8, borderRadius: 20, alignItems: 'center', gap: 0,
             ...(selected ? { backgroundColor: c('bg/color-selected'), borderWidth: 2, borderColor: c('border/color-brand'), padding: 6 } : {}),
           },
           pressed && { transform: [{ scale: 0.97 }] },
         ]}
       >
-        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88 }} />
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88, marginBottom: art ? -14 : -10 }} />
         <Text numberOfLines={art ? 2 : 3} style={[type(art ? 'BodyM' : 'BodyS', selected ? 'bold' : art ? 'medium' : 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
       </Pressable>
     );
