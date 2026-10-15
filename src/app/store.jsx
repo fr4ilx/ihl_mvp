@@ -34,7 +34,7 @@ export function journeyOf(me) {
   const next = STAGES[at + 1] || null;
   const streak = streakOf(me.weeks);
   const steps = {
-    sprout: [['Add a short bio', !!(me.bio || '').trim()], ['Reply to a post', !!me.replied], ['Visit a local place', (me.visited || []).length > 0]],
+    sprout: [['Add a short bio', !!(me.bio || '').trim()], ['Reply to a post', !!me.replied], ['Review a local place', (me.visited || []).length > 0]],
     root: [['Check in 4 weeks in a row', streak >= 4, `${Math.min(streak, 4)} of 4 weeks`, Math.min(streak, 4), 4], ['Share 10 posts', (me.posts || 0) >= 10, `${Math.min(me.posts || 0, 10)} of 10 posts`, Math.min(me.posts || 0, 10), 10]],
     grove: [['Join Grove', me.tier === 'grove'], ['Post in all 4 topics', false, '2 of 4 topics', 2, 4]],
     forest: [['Check in 12 weeks in a row', streak >= 12, `${Math.min(streak, 12)} of 12 weeks`, Math.min(streak, 12), 12], ['Share 25 posts', (me.posts || 0) >= 25, `${Math.min(me.posts || 0, 25)} of 25 posts`, Math.min(me.posts || 0, 25), 25]],
@@ -260,7 +260,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
         const grew = change((m) => ({ ...m, weeks, mood, progress: { ...m.progress, steady: Math.min(n, 4) }, badges: earned ? { ...m.badges, steady: 'Today' } : m.badges }));
         return { streak: n, earned, grew };
       },
-      // The first rating of a listing marks the visit: counts toward Sprout, Explorer, Farm Friend and, for Grove, the quest.
+      // The first review of a listing marks the visit: counts toward Sprout, Explorer, Farm Friend and, for Grove, the quest.
       // Returns { earned, grew } like checkIn.
       visit: (listing) => {
         if ((me.visited || []).includes(listing.id)) return {};

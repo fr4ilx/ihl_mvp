@@ -563,7 +563,7 @@ export const GROVE_PERKS = [
 // A visit is the first review of a listing. unit: what the progress counts, as in "6 of 10 places".
 export const STAGES = [
   { id: 'seedling', name: 'Seedling', icon: 'soil-alt', steps: ['Make your account'] },
-  { id: 'sprout', name: 'Sprout', icon: 'leaf', steps: ['Add a short bio', 'Reply to a post', 'Visit a local place'] },
+  { id: 'sprout', name: 'Sprout', icon: 'leaf', steps: ['Add a short bio', 'Reply to a post', 'Review a local place'] },
   { id: 'root', name: 'Root', icon: 'flower', steps: ['Check in 4 weeks in a row', 'Share 10 posts'] },
   { id: 'grove', name: 'Grove', icon: 'tree', steps: ['Join Grove', 'Post in all 4 topics'] },
   { id: 'forest', name: 'Forest', icon: 'pine-tree', steps: ['Check in 12 weeks in a row', 'Share 25 posts'] },
@@ -571,8 +571,8 @@ export const STAGES = [
 ];
 export const BADGES = [
   { id: 'seedling', name: 'Seedling', icon: 'soil-alt', how: 'Make your account.' },
-  { id: 'explorer', name: 'Explorer', icon: 'compass', how: 'Visit 10 places in the Directory.', goal: 10, unit: 'places' },
-  { id: 'farmfriend', name: 'Farm Friend', icon: 'farm', how: 'Visit 3 local farms or markets.', goal: 3, unit: 'farms' },
+  { id: 'explorer', name: 'Explorer', icon: 'compass', how: 'Review 10 places in the Directory.', goal: 10, unit: 'places' },
+  { id: 'farmfriend', name: 'Farm Friend', icon: 'farm', how: 'Review 3 local farms or markets.', goal: 3, unit: 'farms' },
   { id: 'welcomer', name: 'Welcomer', icon: 'user-love', how: 'Greet 5 new members in the Welcome Circle.', goal: 5, unit: 'members' },
   { id: 'harvest', name: 'Harvest 2026', icon: 'apple-fruit', how: 'Finish the Fall Harvest Quest.', goal: 3, unit: 'steps' },
   { id: 'steady', name: 'Steady', icon: 'sun-light', how: 'Check in 4 weeks in a row.', goal: 4, unit: 'weeks' },
@@ -591,8 +591,8 @@ export const QUEST = {
   id: 'fall-2026', name: 'Fall Harvest Quest', art: questFall, dates: 'Sep 22 to Dec 20', ends: 'Dec 20', badge: 'harvest',
   about: 'Three small ways to enjoy the season close to home.',
   steps: [
-    { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby.', action: 'Find a farm' },
-    { id: 'practitioner', title: 'Visit a practitioner', text: 'Try a class, a massage or a consult near you.', action: 'Find one' },
+    { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby, then review it.', action: 'Find a farm' },
+    { id: 'practitioner', title: 'Visit a practitioner', text: 'Try a class, a massage or a consult, then review it.', action: 'Find one' },
     { id: 'share', title: 'Share a reflection', text: 'Post what you tried and how it felt.', action: 'Write a post' },
   ],
 };

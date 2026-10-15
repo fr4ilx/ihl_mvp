@@ -2,6 +2,8 @@
 // counts and the topic as a Neutral badge at the end of the same row. The time stays with the author and the topic
 // with the content, so the two never share a line or a style.
 // A practitioner posts as their practice: the Practitioner badge (Success, Subtle) starts the line under the name.
+// A member's stage sits after the name in V2: a 20pt Medallion and the stage in Caption Bold text/color-accent, so it reads
+// in words too. Practitioners show the Practitioner badge instead. Nothing ranks members, it only says where they are.
 // A promotion adds the Promotion badge (Accent, like Sponsored). An Ask the Experts question adds that badge (Info).
 import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from '../rn';
@@ -11,12 +13,17 @@ import Icon from './Icon';
 import Avatar from './Avatar';
 import Badge from './Badge';
 import { usePop } from '../app/usePop';
+import { useApp } from '../app/store';
+import Medallion from './Medallion';
+import { STAGES } from '../data';
 
 // inGroup: on a group page, where the Ask the Experts badge would repeat the page title. Group posts have no topic.
 // onMore: More opens the post options (Report and Block, or Delete on your own post). Without it, as in a
 // conversation where the nav bar holds More, the card has no More.
 export default function PostCard({ post, author, onPress, onLike, onAuthor, onPhoto, onMore, full, inGroup, testID }) {
   const { c } = useTheme();
+  const app = useApp();
+  const stage = app.v2 && !author.practitioner && STAGES.find((s) => s.id === author.stage);
   const [pop, trigger] = usePop(motion.like.duration);
   const like = () => { trigger(); onLike && onLike(); };
   const photos = post.photos || [];
@@ -27,7 +34,15 @@ export default function PostCard({ post, author, onPress, onLike, onAuthor, onPh
         <Pressable testID="post-author" onPress={onAuthor} accessibilityLabel={`Open ${author.name}`} hitSlop={{ top: 4, bottom: 4 }} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
           <Avatar person={author} size={40} />
           <View style={{ flex: 1 }}>
-            <Text numberOfLines={1} style={[type('BodyS', 'bold'), { color: c('text/color-primary') }]}>{author.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text numberOfLines={1} style={[type('BodyS', 'bold'), { color: c('text/color-primary'), flexShrink: 1 }]}>{author.name}</Text>
+              {!!stage && (
+                <View testID="post-stage" accessibilityLabel={`${stage.name} stage`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Medallion icon={stage.icon} size={20} />
+                  <Text style={[type('Caption', 'bold'), { color: c('text/color-accent') }]}>{stage.name}</Text>
+                </View>
+              )}
+            </View>
             {/* The meta line wraps as a whole under the badge when it runs out of room (larger text sizes). */}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: 8 }}>
               {author.practitioner && <Badge label="Practitioner" tone="success" />}

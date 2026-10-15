@@ -56,7 +56,7 @@ Final rules, assuming the recommendations above.
 | Stage | Steps |
 |---|---|
 | Seedling | Make an account |
-| Sprout | Add a bio, reply once, visit a local place |
+| Sprout | Add a bio, reply once, review a local place |
 | Root | Check in 4 weeks in a row, share 10 posts |
 | Grove | Join Grove, post in all 4 topics |
 | Forest | Check in 12 weeks in a row, share 25 posts |
@@ -70,8 +70,8 @@ Final rules, assuming the recommendations above.
 
 | Badge | Rule |
 |---|---|
-| Explorer | Visit 10 places |
-| Farm Friend | Visit 3 farms or markets |
+| Explorer | Review 10 places |
+| Farm Friend | Review 3 farms or markets |
 | Welcomer | Greet 5 new members in the Welcome Circle |
 | Steady | Check in 4 weeks in a row |
 | Season badge | Finish that season's quest |
@@ -99,7 +99,7 @@ The Spring workshop step needs events. Until then use "try a class or practition
 
 ### 4.5 Integrity
 
-- I was here counts once per place per member.
+- A place's first review counts once per member. I was here is gone, the review is the visit.
 - Ask for the phone to be near the place when location is on, otherwise accept it with a daily cap of 3 visits.
 - Posts count only when kept for 24 hours, so delete and repost does nothing.
 - Greets count only for members who joined in the last 14 days.
@@ -125,7 +125,7 @@ Home shows one next step at a time in the weekly card area.
 |---|---|---|
 | 0 | Join the Welcome Circle | A group joined |
 | 1 to 2 | Say hello in the Welcome Circle | Sprout step |
-| 3 to 4 | Visit a place near you with I was here | Sprout step |
+| 3 to 4 | Review a place near you | Sprout step |
 | 7 | Your first check-in | First dot |
 
 No pushes. The prompts live on Home only.
@@ -173,7 +173,7 @@ Claim or add, set up, send for review, live, then request a feature. Their progr
 | Phase | Work | Output |
 |---|---|---|
 | 0 | IHL answers section 3 | Final rules |
-| 1 | Align prototype copy and rules, add stage Medallion on posts | Updated V2 and HANDOFF |
+| 1 | Align prototype copy and rules, add stage Medallion on posts, first week card. Done October 15, 2026 | Updated V2 and HANDOFF |
 | 2 | Figma: stage mark on Post card, seasonal quest art, first week card | Mockups V2 |
 | 3 | Build in Expo: stages, check-in, I was here, paywall | MVP |
 | 4 | Add Winter, Spring and Summer quests, then group quests | Post launch |

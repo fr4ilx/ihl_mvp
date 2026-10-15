@@ -26,6 +26,7 @@ import PhotoPager from '../components/PhotoPager';
 import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
 import StreakCard from '../components/StreakCard';
+import FirstWeekCard from '../components/FirstWeekCard';
 import { QuestCard } from '../components/Journey';
 import CheckInSheet from '../components/CheckInSheet';
 import { CategoryTiles } from '../components/CategoryTile';
@@ -60,6 +61,13 @@ export function Home() {
     setTimeout(() => celebrate(fb, r, { message: 'Checked in for this week', bottom: SNACK.tabBar }), 360);
   };
   const questDone = QUEST.steps.filter((x) => app.questDone(x.id)).length;
+  // Your first week (V2): one next step at a time for a new member at Seedling. No pushes, it lives on Home only.
+  const firstStep = (id) => {
+    if (id === 'join') { app.joinGroup('welcome'); fb.snack({ message: 'You joined Welcome Circle', bottom: SNACK.tabBar }); }
+    if (id === 'hello') nav.navigate('Group', { id: 'welcome' });
+    if (id === 'review') nav.switchTab('directory');
+    if (id === 'checkin') { fb.haptic('light'); setCheckIn(true); }
+  };
   // Review panel only: open scrolled to the week cards, or check in on its own to show an award.
   const scroll = useRef();
   useScrollTo(scroll, params.scrollTo);
@@ -136,6 +144,7 @@ export function Home() {
         {app.v2 && app.member && (
           <View testID="home-week" {...enter(1)}>
             <View style={{ gap: 12 }}>
+              {app.me.stage === 'seedling' && <FirstWeekCard me={app.me} onStep={firstStep} />}
               <StreakCard weeks={app.me.weeks} streak={app.streak} onCheckIn={() => { fb.haptic('light'); setCheckIn(true); }} />
               <QuestCard done={questDone} locked={!app.grove} onPress={() => (app.grove ? nav.navigate('Quest') : nav.openModal('JoinGrove', { reason: 'quests' }))} />
             </View>
