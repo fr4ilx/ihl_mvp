@@ -6,7 +6,7 @@ import { motion } from '../theme/motion';
 import { useNav, useRoute, useStatusBarStyle } from '../app/nav';
 import { useApp, useLoad } from '../app/store';
 import { useFeedback, SNACK, celebrate } from '../app/feedback';
-import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBTYPES, SUBCATEGORY_ICONS } from '../data';
+import { LISTINGS, images, NEAR_ME, townOf, milesOf, SUBCATEGORIES, SUBTYPES, SUBCATEGORY_ICONS, SUBCATEGORY_ART } from '../data';
 import Screen, { BottomBar, HeaderFill, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -248,11 +248,11 @@ function DirectoryLayout({ category, subcategory, subtype }) {
   }, [q, category, sub, subtype, city, radius, app.listings]);
   const open = (item) => nav.navigate('ListingProfile', { id: item.id });
   const place = city === NEAR_ME ? 'near you' : `in ${city}`;
-  const icons = (list) => list.map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }));
+  const icons = (list) => list.map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k], thumb: SUBCATEGORY_ART[k] }));
   const tiles = kinds
     ? <CategoryTiles testPrefix="subtype-tile" items={icons(kinds)} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubtypeResults', { category, subcategory: sub, subtype: k, city }); }} />
     : sub ? null : category
-    ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k] }))} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubcategoryResults', { category, subcategory: k, city }); }} />
+    ? <CategoryTiles testPrefix="subcategory-tile" items={(SUBCATEGORIES[category] || []).map((k) => ({ label: k, icon: SUBCATEGORY_ICONS[k], thumb: SUBCATEGORY_ART[k] }))} onPick={(k) => { fb.haptic('selection'); nav.navigate('SubcategoryResults', { category, subcategory: k, city }); }} />
     : <CategoryTiles onPick={(k) => { fb.haptic('selection'); nav.navigate('CategoryResults', { category: k, city }); }} />;
 
   let body;

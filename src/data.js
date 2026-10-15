@@ -38,6 +38,29 @@ import wcHolistic from '../assets/img/wc_cat_holistic.webp';
 import wcFood from '../assets/img/wc_cat_food.webp';
 import wcShop from '../assets/img/wc_cat_shop.webp';
 import wcServices from '../assets/img/wc_cat_services.webp';
+import wcSubIntegrative from '../assets/img/wc_sub_integrative.webp';
+import wcSubAlternative from '../assets/img/wc_sub_alternative.webp';
+import wcSubMovement from '../assets/img/wc_sub_movement.webp';
+import wcSubMental from '../assets/img/wc_sub_mental.webp';
+import wcSubFarms from '../assets/img/wc_sub_farms.webp';
+import wcSubMarkets from '../assets/img/wc_sub_markets.webp';
+import wcSubBakeries from '../assets/img/wc_sub_bakeries.webp';
+import wcSubRestaurants from '../assets/img/wc_sub_restaurants.webp';
+import wcSubGrocers from '../assets/img/wc_sub_grocers.webp';
+import wcSubApothecary from '../assets/img/wc_sub_apothecary.webp';
+import wcSubSupplements from '../assets/img/wc_sub_supplements.webp';
+import wcSubSkincare from '../assets/img/wc_sub_skincare.webp';
+import wcSubTeas from '../assets/img/wc_sub_teas.webp';
+import wcSubVet from '../assets/img/wc_sub_vet.webp';
+import wcSubBirth from '../assets/img/wc_sub_birth.webp';
+import wcSubSpa from '../assets/img/wc_sub_spa.webp';
+import wcSubCoaching from '../assets/img/wc_sub_coaching.webp';
+import wcSubProfessional from '../assets/img/wc_sub_professional.webp';
+import wcSubFacilities from '../assets/img/wc_sub_facilities.webp';
+import wcSubHerbalism from '../assets/img/wc_sub_herbalism.webp';
+import wcSubTcm from '../assets/img/wc_sub_tcm.webp';
+import wcSubNaturopath from '../assets/img/wc_sub_naturopath.webp';
+import wcSubHomeopath from '../assets/img/wc_sub_homeopath.webp';
 export const CATEGORY_ART = { 'Holistic Business': wcHolistic, Food: wcFood, Shop: wcShop, Services: wcServices };
 // Figma: Medallion art. Full color for earned, a grey copy for in progress and locked.
 import artSeedling from '../assets/img/art_seedling.webp';
@@ -121,6 +144,32 @@ export const SUBCATEGORY_ICONS = {
   Apothecary: 'flask', Supplements: 'pharmacy-cross-tag', 'Skin care': 'soap', 'Teas and herbs': 'leaf',
   'Holistic Vet': 'heart', 'Birth and Family Services': 'stroller', 'Wellness Spa': 'bathroom', 'Coaching and Personal': 'chat-lines', 'Professional Services': 'suitcase', Facilities: 'building',
   Herbalism: 'leaf', 'TCM and Ayurveda': 'potion', Naturopath: 'flower', Homeopath: 'droplet',
+};
+// The watercolor on each subcategory's and subtype's tile, 48pt in place of the Iconoir circle.
+export const SUBCATEGORY_ART = {
+  'Integrative and Functional Medicine': wcSubIntegrative,
+  'Alternative Health Professionals': wcSubAlternative,
+  'Movement and Manual Therapy': wcSubMovement,
+  'Mental Health and Energy Work': wcSubMental,
+  'Farms': wcSubFarms,
+  'Markets': wcSubMarkets,
+  'Bakeries and cafés': wcSubBakeries,
+  'Restaurants': wcSubRestaurants,
+  'Grocers': wcSubGrocers,
+  'Apothecary': wcSubApothecary,
+  'Supplements': wcSubSupplements,
+  'Skin care': wcSubSkincare,
+  'Teas and herbs': wcSubTeas,
+  'Holistic Vet': wcSubVet,
+  'Birth and Family Services': wcSubBirth,
+  'Wellness Spa': wcSubSpa,
+  'Coaching and Personal': wcSubCoaching,
+  'Professional Services': wcSubProfessional,
+  'Facilities': wcSubFacilities,
+  'Herbalism': wcSubHerbalism,
+  'TCM and Ayurveda': wcSubTcm,
+  'Naturopath': wcSubNaturopath,
+  'Homeopath': wcSubHomeopath,
 };
 // Directory's city picker: Near me, then Indiana's 10 largest cities. It opens on the city in the person's profile.
 export const NEAR_ME = 'Near me';

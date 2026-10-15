@@ -42,6 +42,10 @@ photorealistic, 3D render, glossy, vector, flat cartoon, black outlines, text, l
 - For the app, export 144 by 144 WebP (48pt at 3x) into `assets/img`.
 - In the tiles the art replaces the Iconoir glyph inside the 40pt circle and grows to 48pt with no circle. Check every one at that size in Light and Dark before handing over. If pale washes vanish on the Dark card (#2B2722), keep a cream circle behind the art in Dark only.
 
+## Applied
+
+The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 48pt with no circle. The goal, care, mood and perk sets are made and not placed yet.
+
 ## The list
 
 46 images.

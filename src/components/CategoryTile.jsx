@@ -1,8 +1,8 @@
 // Figma: Category tile (Selected: No, Yes). The four broad categories at the top of Directory, two to a row with a
 // 12pt gap, styled like the listing cards under them: a 72pt tile on bg/color-surface-raised, radius/20, Elevation/Card
 // and no edge,
-// a 40pt bg/color-brand-subtle circle with the icon in icon/color-brand, then the label in Body S Medium, which may
-// wrap to three lines, and the tile grows to fit it. Selected fills the tile with bg/color-selected, a 2pt border/color-brand edge, the circle in
+// a 40pt bg/color-brand-subtle circle with the icon (or, with thumb, a 48pt watercolor and no circle) in icon/color-brand, then the label in Body S Medium, which may
+// wrap to three lines (four with a watercolor), and the tile grows to fit it. Selected fills the tile with bg/color-selected, a 2pt border/color-brand edge, the circle in
 // bg/color-brand with the icon in icon/color-on-brand and the label in Bold, so the state never rests on color alone.
 // On a category page the same tiles hold its subcategories. Tapping the selected tile again shows every place.
 import React from 'react';
@@ -16,7 +16,7 @@ export const CATEGORY_ICONS = { 'Holistic Business': 'user-love', Food: 'apple-f
 // art: a watercolor in place of the icon circle. The four categories have one so far, and with art the tile is tall:
 // 200pt, the watercolor at 128pt centered on top and the label in Body M centered under it, so the 2 by 2 grid
 // takes about half the screen.
-export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], selected, onPress, testID }) {
+export default function CategoryTile({ label, icon, thumb, art = thumb ? undefined : CATEGORY_ART[label], selected, onPress, testID }) {
   const { c } = useTheme();
   return (
     <Pressable
@@ -28,7 +28,7 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
       style={({ pressed }) => [
         {
           flex: 1, minHeight: art ? 200 : 72, paddingHorizontal: selected ? 10 : 12, paddingVertical: selected ? 10 : 12, borderRadius: 20,
-          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : 12,
+          flexDirection: art ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: art ? 8 : thumb ? 8 : 12,
           backgroundColor: c(selected ? 'bg/color-selected' : 'bg/color-surface-raised'), boxShadow: elevation.card,
           ...(selected ? { borderWidth: 2, borderColor: c('border/color-brand') } : {}),
         },
@@ -37,6 +37,8 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
     >
       {art ? (
         <Image source={art} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 128, height: 128 }} />
+      ) : thumb ? (
+        <Image source={thumb} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 48, height: 48 }} />
       ) : (
       <View style={{ width: 40, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center', backgroundColor: c(selected ? 'bg/color-brand' : 'bg/color-brand-subtle') }}>
         <Icon name={icon || CATEGORY_ICONS[label]} size={24} color={c(selected ? 'icon/color-on-brand' : 'icon/color-brand')} />
@@ -44,7 +46,7 @@ export default function CategoryTile({ label, icon, art = CATEGORY_ART[label], s
       )}
       {art
         ? <Text numberOfLines={2} style={[type('BodyM'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
-        : <Text numberOfLines={3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>}
+        : <Text numberOfLines={thumb ? 4 : 3} style={[type('BodyS', selected ? 'bold' : 'medium'), { color: c('text/color-primary'), flex: 1 }]}>{label}</Text>}
     </Pressable>
   );
 }
@@ -57,7 +59,7 @@ export function CategoryTiles({ items = Object.keys(CATEGORY_ICONS).map((k) => (
     <View testID={`${testPrefix}s`} style={{ gap: 12 }}>
       {rows.map((row, r) => (
         <View key={r} style={{ flexDirection: 'row', gap: 12 }}>
-          {row.map((it) => <CategoryTile key={it.label} testID={`${testPrefix}-${it.label}`} label={it.label} icon={it.icon} selected={value === it.label} onPress={() => onPick(value === it.label ? null : it.label)} />)}
+          {row.map((it) => <CategoryTile key={it.label} testID={`${testPrefix}-${it.label}`} label={it.label} icon={it.icon} thumb={it.thumb} selected={value === it.label} onPress={() => onPick(value === it.label ? null : it.label)} />)}
           {row.length === 1 && <View style={{ flex: 1 }} />}
         </View>
       ))}
