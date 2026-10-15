@@ -2,7 +2,7 @@
 //   network / content: the panel values this state needs (the panel switches to them).
 //   seed: sample data the app starts with for this item, for example which places are saved.
 //   Route params like email, name, draft, denied, emailError, showAlert, autoSubmit, autoSend, autoPost, validate, picks,
-//   expanded, scrollTo, openMaps, openShare, confirmDelete, openTopics, showWaiver, waiverRead, promo, query, openCheckIn, mood,
+//   expanded, scrollTo, openMaps, openShare, confirmDelete, openTopics, showWaiver, waiverRead, query, openCheckIn, mood,
 //   autoCheckIn, autoRate, confirmLeave, replyTo, showStore, welcome and open only exist for the panel.
 //   In the app every form opens empty.
 //   v: 2 marks an item that only exists in V2 (the seeker round). v1: { label, nav } is how an item reads and opens
@@ -30,8 +30,6 @@ const REQUESTED = AS({ ...SAMPLE_PRACTICE, feature: { status: 'requested', lengt
 const FEATURED = AS({ ...SAMPLE_PRACTICE, feature: { status: 'live', length: '3 months', until: 'January 3, 2027' } });
 const BASICS = { name: 'Quiet Mind Massage', type: 'Practice' };
 const PLACE = { address: '5625 E Washington St', city: 'Irvington, Indianapolis' };
-const PRACTICE_POST = 'Tight shoulders after yard work? Roll them back slowly ten times, then rest your hands on your belly and breathe out long.';
-const PROMO_POST = 'This week only: 15 minutes of reflexology added to any massage, on us. Book online or give us a call.';
 const ANSWER = 'Most people can have gentle massage once the incision has healed, often around 6 to 8 weeks. Check with your surgeon first, and tell your therapist about the knee so they stay clear of it.';
 // Practice setup: what each step fills in, in step order. upTo(n) is the practice when step n opens.
 const STEP_FIELDS = [BASICS, { specialties: SAMPLE_PRACTICE.specialties }, PLACE, { photos: SAMPLE_PRACTICE.photos }, { about: SAMPLE_PRACTICE.about }, { hours: SAMPLE_PRACTICE.hours }, { phone: SAMPLE_PRACTICE.phone, website: SAMPLE_PRACTICE.website, booking: SAMPLE_PRACTICE.booking }, { services: SAMPLE_PRACTICE.services }, { offer: SAMPLE_PRACTICE.offer }];
@@ -183,7 +181,7 @@ export const FLOWS = [
       { id: 'post-options', label: 'Post options', state: true, nav: tab('community', ['Community', { options: 'p1' }]) },
       { id: 'block-alert', label: 'Block Karen B.', state: true, nav: tab('community', ['Community', { block: 'p1' }]) },
       { id: 'conversation', label: 'Conversation', nav: tab('community', ['Community'], ['Conversation', { postId: 'p1' }]) },
-      { id: 'practitioner-post', label: 'Practitioner post', nav: tab('community', ['Community'], ['Conversation', { postId: 'p6' }]) },
+      { id: 'practitioner-post', label: 'Practitioner reply', nav: tab('community', ['Community'], ['Conversation', { postId: 'p6' }]) },
       { id: 'no-replies', label: 'No replies yet', state: true, content: 'empty', nav: tab('community', ['Community'], ['Conversation', { postId: 'p1' }]) },
       { id: 'couldnt-send', label: 'Couldn’t send', state: true, network: 'offline', nav: tab('community', ['Community'], ['Conversation', { postId: 'p1', draft: REPLY_DRAFT, autoSend: true }]) },
       { id: 'member', label: 'Member profile', nav: tab('community', ['Community'], ['MemberProfile', { personId: 'karen' }]) },
@@ -308,10 +306,11 @@ export const FLOWS = [
       { id: 'feature-requested', label: 'Request sent', state: true, seed: REQUESTED, nav: tab('profile', ['MyPractice', { scrollTo: 'this-month' }]) },
       { id: 'featured', label: 'Featured', state: true, seed: FEATURED, nav: tab('profile', ['MyPractice', { scrollTo: 'this-month' }]) },
       { id: 'featured-home', label: 'Featured on Home', state: true, seed: FEATURED, nav: tab('home', ['Home']) },
-      { id: 'practice-newpost', label: 'New post as a practitioner', seed: LIVE, nav: { ...tab('community', ['Community']), modal: mk('NewPost', { topic: 'Movement', text: PRACTICE_POST }) } },
-      { id: 'promo-on', label: 'Promotion on', state: true, seed: LIVE, nav: { ...tab('community', ['Community']), modal: mk('NewPost', { topic: 'Movement', text: PROMO_POST, promo: true }) } },
-      { id: 'promo-limit', label: '3 promotions this week', state: true, seed: AS({ ...SAMPLE_PRACTICE, promos: ['2026-09-30', '2026-10-01', '2026-10-03'] }), nav: { ...tab('community', ['Community']), modal: mk('NewPost', { topic: 'Movement', text: PROMO_POST }) } },
-      { id: 'promo-posted', label: 'Promotion posted', state: true, seed: LIVE, nav: { ...tab('community', ['Community']), modal: mk('NewPost', { topic: 'Movement', text: PROMO_POST, promo: true, autoPost: true }) } },
+      { id: 'practice-community', label: 'Community, questions for you', seed: LIVE, nav: tab('community', ['Community']) },
+      { id: 'practice-answer', label: 'Answering a question', state: true, seed: LIVE, nav: tab('community', ['Community'], ['Conversation', { postId: 'q1', draft: ANSWER }]) },
+      { id: 'practice-caught-up', label: 'All caught up', state: true, seed: AS({ ...SAMPLE_PRACTICE, specialties: ['Back pain', 'Stress'] }), nav: tab('community', ['Community']) },
+      { id: 'practice-community-draft', label: 'Community before live', state: true, seed: READY, nav: tab('community', ['Community']) },
+      { id: 'practice-group', v: 2, label: 'A group, read only', state: true, seed: LIVE, nav: tab('community', ['Community'], ['Group', { id: 'bookclub' }]) },
     ],
   },
 ];

@@ -103,7 +103,9 @@ export function Group() {
   const [leave, setLeave] = useState(!!params.confirmLeave);
   const posts = app.groupPosts(g.id);
   const experts = g.id === 'experts';
-  // Members ask. A practitioner answers from Questions for you on My Practice.
+  // Members ask. A practitioner answers from Questions for you on Community and My Practice.
+  // Groups are for members: a practitioner reads and replies, with no Join and no New post.
+  const pro = app.practitioner;
   const asking = experts && app.member;
   const ask = () => (app.grove ? nav.openModal('AskQuestion') : nav.openModal('JoinGrove', { reason: 'experts' }));
   const newPost = () => nav.openModal('NewPost', { group: g.id });
@@ -112,7 +114,7 @@ export function Group() {
     <>
       <Screen
         testID="screen-group"
-        nav={<NavBar kind="back" onBack={nav.goBack} actions={g.joined && !experts ? [{ icon: 'plus', variant: 'filled', onPress: newPost, accessibilityLabel: `New post in ${g.name}`, testID: 'group-new-post' }] : []} />}
+        nav={<NavBar kind="back" onBack={nav.goBack} actions={g.joined && !experts && !pro ? [{ icon: 'plus', variant: 'filled', onPress: newPost, accessibilityLabel: `New post in ${g.name}`, testID: 'group-new-post' }] : []} />}
         bodyGap={24}
       >
         <View style={{ alignItems: 'center', gap: 8 }}>
@@ -120,11 +122,12 @@ export function Group() {
           <Text style={[type('H2', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{g.name}</Text>
           <Text style={[type('BodyS'), { color: c('text/color-secondary'), textAlign: 'center' }]}>{members(g.members)}  ·  {fresh(g.fresh)}</Text>
           <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>{g.about}</Text>
-          <View style={{ alignSelf: 'stretch', marginTop: 8 }}>
+          {pro && <Text testID="group-members-only" style={[type('BodyS', 'bold'), { color: c('text/color-brand'), textAlign: 'center', marginTop: 8 }]}>Members post here. You can reply.</Text>}
+          {!pro && <View style={{ alignSelf: 'stretch', marginTop: 8 }}>
             {g.joined
               ? <Button testID="group-joined" label="Joined" hierarchy="secondary" leadingIcon="check" fill onPress={() => { fb.haptic('light'); setLeave(true); }} />
               : <Button testID="group-join" label="Join group" fill onPress={() => join(g)} />}
-          </View>
+          </View>}
         </View>
         {asking && <AskCard locked={!app.grove} quiet={!g.joined} onAsk={ask} />}
         {asking && app.grove && app.myQuestions.length > 0 && (
@@ -156,7 +159,7 @@ export function Group() {
               ))}
             </View>
           ) : (
-            <EmptyState testID="group-empty" illustration={images.illustrations.circle} title="No posts yet" message={g.joined ? 'Start the first one.' : 'Join to start the first one.'} action={g.joined ? 'New post' : null} onAction={newPost} />
+            <EmptyState testID="group-empty" illustration={images.illustrations.circle} title="No posts yet" message={pro ? 'Members’ posts show up here.' : g.joined ? 'Start the first one.' : 'Join to start the first one.'} action={g.joined && !pro ? 'New post' : null} onAction={newPost} />
           )}
         </View>
       </Screen>

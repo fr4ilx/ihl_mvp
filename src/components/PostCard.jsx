@@ -1,10 +1,10 @@
 // Figma: Post card. Who and when, text (Body S, up to four lines in the feed, Body M in full in a conversation), optional photos, then Like and Reply with
 // counts and the topic as a Neutral badge at the end of the same row. The time stays with the author and the topic
 // with the content, so the two never share a line or a style.
-// A practitioner posts as their practice: the Practitioner badge (Success, Subtle) starts the line under the name.
+// A practice's posts from before practitioners went reply only keep the Practitioner badge (Success, Subtle) under the name.
 // A member's stage sits after the name in V2: a 20pt Medallion and the stage in Caption Bold text/color-accent, so it reads
 // in words too. Practitioners show the Practitioner badge instead. Nothing ranks members, it only says where they are.
-// A promotion adds the Promotion badge (Accent, like Sponsored). An Ask the Experts question adds that badge (Info).
+// An Ask the Experts question adds that badge (Info).
 import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from '../rn';
 import { useTheme, type, elevation } from '../theme';
@@ -46,7 +46,6 @@ export default function PostCard({ post, author, onPress, onLike, onAuthor, onPh
             {/* The meta line wraps as a whole under the badge when it runs out of room (larger text sizes). */}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: 8 }}>
               {author.practitioner && <Badge label="Practitioner" tone="success" />}
-              {post.promo && <Badge testID="promo-badge" label="Promotion" tone="accent" />}
               {post.ask && !inGroup && <Badge testID="ask-badge" label="Ask the Experts" tone="info" />}
               <Text style={[type('Caption'), { color: c('text/color-tertiary') }]}>{post.time}</Text>
             </View>

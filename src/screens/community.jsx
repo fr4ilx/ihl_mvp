@@ -1,5 +1,7 @@
 // Community tab: Community (feed), Conversation, MemberProfile. Modals: NewPost, PhotoViewer.
 // Community shows Your groups above the feed (V2). Group posts live in their group (groups.jsx), so the feed holds the rest.
+// A practitioner reads, replies and answers, and never starts a post: Questions for you leads their Community instead
+// of Your groups, and there is no New post button.
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, ScrollView, Pressable, TextInput, StyleSheet } from '../rn';
 import { useTheme, type, elevation } from '../theme';
@@ -33,9 +35,8 @@ import ShareSheet from '../components/ShareSheet';
 import ChoosePhotosSheet from '../components/ChoosePhotosSheet';
 import PhotoGrid from '../components/PhotoGrid';
 import Badge from '../components/Badge';
-import Toggle from '../components/Toggle';
-import { SettingRow } from '../components/Rows';
 import { GroupTile, FindGroupsTile, GroupArt } from '../components/Groups';
+import { AnswerCard, QuestionsNote } from '../components/Questions';
 import { BadgeRow } from '../components/Journey';
 import { STAGES, BADGES, QUEST } from '../data';
 import { enter } from './home';
@@ -86,6 +87,7 @@ export function Community() {
   const [sheet, setSheet] = useState(!!params.openTopics);
   const [state, retry] = useLoad(app.network);
   const q = query.trim().toLowerCase();
+  const pro = app.practitioner;
   const posts = app.feed.filter((p) => (topic === 'All' || p.topic === topic) && (!q || [p.text, p.topic, app.person(p.author).name].join(' ').toLowerCase().includes(q)));
   const pick = (t) => { setTopic(t); setSheet(false); fb.haptic('selection'); };
   const options = usePostOptions();
@@ -102,9 +104,9 @@ export function Community() {
   if (state === 'loading') body = <><PostSkeleton /><PostSkeleton photo={false} /></>;
   // Figma: feed messages sit 56pt lower than the first card would.
   else if (state === 'error') body = <><View style={{ height: 56 }} /><EmptyState testID="feed-error" tone="error" illustration={images.illustrations.error} title="Can’t load the feed" message="Check your connection and try again." action="Try again" onAction={() => { fb.haptic('light'); retry(); }} /></>;
-  else if (!app.feed.length) body = <><View style={{ height: 56 }} /><EmptyState testID="feed-empty" illustration={images.illustrations.circle} title="No posts yet" message="Be the first to start one." action="New post" onAction={() => nav.openModal('NewPost')} /></>;
+  else if (!app.feed.length) body = <><View style={{ height: 56 }} /><EmptyState testID="feed-empty" illustration={images.illustrations.circle} title="No posts yet" message={pro ? 'Members’ posts show up here.' : 'Be the first to start one.'} action={pro ? null : 'New post'} onAction={() => nav.openModal('NewPost')} /></>;
   else if (!posts.length && q) body = <><View style={{ height: 56 }} /><EmptyState testID="feed-no-results" illustration={images.illustrations.noResults} title={`No posts for “${query.trim()}”`} message="Try another word or topic." action="Clear search" onAction={() => { setQuery(''); setTopic('All'); }} /></>;
-  else if (!posts.length) body = <><View style={{ height: 56 }} /><EmptyState testID="feed-topic-empty" illustration={images.illustrations.circle} title={`No ${topic.toLowerCase()} posts yet`} message="Start the first one." action="New post" onAction={() => nav.openModal('NewPost', { topic })} /></>;
+  else if (!posts.length) body = <><View style={{ height: 56 }} /><EmptyState testID="feed-topic-empty" illustration={images.illustrations.circle} title={`No ${topic.toLowerCase()} posts yet`} message={pro ? 'Members’ posts show up here.' : 'Start the first one.'} action={pro ? null : 'New post'} onAction={() => nav.openModal('NewPost', { topic })} /></>;
   else body = posts.map((p, i) => (
     <View key={p.id} {...enter(p.fresh ? 0 : i)}>
       <PostCard
@@ -120,8 +122,11 @@ export function Community() {
     </View>
   ));
   const showCount = state === 'ready' && posts.length > 0 && (topic !== 'All' || !!q);
-  // Your groups sits above the feed until a search or a topic narrows it. V1 has no groups.
-  const showGroups = app.v2 && state === 'ready' && topic === 'All' && !q;
+  // Your groups, or Questions for you for a practitioner, sits above the feed until a search or a topic narrows it.
+  // V1 has no groups.
+  const top = state === 'ready' && topic === 'All' && !q;
+  const showGroups = app.v2 && !pro && top;
+  const showQuestions = pro && top;
   const mine = app.groups.filter((g) => g.joined);
   const listed = state === 'ready' && posts.length > 0;
 
@@ -131,8 +136,8 @@ export function Community() {
         testID="screen-community"
         bodyTop={12}
         statusFill
-        bottomSpace={186}
-        bottom={<><NewPostButton onPress={() => nav.openModal('NewPost')} /><TabBar active="community" onChange={nav.switchTab} /></>}
+        bottomSpace={pro ? 140 : 186}
+        bottom={<>{!pro && <NewPostButton onPress={() => nav.openModal('NewPost')} />}<TabBar active="community" onChange={nav.switchTab} /></>}
       >
         <View style={{ gap: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -164,7 +169,8 @@ export function Community() {
             )}
           </View>
         )}
-        {showGroups && listed ? (
+        {showQuestions && <QuestionsForYou />}
+        {(showGroups || showQuestions) && listed ? (
           <View style={{ gap: 12 }}>
             <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Latest posts</Text>
             <View style={{ gap: 20 }}>{body}</View>
@@ -173,6 +179,36 @@ export function Community() {
       </Screen>
       <TopicsSheet visible={sheet} value={topic} onPick={pick} onClose={() => setSheet(false)} />
     </>
+  );
+}
+
+// Questions for you: Ask the Experts questions that match this practice's specialties, waiting for its answer.
+// Each card opens the conversation, Answer opens it with the Reply bar ready. Once answered a question leaves the list.
+// Nothing waiting, or a listing that isn't live yet, shows one Questions note instead.
+function QuestionsForYou() {
+  const { c } = useTheme();
+  const nav = useNav();
+  const app = useApp();
+  const fb = useFeedback();
+  const status = app.practice.status;
+  const waiting = app.questions;
+  const open = (q, focus) => { if (focus) fb.haptic('light'); nav.navigate('Conversation', { postId: q.id, focus }); };
+  let body;
+  if (status === 'draft') body = <QuestionsNote testID="questions-later" title="Questions start once you’re live" message="Finish your listing on My Practice." onPress={() => nav.switchTab('profile')} />;
+  else if (status !== 'live') body = <QuestionsNote testID="questions-later" title="Questions start once you’re live" message="We’re checking your listing now." />;
+  else if (!waiting.length) body = <QuestionsNote testID="questions-done" tone="done" title="You’re all caught up" message="New questions show up here." />;
+  else body = waiting.map((q, i) => <AnswerCard key={q.id} testID={`answer-${q.id}`} {...enter(i)} question={q} author={app.person(q.author)} onOpen={() => open(q)} onAnswer={() => open(q, true)} />);
+  return (
+    <View testID="questions-for-you" style={{ gap: 12 }}>
+      <View style={{ gap: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Questions for you</Text>
+          {status === 'live' && waiting.length > 0 && <Text testID="questions-waiting" style={[type('BodyS', 'bold'), { color: c('text/color-brand') }]}>{waiting.length} waiting</Text>}
+        </View>
+        {status === 'live' && waiting.length > 0 && <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>Your answers show the Expert badge.</Text>}
+      </View>
+      {body}
+    </View>
   );
 }
 
@@ -213,6 +249,8 @@ export function Conversation() {
   const scroll = useRef();
   const input = useRef();
   useEffect(() => { if (!route.params.autoSend) return; const t = setTimeout(() => send(), 600); return () => clearTimeout(t); }, []);
+  // Answer on Questions for you: the Reply bar is ready once the push settles.
+  useEffect(() => { if (!route.params.focus) return; const t = setTimeout(() => input.current && input.current.focus(), 520); return () => clearTimeout(t); }, []);
   useEffect(() => {
     if (route.params.justPosted) {
       const t = setTimeout(() => fb.snack({ message: 'Your post is live', bottom: SNACK.composer }), 560);
@@ -380,15 +418,7 @@ export function NewPost() {
   const form = useForm(!!p.validate);
   const errors = { topic: !group && !topic ? 'Pick a topic.' : null, content: !text.trim() && !photos.length ? 'Write something or add a photo.' : null };
   const shown = form.shown(errors);
-  const me = app.person('jane');
   const room = MAX_PHOTOS - photos.length;
-  // A practitioner can mark a post as a promotion (an offer, a sale, an event): 1 a day and 3 in any 7 days.
-  // Answers, replies and other posts have no limit.
-  const promo = app.promo;
-  const [promoOn, setPromoOn] = useState(!!p.promo && !!promo && promo.open);
-  const promoLine = !promo ? '' : promo.open
-    ? `Offers, sales and events. ${promo.left} of 3 left this week.`
-    : promo.left === 0 ? `You’ve shared 3 this week. Next one on ${promo.next}.` : 'You shared one today. Next one tomorrow.';
 
   const timers = useRef([]);
   const later = (fn, ms) => timers.current.push(setTimeout(fn, ms));
@@ -403,7 +433,7 @@ export function NewPost() {
       if (!live.current) return; // closed while posting
       setPosting(false);
       if (app.network === 'offline') { fb.snack({ message: 'Couldn’t post. Try again.', tone: 'error', bottom: SNACK.bottomBar }); return; }
-      const created = app.addPost({ topic: group ? null : topic, text: text.trim(), photos, promo: me.practitioner && promoOn, group: group ? group.id : null });
+      const created = app.addPost({ topic: group ? null : topic, text: text.trim(), photos, group: group ? group.id : null });
       fb.haptic('success');
       // A group post shows up on the group's page, under the modal.
       if (group) { nav.closeModal(); setTimeout(() => celebrate(fb, { grew: created.grew }, { message: 'Your post is live', bottom: SNACK.none }), 420); return; }
@@ -425,19 +455,6 @@ export function NewPost() {
         bodyGap={24}
         bottom={<BottomBar plain><Button testID="post-submit" label={posting ? 'Posting…' : 'Post'} fill disabled={posting} onPress={() => form.submit(errors, post)} /></BottomBar>}
       >
-        {me.practitioner && (
-          // A practitioner posts as their practice, so the page says who the post comes from.
-          <View testID="posting-as" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <Avatar person={me} size={40} />
-            <View style={{ flex: 1 }}>
-              <Text style={[type('Caption'), { color: c('text/color-tertiary') }]}>Posting as</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text numberOfLines={1} style={[type('BodyS', 'bold'), { color: c('text/color-primary'), flexShrink: 1 }]}>{me.name}</Text>
-                <Badge label="Practitioner" tone="success" />
-              </View>
-            </View>
-          </View>
-        )}
         {group ? (
           <View testID="posting-in" style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <GroupArt group={group} size={40} />
@@ -461,8 +478,7 @@ export function NewPost() {
             <Text style={[type('BodyS'), { color: c('text/color-primary'), flex: 1 }]}>This post finishes a step of the {QUEST.name}.</Text>
           </View>
         )}
-        {/* 220pt, or 176pt when the Promotion row is there too, so its line stays clear of Post. */}
-        <View style={{ height: me.practitioner && promo ? 176 : 220, borderRadius: 16, borderWidth: shown.content ? 2 : 1, borderColor: c(shown.content ? 'border/color-error' : 'border/color-control'), backgroundColor: c('bg/color-surface-raised'), padding: shown.content ? 15 : 16 }}>
+        <View style={{ height: 220, borderRadius: 16, borderWidth: shown.content ? 2 : 1, borderColor: c(shown.content ? 'border/color-error' : 'border/color-control'), backgroundColor: c('bg/color-surface-raised'), padding: shown.content ? 15 : 16 }}>
           <TextInput testID="post-text" multiline value={text} onChangeText={setText} placeholder="What would you like to share?" placeholderTextColor={c('text/color-tertiary')} style={[type('BodyM'), { color: c('text/color-primary'), flex: 1, height: '100%' }]} />
         </View>
         {/* Figma: the photo row and its caption are separate rows of the body (24pt apart) */}
@@ -471,14 +487,6 @@ export function NewPost() {
         {shown.content
           ? <FieldError testID="content-error" message={shown.content} />
           : <Text style={[type('Caption'), { color: c('text/color-tertiary') }]}>{photos.length ? `${photos.length} of ${MAX_PHOTOS} photos` : `Add up to ${MAX_PHOTOS} photos`}</Text>}
-        {me.practitioner && promo && (
-          <View testID="promo" style={{ gap: 8 }}>
-            <View style={{ backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card, borderRadius: 16, paddingHorizontal: 16, opacity: promo.open ? 1 : 0.5 }}>
-              <SettingRow icon="megaphone" label="Promotion" trailing={<Toggle testID="promo-toggle" on={promoOn} accessibilityLabel="Promotion" onChange={(v) => { if (!promo.open) return; setPromoOn(v); fb.haptic('selection'); }} />} />
-            </View>
-            <Text testID="promo-line" style={[type('BodyS'), { color: c('text/color-secondary') }]}>{promoLine}</Text>
-          </View>
-        )}
       </Screen>
       <ChoosePhotosSheet visible={sheet} room={room} initialPicks={p.picks || []} onAdd={addPicked} onClose={() => setSheet(false)} />
     </>

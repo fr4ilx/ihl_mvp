@@ -12,7 +12,7 @@
 // practice.feature: null, { status: 'requested', length } or { status: 'live', length, until } (shown in the Home reel).
 // unclaimed: imported listings nobody manages yet. Claimed listings carry the Verified Local Business badge.
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ME, POSTS, PEOPLE, LISTINGS, WEEK, TYPE_CATEGORY, SAMPLE_PRACTICE, TODAY, GROUPS, FREE_GROUPS, STAGES, BADGES, QUEST, MY_QUESTIONS, GROUP_HINTS, SPECIALTIES, FOCUS_AREAS, kindOf, moreReplies } from '../data';
+import { ME, POSTS, PEOPLE, LISTINGS, WEEK, TYPE_CATEGORY, SAMPLE_PRACTICE, GROUPS, FREE_GROUPS, STAGES, BADGES, QUEST, MY_QUESTIONS, GROUP_HINTS, SPECIALTIES, FOCUS_AREAS, kindOf, moreReplies } from '../data';
 
 const AppContext = createContext(null);
 export const useApp = () => useContext(AppContext);
@@ -64,21 +64,8 @@ const NEW_ACCOUNT_UNCLAIMED = ['rooted', 'quietmind', 'apothecary'];
 // The email on record with only its first letter showing: d•••@quietmindmassage.com
 export const maskEmail = (email) => { const [user, domain] = (email || '').split('@'); return user ? `${user[0]}\u2022\u2022\u2022@${domain}` : ''; };
 
-// Promotions: 1 a day and 3 in any 7 days. Replies, comments and answers have no limit.
-// Returns { left, today, next }: next is the day the next promotion opens, like Wed, Oct 7.
-const DAY = 86400000;
-const toDate = (iso) => new Date(`${iso}T12:00:00`);
-const fmtDay = (d) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-export function promoStatus(promos = [], today = TODAY) {
-  const now = toDate(today);
-  const recent = promos.map(toDate).filter((d) => now - d < 7 * DAY && d <= now).sort((a, b) => a - b);
-  const usedToday = recent.some((d) => d.getTime() === now.getTime());
-  const left = Math.max(0, 3 - recent.length);
-  let next = null;
-  if (!left) next = fmtDay(new Date(recent[0].getTime() + 7 * DAY));
-  else if (usedToday) next = 'tomorrow';
-  return { left, usedToday, next, open: left > 0 && !usedToday };
-}
+// A practitioner already answered a question when one of its replies, or a reply to a reply, is theirs.
+const answeredBy = (p, id) => p.replies.some((r) => r.author === id || (r.replies || []).some((x) => x.author === id));
 
 // Hours as people read them on a listing: "Wed to Sun" over "11:00 AM to 8:00 PM".
 export function hoursSummary(hours) {
@@ -135,7 +122,7 @@ function practiceFrom(l) {
   if (l.id === SAMPLE_PRACTICE.listingId) return clone(SAMPLE_PRACTICE);
   return {
     listingId: l.id, name: l.name, type: TYPE_OF[l.category] || 'Practice', specialties: [...(l.specialties || [])], email: l.email || '',
-    address: l.address, city: l.city, phone: l.phone, website: l.website || '', booking: l.booking || '', offer: l.offer || null, promos: [],
+    address: l.address, city: l.city, phone: l.phone, website: l.website || '', booking: l.booking || '', offer: l.offer || null,
     photos: [l.photo], about: l.about, hours: hoursFrom(l.days, l.time), services: [...l.services],
     status: 'live', feature: null, stats: { views: 0, saves: 0, directions: 0 },
   };
@@ -195,7 +182,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
     const all = (empty ? posts.filter(mine) : posts).filter((p) => !blocked.includes(p.author)).map(view);
     const feed = all.filter((p) => !p.group || (!v2 && p.ask));
     const practitioner = me.role === 'practitioner' && !!practice;
-    // Membership, groups and the journey are for seekers. A practitioner takes part as their practice, with no limits.
+    // Membership, groups and the journey are for seekers. A practitioner reads, replies and answers as their practice.
     const grove = me.tier === 'grove';
     const joined = me.groups || [];
     // Applies a change to the member and returns the stage it grew them into, if any. The update stays functional so
@@ -212,8 +199,9 @@ export function AppProvider({ children, network = 'online', content = 'full', se
     // While it is a draft or in review it stays out of the Directory. A claim in review keeps the imported listing.
     const ownIsLive = practitioner && practice.status === 'live';
     const listings = empty ? [] : imported.filter((l) => !ownIsLive || l.id !== practice.listingId).concat(ownIsLive ? [myListing] : []);
-    // Ask the Experts: approved questions for the specialties this practice lists. Only live (verified) listings get them.
-    const questions = ownIsLive ? posts.filter((p) => p.ask && p.asks.some((m) => practice.specialties.includes(m))).map(view) : [];
+    // Ask the Experts: approved questions for the specialties this practice lists, until the practice answers them.
+    // Only live (verified) listings get them.
+    const questions = ownIsLive ? posts.filter((p) => p.ask && p.asks.some((m) => practice.specialties.includes(m)) && !answeredBy(p, 'jane')).map(view) : [];
     return {
       v2,
       me: { ...me, initials: initialsOf(me.name) }, saved, network, content,
@@ -224,7 +212,6 @@ export function AppProvider({ children, network = 'online', content = 'full', se
       // The practitioner's own listing as seekers will see it, except a claim in review: seekers still see the import.
       listing: (id) => (myListing && id === myListing.id && practice.claim !== 'review' ? myListing : imported.find((l) => l.id === id)),
       questions,
-      promo: practice ? promoStatus(practice.promos) : null,
       // ---------- Membership, groups, journey ----------
       // member: a seeker. Tiers, the journey, check-ins and quests are theirs.
       member: !practitioner,
@@ -333,11 +320,10 @@ export function AppProvider({ children, network = 'online', content = 'full', se
         const grew = change((m) => ({ ...m, replied: true, progress: { ...m.progress, welcomer }, badges: earned ? { ...m.badges, welcomer: 'Today' } : m.badges }));
         return { grew, earned };
       },
-      // promo: a practitioner's promotion. It counts toward 1 a day and 3 in any 7 days, and shows the Promotion badge.
-      addPost: ({ topic, text, photos, promo, group }) => {
-        const post = { id: 'p' + Date.now(), author: 'jane', time: 'Just now', topic, liked: false, likes: 0, text, photos, replies: [], replyCount: 0, fresh: true, ...(promo ? { promo: true } : {}), ...(group ? { group } : {}) };
+      // Members only. A practitioner replies and answers, they never start a post.
+      addPost: ({ topic, text, photos, group }) => {
+        const post = { id: 'p' + Date.now(), author: 'jane', time: 'Just now', topic, liked: false, likes: 0, text, photos, replies: [], replyCount: 0, fresh: true, ...(group ? { group } : {}) };
         setPosts((ps) => [post, ...ps]);
-        if (promo) setPractice((p) => ({ ...p, promos: [...(p.promos || []), TODAY] }));
         post.grew = change((m) => ({ ...m, posts: (m.posts || 0) + 1 }));
         return post;
       },
@@ -349,7 +335,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
       setRole: (role) => setMe((m) => ({ ...m, role })),
       // Your practice: the first two checklist items come from onboarding.
       startPractice: ({ name, type }) => setPractice((p) => ({
-        listingId: 'mine', specialties: [], address: '', city: '', phone: '', website: '', booking: '', offer: null, promos: [], photos: [], about: '', hours: {}, services: [],
+        listingId: 'mine', specialties: [], address: '', city: '', phone: '', website: '', booking: '', offer: null, photos: [], about: '', hours: {}, services: [],
         status: 'draft', feature: null, stats: { views: 0, saves: 0, directions: 0 }, ...(p || {}),
         // A new type offers other things, so its picks from What you offer go. Focus areas stay.
         ...(p && p.type !== type ? { specialties: p.specialties.filter((s) => FOCUS_AREAS.includes(s)) } : {}), name, type,

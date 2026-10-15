@@ -128,7 +128,7 @@ export function Home() {
     // 62 + the search field and its 20pt gap keep the illustration where it sat before search was added.
     body = (
       <View style={{ paddingTop: 62 }}>
-        <EmptyState testID="home-empty" illustration={images.illustrations.path} title="Nothing here yet" message="Partners and conversations near you will show up here." action="Start a conversation" onAction={() => nav.openModal('NewPost')} />
+        <EmptyState testID="home-empty" illustration={images.illustrations.path} title="Nothing here yet" message="Partners and conversations near you will show up here." action={app.practitioner ? null : 'Start a conversation'} onAction={() => nav.openModal('NewPost')} />
       </View>
     );
   } else {

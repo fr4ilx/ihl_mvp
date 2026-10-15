@@ -259,7 +259,7 @@ export const LISTINGS = [
 
 export const TOPICS = ['All', 'Herbs', 'Food', 'Movement', 'Mind'];
 
-// Seekers are members. Practitioners post as their practice: a Practitioner badge sits next to the name,
+// Seekers are members. Practitioners reply as their practice: a Practitioner badge sits next to the name,
 // and the name or photo opens their listing instead of a member profile.
 export const PEOPLE = {
   karen: { id: 'karen', name: 'Karen B.', initials: 'KB', photo: photoHerbs, area: 'Broad Ripple', since: '2025', interests: ['Herbs', 'Gardening', 'Markets'], stage: 'root', bio: 'Gardener and grandma of four. Ask me about herbs.', badges: ['seedling', 'explorer', 'farmfriend', 'welcomer'] },
@@ -330,10 +330,13 @@ export const POSTS = [
     replyCount: 8,
   },
   {
-    id: 'p6', author: 'quietmind', time: '6h', topic: 'Movement', liked: false, likes: 27,
-    text: 'A small habit for stiff shoulders: roll them back slowly ten times each time you stand up. It adds up over a day.',
+    id: 'p6', author: 'karen', time: '6h', topic: 'Movement', liked: false, likes: 27,
+    text: 'My shoulders get so stiff after a day in the garden. Any small habits that help?',
     photos: [],
-    replies: [{ id: 'r6', author: 'linda', time: '4h', text: 'Doing this now. Thank you!', likes: 1, liked: false }],
+    replies: [
+      { id: 'r6', author: 'quietmind', time: '5h', text: 'Roll them back slowly ten times each time you stand up. It adds up over a day.', likes: 9, liked: false,
+        replies: [{ id: 'r6b', author: 'karen', time: '4h', text: 'Doing this now. Thank you!', likes: 1, liked: false }] },
+    ],
     replyCount: 6,
   },
   {
@@ -478,14 +481,12 @@ export const CLOSED_WEEK = Object.fromEntries(WEEK.map((d) => [d, null]));
 export const FEATURE_LENGTHS = ['1 month', '3 months', '6 months'];
 
 // The sample practitioner: Quiet Mind Massage in Irvington (owner Dana). Claimed and live in the Directory.
-// promos: the days this practice shared a promotion (1 a day, 3 in any 7 days).
 export const SAMPLE_PRACTICE = {
   listingId: 'quietmind', name: 'Quiet Mind Massage', type: 'Practice', specialties: ['Massage', 'Reflexology', 'Back pain', 'Joint pain', 'Stress'],
   email: 'dana@quietmindmassage.com',
   address: '5625 E Washington St', city: 'Irvington, Indianapolis',
   phone: '(317) 555-0150', website: 'quietmindmassage.com', booking: 'quietmindmassage.com/book',
   offer: { title: '10% off your first massage', details: 'Mention the app when you book.' },
-  promos: ['2026-10-01'],
   photos: [photoFriends, photoHerbs, photoSeedlings],
   about: 'Relaxing and therapeutic massage with extra time for stiff shoulders and hips. Tables adjust for easy on and off, and the studio is on the ground floor with no steps.',
   hours: { Monday: null, Tuesday: null, Wednesday: ['11:00 AM', '8:00 PM'], Thursday: ['11:00 AM', '8:00 PM'], Friday: ['11:00 AM', '8:00 PM'], Saturday: ['11:00 AM', '8:00 PM'], Sunday: ['11:00 AM', '8:00 PM'] },
@@ -497,7 +498,7 @@ export const SAMPLE_PRACTICE = {
 // What a new practitioner has right after Your practice and Where people find you.
 // Hours start unset: each day reads Add until it is set to opening times or Closed.
 export const NEW_PRACTICE = {
-  ...SAMPLE_PRACTICE, specialties: [], phone: '', website: '', booking: '', offer: null, promos: [], photos: [], about: '', hours: {}, services: [],
+  ...SAMPLE_PRACTICE, specialties: [], phone: '', website: '', booking: '', offer: null, photos: [], about: '', hours: {}, services: [],
   status: 'draft', stats: { views: 0, saves: 0, directions: 0 },
 };
 
