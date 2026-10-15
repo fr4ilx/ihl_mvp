@@ -18,7 +18,7 @@ import StarRating from './StarRating';
 
 const noop = () => {};
 
-export default function ListingSections({ item, reviewable, review, onRate, offerLocked, onUnlock, aboutOpen, onTag = noop, onMap = noop, onLink = noop, preview, style }) {
+export default function ListingSections({ item, reviewable, review, onReview, offerLocked, onUnlock, aboutOpen, onTag = noop, onMap = noop, onLink = noop, preview, style }) {
   const { c } = useTheme();
   const address = `${item.address}, ${item.city}`;
   const tags = item.specialties || [];
@@ -30,9 +30,15 @@ export default function ListingSections({ item, reviewable, review, onRate, offe
           <Text style={[type('H3', 'bold'), { color: c('text/color-primary') }]}>{item.name}</Text>
         </View>
         <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{item.distance}  ·  {item.hours}</Text>
-        {/* Figma: Star rating, where the Verified Local Business badge was. A seeker rates someone else's listing by
-            tapping a star, and can tap another to change it. */}
-        {reviewable && <StarRating value={review ? review.rating : 0} onRate={onRate} />}
+        {/* Figma: Review, where the Verified Local Business badge was, for a seeker on someone else's listing. Empty: Add a
+            review (Secondary, Medium, star). Done: their stars at 28pt. Either opens the Review sheet. */}
+        {reviewable && (review ? (
+          <Pressable testID="your-review" onPress={onReview} accessibilityRole="button" accessibilityLabel={`Your review, ${review.rating} of 5 stars. Change it`} className="fx-fade-up" style={({ pressed }) => [{ alignSelf: 'flex-start', minHeight: 48, justifyContent: 'center' }, pressed && { opacity: 0.6 }]}>
+            <StarRating value={review.rating} size={28} />
+          </Pressable>
+        ) : (
+          <Button testID="add-review" label="Add a review" hierarchy="secondary" size="medium" leadingIcon="star" onPress={onReview} />
+        ))}
       </View>
       {!!item.offer && (
       <View testID="listing-offer" style={{ gap: 12 }}>

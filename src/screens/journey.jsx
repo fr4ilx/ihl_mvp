@@ -1,5 +1,5 @@
 // Your journey: Journey (stages), Badges and Quest (the season's quest). From My Profile and the Quest card on Home.
-// The journey grows from Seedling to Oak by taking part: check-ins, replies, posts and visits (the first rating of a listing).
+// The journey grows from Seedling to Oak by taking part: check-ins, replies, posts and visits (the first review of a listing).
 // Nothing here ranks members against each other.
 import React, { useRef, useState } from 'react';
 import { View, Text, Image } from '../rn';
@@ -124,7 +124,7 @@ export function Quest() {
   const total = QUEST.steps.length;
   const done = QUEST.steps.filter((s) => app.questDone(s.id)).length;
   const harvest = app.badges.find((b) => b.id === QUEST.badge);
-  // Each step leads to where it happens. A visit counts with the first rating on the listing.
+  // Each step leads to where it happens. A visit counts with the first review on the listing.
   const go = (id) => {
     if (id === 'farm') nav.openTab('directory', 'CategoryResults', { category: 'Food' });
     if (id === 'practitioner') nav.openTab('directory', 'CategoryResults', { category: 'Holistic Business' });

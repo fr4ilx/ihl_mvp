@@ -2,7 +2,7 @@
 // 96pt, a line above the title in Body S Bold text/color-accent (when it was earned, or New badge and New stage for the
 // moment it happens), the name in H2 Bold, how to earn it in Body M, and for a badge in progress a Progress bar with
 // "6 of 10 places", all in the middle of the sheet. Done, pinned at the bottom, closes it.
-// Award: the Medallion gets its breathing halo and the sheet opens with a success haptic, from Check in, a rating,
+// Award: the Medallion gets its breathing halo and the sheet opens with a success haptic, from Check in, a review,
 // a reply or a post. In the app: the shared bottom sheet and expo-haptics notificationAsync(Success).
 import React from 'react';
 import { View, Text } from '../rn';
