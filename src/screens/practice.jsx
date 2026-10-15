@@ -436,7 +436,7 @@ export function MyPractice() {
               return <ThreadRow key={q.id} testID={`question-${q.id}`} post={q} author={who} meta={`${who.name}  ·  ${q.replyCount ? `${q.replyCount} ${q.replyCount === 1 ? 'answer' : 'answers'}` : 'No answers yet'}  ·  ${q.time}`} divider={i < app.questions.length - 1} onPress={() => nav.navigate('Conversation', { postId: q.id })} />;
             })}
           </View>
-          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>IHL approves every question. Your answers show the Expert badge.</Text>
+          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>Your answers show the Expert badge.</Text>
         </View>
       )}
 

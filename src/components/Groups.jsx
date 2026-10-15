@@ -81,54 +81,26 @@ export function AskCard({ locked, quiet, onAsk }) {
           <Text style={[type('H5', 'bold'), { color: c('text/color-primary'), flexShrink: 1 }]}>Ask a local expert</Text>
           {locked && <Badge label="Grove" tone="accent" icon="lock" />}
         </View>
-        <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>IHL reads every question before it’s published.</Text>
+        <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>Verified local practitioners answer.</Text>
       </View>
       <Button testID="ask-question" label="Ask a question" hierarchy={quiet ? 'secondary' : 'primary'} fill onPress={onAsk} />
     </View>
   );
 }
 
-// Where a question is. IHL reads each one first: In review, then Published or Needs changes with a note.
-export const QUESTION_STATUS = {
-  review: { label: 'In review', tone: 'info', icon: 'clock' },
-  published: { label: 'Published', tone: 'success', icon: 'check-circle' },
-  changes: { label: 'Needs changes', tone: 'warning', icon: 'warning-circle' },
-};
-
-// Figma: Question card (Status In review, Published, Needs changes). One of your questions: the status badge and the
-// day, the question in Body M, then: In review says what happens next, Published shows the answers and opens the
-// conversation, Needs changes shows IHL's note on bg/color-warning-subtle and Edit question.
-export function QuestionCard({ question: q, answers, onOpen, onEdit }) {
+// Figma: Question card. One of your questions, live in the group: the day, the question in Body M, then how many
+// answers it has (or See your question) and a chevron. The whole card opens the conversation.
+export function QuestionCard({ question: q, answers, onOpen }) {
   const { c } = useTheme();
-  const s = QUESTION_STATUS[q.status];
-  const inner = (
-    <>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <Badge testID={`question-status-${q.status}`} label={s.label} tone={s.tone} icon={s.icon} />
-        <Text style={[type('Caption'), { color: c('text/color-tertiary') }]}>{q.when}</Text>
-      </View>
+  return (
+    <Pressable testID={`question-${q.id}`} className={q.fresh ? 'fx-list-in' : ''} onPress={onOpen} style={({ pressed }) => [{ padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card, gap: 12 }, pressed && { transform: [{ scale: 0.985 }] }]}>
+      <Text style={[type('Caption'), { color: c('text/color-tertiary') }]}>{q.when}</Text>
       <Text style={[type('BodyM'), { color: c('text/color-primary') }]}>{q.text}</Text>
-      {q.status === 'review' && <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>We’ll let you know once it’s published.</Text>}
-      {q.status === 'published' && (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={[type('BodyS', 'bold'), { color: c('text/color-link') }]}>{answers ? `${answers} ${answers === 1 ? 'answer' : 'answers'}` : 'See your question'}</Text>
-          <Icon name="nav-arrow-right" size={20} color={c('icon/color-secondary')} />
-        </View>
-      )}
-      {q.status === 'changes' && (
-        <>
-          <View testID="question-note" style={{ padding: 12, borderRadius: 12, backgroundColor: c('bg/color-warning-subtle'), gap: 4 }}>
-            <Text style={[type('BodyS', 'bold'), { color: c('text/color-warning') }]}>Note from IHL</Text>
-            <Text style={[type('BodyS'), { color: c('text/color-primary') }]}>{q.note}</Text>
-          </View>
-          <Button testID={`edit-question-${q.id}`} label="Edit question" hierarchy="secondary" size="medium" leadingIcon="edit-pencil" onPress={onEdit} />
-        </>
-      )}
-    </>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={[type('BodyS', 'bold'), { color: c('text/color-link') }]}>{answers ? `${answers} ${answers === 1 ? 'answer' : 'answers'}` : 'See your question'}</Text>
+        <Icon name="nav-arrow-right" size={20} color={c('icon/color-secondary')} />
+      </View>
+    </Pressable>
   );
-  const style = { padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card, gap: 12 };
-  return q.status === 'published'
-    ? <Pressable testID={`question-${q.id}`} onPress={onOpen} style={({ pressed }) => [style, pressed && { transform: [{ scale: 0.985 }] }]}>{inner}</Pressable>
-    : <View testID={`question-${q.id}`} className={q.fresh ? 'fx-list-in' : ''} style={style}>{inner}</View>;
 }
 

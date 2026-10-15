@@ -1,9 +1,9 @@
 // Groups: Groups (all groups, from Community), Group (one group and its posts) and AskQuestion (a full screen modal).
 // Groups are forum spaces on top of the four topics, like Book Club or Ask the Experts. Their posts live in the group,
 // not in the Community feed. A Seedling joins up to 3 and posts in them. Grove opens every group.
-// Ask the Experts: a Grove member asks, IHL reads it first (In review), then publishes it in the group for verified
-// practitioners to answer, or sends it back with a note (Needs changes).
-import React, { useState } from 'react';
+// Ask the Experts: a Grove member asks, and the question is live in the group right away for verified practitioners
+// to answer. Members can report it like any post.
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput } from '../rn';
 import { useTheme, type, elevation } from '../theme';
 import { useNav, useRoute } from '../app/nav';
@@ -134,7 +134,7 @@ export function Group() {
           <View testID="my-questions" style={{ gap: 12 }}>
             <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Your questions</Text>
             {app.myQuestions.map((q) => (
-              <QuestionCard key={q.id} question={q} answers={answers(q.postId)} onOpen={() => nav.navigate('Conversation', { postId: q.postId, from: g.id })} onEdit={() => nav.openModal('AskQuestion', { edit: q.id })} />
+              <QuestionCard key={q.id} question={q} answers={answers(q.postId)} onOpen={() => nav.navigate('Conversation', { postId: q.postId, from: g.id })} />
             ))}
           </View>
         )}
@@ -175,30 +175,26 @@ export function Group() {
 }
 
 // ---------- Ask the Experts (full screen modal) ----------
-// A topic, the question and two reminders, then Send for review. Opened with edit, it reopens a question that needs
-// changes with IHL's note on top, and Send again.
+// A topic, the question and two reminders, then Post question. The question is live in the group right away.
 export function AskQuestion() {
   const { c } = useTheme();
   const nav = useNav();
   const app = useApp();
   const fb = useFeedback();
   const p = useRoute().route.params || {};
-  const editing = p.edit ? app.myQuestions.find((q) => q.id === p.edit) : null;
-  const [topic, setTopic] = useState(p.topic || (editing && editing.topic) || null);
-  const [text, setText] = useState(p.text ?? (editing ? editing.text : ''));
+  const [topic, setTopic] = useState(p.topic || null);
+  const [text, setText] = useState(p.text ?? '');
   const form = useForm(!!p.validate);
-  const errors = {
-    topic: topic ? null : 'Pick a topic.',
-    text: !text.trim() ? 'Write your question.' : editing && text.trim() === editing.text ? 'Edit your question to send it again.' : null,
-  };
+  const errors = { topic: topic ? null : 'Pick a topic.', text: text.trim() ? null : 'Write your question.' };
   const shown = form.shown(errors);
   const send = () => form.submit(errors, () => {
-    if (editing) app.resendQuestion(editing.id, text.trim());
-    else app.askQuestion({ topic, text: text.trim() });
+    app.askQuestion({ topic, text: text.trim() });
     fb.haptic('success');
     nav.closeModal();
-    setTimeout(() => fb.snack({ message: 'Sent for review', bottom: SNACK.none }), 420);
+    setTimeout(() => fb.snack({ message: 'Your question is live', bottom: SNACK.none }), 420);
   });
+  // Review panel only: post on its own to show the result.
+  useEffect(() => { if (!p.autoSend) return undefined; const t = setTimeout(send, 700); return () => clearTimeout(t); }, []);
   const tip = (icon, line) => (
     <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
       <Icon name={icon} size={20} color={c('icon/color-secondary')} style={{ marginTop: 1 }} />
@@ -208,16 +204,10 @@ export function AskQuestion() {
   return (
     <Screen
       testID="screen-ask"
-      nav={<NavBar kind="back" backIcon="xmark" title={editing ? 'Edit question' : 'Ask the Experts'} onBack={nav.closeModal} />}
+      nav={<NavBar kind="back" backIcon="xmark" title="Ask the Experts" onBack={nav.closeModal} />}
       bodyGap={24}
-      bottom={<BottomBar plain><Button testID="ask-send" label={editing ? 'Send again' : 'Send for review'} fill onPress={send} /></BottomBar>}
+      bottom={<BottomBar plain><Button testID="ask-send" label="Post question" fill onPress={send} /></BottomBar>}
     >
-      {editing && editing.note && (
-        <View testID="ask-note" style={{ padding: 12, borderRadius: 12, backgroundColor: c('bg/color-warning-subtle'), gap: 4 }}>
-          <Text style={[type('BodyS', 'bold'), { color: c('text/color-warning') }]}>Note from IHL</Text>
-          <Text style={[type('BodyS'), { color: c('text/color-primary') }]}>{editing.note}</Text>
-        </View>
-      )}
       <View style={{ gap: 8 }}>
         <SectionLabel error={!!shown.topic}>Topic</SectionLabel>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>

@@ -410,11 +410,9 @@ export const POSTS = [
   },
 ];
 
-// Ask the Experts: questions a member sent. IHL reads each one first (In review), then publishes it in the
-// Ask the Experts group or sends it back with a note (Needs changes).
+// Ask the Experts: questions a member asked. Each one is live in the group as soon as it's posted.
 export const MY_QUESTIONS = [
-  { id: 'aq1', topic: 'Herbs', text: 'Which herbal teas are gentle enough to drink every evening?', status: 'published', postId: 'q3', when: 'Sep 30' },
-  { id: 'aq2', topic: 'Herbs', text: 'Is it safe to take ashwagandha with my lisinopril?', status: 'changes', note: 'Please leave out the name of your medicine, then send it again. An expert can share general guidance.', when: 'Oct 2' },
+  { id: 'aq1', topic: 'Herbs', text: 'Which herbal teas are gentle enough to drink every evening?', postId: 'q3', when: 'Sep 30' },
 ];
 
 // Photos offered in the Choose photos sheet (the phone's recent photos).

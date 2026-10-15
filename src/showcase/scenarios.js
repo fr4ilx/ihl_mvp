@@ -8,7 +8,7 @@
 //   v: 2 marks an item that only exists in V2 (the seeker round). v1: { label, nav } is how an item reads and opens
 //   in V1, when it differs.
 import { mk, tabRoots } from '../app/nav';
-import { images, POSTS, SAMPLE_PRACTICE, NEW_PRACTICE, PRACTICE_STEPS, MY_QUESTIONS } from '../data';
+import { images, POSTS, SAMPLE_PRACTICE, NEW_PRACTICE, PRACTICE_STEPS } from '../data';
 
 const auth = (...routes) => ({ root: 'auth', auth: routes.map(([n, p]) => mk(n, p)) });
 const tab = (t, ...routes) => ({ root: 'main', tab: t, tabs: { [t]: routes.map(([n, p]) => mk(n, p)) } });
@@ -59,7 +59,6 @@ const REFLECTION = 'Picked up apples and squash at Garfield Park Market, then a 
 const QUESTION = 'What helps with stiff hands in the morning? Mine ache until about ten.';
 const GROUP_POST = 'Finished chapter two on the porch this morning. The part about gifts stayed with me all day.';
 const SUB_REPLY = 'Would linden help with sleep too?';
-const SENT = { questions: [{ id: 'aq3', topic: 'Movement', text: QUESTION, status: 'review', when: 'Today' }, ...MY_QUESTIONS] };
 const modal = (base, name, params) => ({ ...base, modal: mk(name, params) });
 
 export const FLOWS = [
@@ -210,8 +209,7 @@ export const FLOWS = [
       { id: 'ask', v: 2, label: 'Ask a question', nav: modal(tab('community', ['Community'], ['Group', { id: 'experts' }]), 'AskQuestion', { topic: 'Movement', text: QUESTION }) },
       { id: 'ask-empty', v: 2, label: 'Ask, empty', state: true, nav: modal(tab('community', ['Community'], ['Group', { id: 'experts' }]), 'AskQuestion') },
       { id: 'ask-errors', v: 2, label: 'Ask, errors', state: true, nav: modal(tab('community', ['Community'], ['Group', { id: 'experts' }]), 'AskQuestion', { validate: true }) },
-      { id: 'ask-sent', v: 2, label: 'Sent for review', state: true, seed: SENT, nav: tab('community', ['Community'], ['Group', { id: 'experts' }]) },
-      { id: 'ask-edit', v: 2, label: 'Edit a question', state: true, nav: modal(tab('community', ['Community'], ['Group', { id: 'experts' }]), 'AskQuestion', { edit: 'aq2' }) },
+      { id: 'ask-posted', v: 2, label: 'Question posted', state: true, nav: modal(tab('community', ['Community'], ['Group', { id: 'experts' }]), 'AskQuestion', { topic: 'Movement', text: QUESTION, autoSend: true }) },
     ],
   },
   {

@@ -270,10 +270,15 @@ export function AppProvider({ children, network = 'online', content = 'full', se
         return won;
       },
       visited: (id) => (me.visited || []).includes(id),
-      // Ask the Experts: every question goes to IHL first. Needs changes comes back with a note, then Send again.
+      // Ask the Experts: a question is live in the group as soon as it's posted. Members can report it like any post.
+      // asks: the specialties it is for. The server picks them in the app, the prototype leaves them empty.
       myQuestions: asked,
-      askQuestion: ({ topic, text }) => setAsked((q) => [{ id: 'aq' + Date.now(), text, topic, status: 'review', when: 'Today', fresh: true }, ...q]),
-      resendQuestion: (id, text) => setAsked((q) => [{ ...q.find((x) => x.id === id), text, status: 'review', note: null, when: 'Today', fresh: true }, ...q.filter((x) => x.id !== id)]),
+      askQuestion: ({ topic, text }) => {
+        const post = { id: 'q' + Date.now(), author: 'jane', time: 'Just now', topic, group: 'experts', ask: true, asks: [], liked: false, likes: 0, text, photos: [], replies: [], replyCount: 0, fresh: true };
+        setPosts((ps) => [post, ...ps]);
+        setAsked((q) => [{ id: 'aq' + Date.now(), text, topic, postId: post.id, when: 'Today', fresh: true }, ...q]);
+        return post;
+      },
       // The onboarding quiz sets the Home feed and suggests groups.
       saveQuiz: (patch) => setMe((m) => ({ ...m, ...patch })),
       feed,
