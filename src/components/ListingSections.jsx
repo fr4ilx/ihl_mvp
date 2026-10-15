@@ -8,6 +8,7 @@ import { useTheme, type } from '../theme';
 import Button from './Button';
 import Icon from './Icon';
 import OfferCard from './OfferCard';
+import PromoCard from './PromoCard';
 import ShowMoreText from './ShowMoreText';
 import TagChip from './TagChip';
 import { ServiceList } from './ServiceTag';
@@ -40,6 +41,12 @@ export default function ListingSections({ item, reviewable, review, onReview, of
           <Button testID="add-review" label="Add a review" hierarchy="secondary" size="medium" leadingIcon="star" onPress={onReview} />
         ))}
       </View>
+      {!!item.promo && (
+      <View testID="listing-promo" style={{ gap: 12 }}>
+        <Text style={[type('H6', 'bold'), { color: c('text/color-secondary') }]}>Promotion</Text>
+        <PromoCard promo={item.promo} />
+      </View>
+      )}
       {!!item.offer && (
       <View testID="listing-offer" style={{ gap: 12 }}>
         <Text style={[type('H6', 'bold'), { color: c('text/color-secondary') }]}>Member offer</Text>

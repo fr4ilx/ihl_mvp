@@ -25,6 +25,9 @@ import ShareSheet from '../components/ShareSheet';
 import PhotoPager from '../components/PhotoPager';
 import ListingSections, { ListingActions } from '../components/ListingSections';
 import Icon from '../components/Icon';
+import Button from '../components/Button';
+import { FeatureCard } from '../components/Practice';
+import PromoCard from '../components/PromoCard';
 import StreakCard from '../components/StreakCard';
 import FirstWeekCard from '../components/FirstWeekCard';
 import { QuestCard } from '../components/Journey';
@@ -324,7 +327,68 @@ function DirectoryLayout({ category, subcategory, subtype }) {
 }
 
 export function Directory() {
-  return <DirectoryLayout />;
+  const app = useApp();
+  return app.practitioner ? <YourListing /> : <DirectoryLayout />;
+}
+
+// Reach: a practitioner's third tab, in the Directory slot: two buttons stacked 12pt above the tab bar, Add a promotion
+// (Secondary, or Edit promotion once there is one) and Get featured (Primary). What is running sits above them: the
+// Promotion card and the Feature card once requested or featured, which takes Get featured's place. With nothing
+// running, an Empty state says what the two buttons do. Before the listing is live there is nothing to promote yet.
+function YourListing() {
+  const nav = useNav();
+  const app = useApp();
+  const fb = useFeedback();
+  const p = app.practice;
+  const live = p.status === 'live';
+  const asking = live && !p.feature;
+  const tabBar = <TabBar active="directory" onChange={nav.switchTab} />;
+  // Buttons stack up from 12pt above the tab bar: Get featured at y 716, Add a promotion 68pt above it.
+  const top = asking ? 648 : 716;
+  const snackAt = 874 - top + 16;
+  const remove = () => { app.updatePractice({ promo: null }); fb.snack({ message: 'Promotion removed', bottom: snackAt, hapticKind: 'light' }); };
+  if (!live) {
+    return (
+      <Screen testID="screen-your-listing" bodyTop={12} nav={<NavBar kind="title" title="Reach" />} bottom={tabBar}>
+        <View style={{ paddingTop: 62 }}>
+          <EmptyState
+            testID="listing-not-live"
+            illustration={images.illustrations.path}
+            title="Your listing shows here once it’s live"
+            message={p.status === 'draft' ? 'Finish it on My Practice.' : 'We’re checking it now.'}
+            action={p.status === 'draft' ? 'Continue setup' : null}
+            onAction={() => nav.switchTab('profile')}
+          />
+        </View>
+      </Screen>
+    );
+  }
+  const running = !!p.promo || !!p.feature;
+  return (
+    <Screen
+      testID="screen-your-listing"
+      bodyTop={12}
+      bottomSpace={874 - top + 12}
+      nav={<NavBar kind="title" title="Reach" />}
+      bottom={(
+        <>
+          <View style={{ position: 'absolute', left: 16, right: 16, top, gap: 12, zIndex: 21 }}>
+            <Button testID="add-promo" label={p.promo ? 'Edit promotion' : 'Add a promotion'} hierarchy="secondary" leadingIcon="megaphone" fill onPress={() => { fb.haptic('light'); nav.navigate('EditPromotion'); }} />
+            {asking && <Button testID="get-featured" label="Get featured" leadingIcon="sparks" fill onPress={() => { fb.haptic('light'); nav.navigate('GetFeatured'); }} />}
+          </View>
+          {tabBar}
+        </>
+      )}
+    >
+      {!running && (
+        <View style={{ paddingTop: 62 }} {...enter(0)}>
+          <EmptyState testID="promote-empty" illustration={images.illustrations.path} title="Bring more people in" message="Add a promotion to your listing, or get featured on Home." />
+        </View>
+      )}
+      {!!p.promo && <View {...enter(0)}><PromoCard promo={p.promo} onRemove={remove} /></View>}
+      {!!p.feature && <View {...enter(1)}><FeatureCard feature={p.feature} /></View>}
+    </Screen>
+  );
 }
 
 export function CategoryResults() {

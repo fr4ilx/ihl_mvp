@@ -26,6 +26,8 @@ const DANA = { role: 'practitioner', email: SAMPLE_PRACTICE.email };
 const AS = (practice) => ({ me: DANA, practice });
 const READY = AS({ ...SAMPLE_PRACTICE, status: 'draft' });
 const LIVE = AS(SAMPLE_PRACTICE);
+const PROMO = { text: '15% off any massage this week', length: '1 week', ends: '2026-10-11' };
+const PROMOTED = AS({ ...SAMPLE_PRACTICE, promo: PROMO });
 const REQUESTED = AS({ ...SAMPLE_PRACTICE, feature: { status: 'requested', length: '3 months' } });
 const FEATURED = AS({ ...SAMPLE_PRACTICE, feature: { status: 'live', length: '3 months', until: 'January 3, 2027' } });
 const BASICS = { name: 'Quiet Mind Massage', type: 'Practice' };
@@ -294,16 +296,20 @@ export const FLOWS = [
       { id: 'practice-later', label: 'Finished later', state: true, seed: upTo(5), nav: tab('profile', ['MyPractice']) },
       { id: 'practice-review', label: 'In review', state: true, seed: AS({ ...SAMPLE_PRACTICE, status: 'review' }), nav: tab('profile', ['MyPractice']) },
       { id: 'practice-live', label: 'My Practice, live', seed: LIVE, nav: tab('profile', ['MyPractice']) },
-      { id: 'practice-scrolled', label: 'My Practice, scrolled', state: true, seed: LIVE, nav: tab('profile', ['MyPractice', { scrollTo: 'this-month' }]) },
       { id: 'practice-preview', label: 'Your listing', seed: LIVE, nav: tab('profile', ['MyPractice'], ['ListingProfile', { id: 'quietmind' }]) },
       { id: 'practice-preview-website', label: 'Your listing, no booking link', state: true, seed: AS({ ...SAMPLE_PRACTICE, booking: '' }), nav: tab('profile', ['MyPractice'], ['ListingProfile', { id: 'quietmind' }]) },
       { id: 'practice-preview-phone', label: 'Your listing, phone only', state: true, seed: AS({ ...SAMPLE_PRACTICE, booking: '', website: '' }), nav: tab('profile', ['MyPractice'], ['ListingProfile', { id: 'quietmind' }]) },
       { id: 'edit-specialties', label: 'Editing Specialties', state: true, seed: LIVE, nav: tab('profile', ['MyPractice'], ['EditSpecialties', { picked: [...SAMPLE_PRACTICE.specialties, 'Mobility'] }]) },
       { id: 'edit-about', label: 'Editing About', state: true, seed: LIVE, nav: tab('profile', ['MyPractice'], ['EditAbout', { about: `${SAMPLE_PRACTICE.about} Free parking out back.` }]) },
-      { id: 'get-featured', label: 'Get featured', seed: LIVE, nav: tab('profile', ['MyPractice'], ['GetFeatured', { length: '3 months' }]) },
-      { id: 'feature-requested', label: 'Request sent', state: true, seed: REQUESTED, nav: tab('profile', ['MyPractice', { scrollTo: 'this-month' }]) },
-      { id: 'featured', label: 'Featured', state: true, seed: FEATURED, nav: tab('profile', ['MyPractice', { scrollTo: 'this-month' }]) },
-      { id: 'featured-home', label: 'Featured on Home', state: true, seed: FEATURED, nav: tab('home', ['Home']) },
+      { id: 'practice-directory', label: 'Reach', seed: LIVE, nav: tab('directory', ['Directory']) },
+      { id: 'promo-add', label: 'Add a promotion', seed: LIVE, nav: tab('directory', ['Directory'], ['EditPromotion', { text: PROMO.text, length: PROMO.length }]) },
+      { id: 'promo-errors', label: 'Add a promotion, errors', state: true, seed: LIVE, nav: tab('directory', ['Directory'], ['EditPromotion', { validate: true }]) },
+      { id: 'promo-live', label: 'Promotion on', state: true, seed: PROMOTED, nav: tab('directory', ['Directory']) },
+      { id: 'promo-listing', label: 'Promotion on the listing', state: true, seed: PROMOTED, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'quietmind' }]) },
+      { id: 'practice-directory-draft', label: 'Reach before live', state: true, seed: READY, nav: tab('directory', ['Directory']) },
+      { id: 'get-featured', label: 'Get featured', seed: LIVE, nav: tab('directory', ['Directory'], ['GetFeatured', { length: '3 months' }]) },
+      { id: 'feature-requested', label: 'Request sent', state: true, seed: REQUESTED, nav: tab('directory', ['Directory']) },
+      { id: 'featured', label: 'Featured', state: true, seed: FEATURED, nav: tab('directory', ['Directory']) },
       { id: 'practice-community', label: 'Community, questions for you', seed: LIVE, nav: tab('community', ['Community']) },
       { id: 'practice-answer', label: 'Answering a question', state: true, seed: LIVE, nav: tab('community', ['Community'], ['Conversation', { postId: 'q1', draft: ANSWER }]) },
       { id: 'practice-caught-up', label: 'All caught up', state: true, seed: AS({ ...SAMPLE_PRACTICE, specialties: ['Back pain', 'Stress'] }), nav: tab('community', ['Community']) },

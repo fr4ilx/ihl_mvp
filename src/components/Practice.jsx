@@ -76,7 +76,7 @@ export function FeatureCard({ feature, onRequest, onSeeHome }) {
       </View>
       {state === 'none' && <Button testID="request-feature" label="Request a feature" hierarchy="secondary" size="medium" fill onPress={onRequest} />}
       {state === 'requested' && <Badge label={`Requested  ·  ${feature.length}`} tone="info" />}
-      {state === 'featured' && <TextLink testID="see-on-home" label="See it on Home" onPress={onSeeHome} />}
+      {state === 'featured' && onSeeHome && <TextLink testID="see-on-home" label="See it on Home" onPress={onSeeHome} />}
     </View>
   );
 }

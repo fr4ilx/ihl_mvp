@@ -211,8 +211,9 @@ app/
     practice-services.tsx
     practice-offer.tsx        Finish (and Finish later from steps 4 to 8) goes to preparing
     preparing.tsx             router.replace('/(tabs)/home') after 2.6 s, '/(tabs)/practice' for a practitioner
-  (tabs)/_layout.tsx          Tabs with the custom glass TabBar: Home, Directory, Community, then My Profile
-                              or My Practice by role (hide the other with href: null)
+  (tabs)/_layout.tsx          Tabs with the custom glass TabBar. A seeker: Home, Directory, Community, My Profile.
+                              A practitioner: My Practice, Community, Reach (antenna-signal), with no Home
+                              (hide the others with href: null)
     home/_layout.tsx          Stack
       index.tsx               Home: Sponsored reel, weekly check-in, Quest card, Top discussions
       quest.tsx               Fall Harvest Quest (Grove)
@@ -422,7 +423,7 @@ The other params you see in `scenarios.js` (`email`, `password`, `confirm`, `nam
 - I was here is gone. In V2 the first review of a place counts as the visit for Sprout, Explorer, Farm Friend and the quest.
 - A listing's tags show under About as Tag chips, under Specialties and Approach. A booking link makes Book the main button next to Call and moves the website into a Detail row. Without one: Website and Call, or Call alone when there is no website. A member offer shows in its own card (locked for a Seedling).
 - From My Practice a Task row or a Your listing row opens its step as an editor: a Back bar named after the row, the same fields, and Save only once something changed. Save goes back to My Practice and confirms with "Photos saved", "Hours saved" and so on. Photos takes up to 6 and the first is the Cover on the listing and the Sponsored card. Hours: a day opens the Hours sheet, Open off means Closed, and a closing time before the opening time shows "Pick a closing time after it opens." under the wheels, and Done answers it with the error haptic.
-- Get featured is a request, nothing is paid in the app. Send request returns to My Practice with "Request sent", and the Feature card shows "Requested  ·  3 months" until the IHL team sets it up. Featured shows the end date and See it on Home, and the practice card leads the Home reel, labeled Sponsored.
+- Get featured is a request, nothing is paid in the app. Get featured is the main button on a practitioner's Directory, which also holds Add a promotion: one line and how long it runs (1 week, 2 weeks, 1 month), stored as `practice.promo` `{ text, length, ends }` and shown on the listing above the Member offer until it ends (`PromoCard.jsx`, `EditPromotion` in practice.jsx). One at a time, Edit and Remove on the Directory. This month moved off the app for now. Send request returns there with "Request sent", and the Feature card shows "Requested  ·  3 months" until the IHL team sets it up. Featured shows the end date, and the practice card leads the Home reel, labeled Sponsored.
 - Questions for you: once live, Community (on top, as Answer cards in `Questions.jsx`) and My Practice list the Ask the Experts questions that match the practice's specialties and that the practice hasn't answered yet. Answer opens the conversation with the Reply bar focused (`focus` param). With none waiting Community shows You’re all caught up, before going live Questions start once you’re live. The practitioner answers as the practice ("Answer as Quiet Mind Massage"), and the answer shows the Expert badge.
 - A practitioner never sees a save button on their own listing, on the listing profile or in the Home reel, and has no check-in, quest or membership.
 - In Community a practitioner reads, replies and answers as their practice: the practice name, its cover photo as the avatar and the Practitioner badge. They never start a post: no New post button, no Your groups row, no Join or plus on a group page ("Members post here. You can reply."), and empty feeds have no New post action. `addPost` is for members only. Offers belong in the Member offer on the listing.

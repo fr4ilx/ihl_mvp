@@ -101,7 +101,7 @@ export function practiceListing(p) {
     id: p.listingId, name: p.name, kind: kindOf(p.type, p.specialties), area: (p.city || '').split(',')[0], category: TYPE_CATEGORY[p.type],
     distance: '0.4 mi away', hours: h.short, days: h.days, time: h.time, photo: p.photos[0] || null, photos: p.photos,
     about: p.about, services: p.services, specialties: p.specialties, address: p.address, city: p.city, phone: p.phone,
-    website: p.website, booking: p.booking, offer: p.offer, verified: p.status === 'live',
+    website: p.website, booking: p.booking, offer: p.offer, promo: p.promo || null, verified: p.status === 'live',
     sponsored: !!(p.feature && p.feature.status === 'live'), mine: true,
   };
 }

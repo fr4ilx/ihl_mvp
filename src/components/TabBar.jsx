@@ -1,4 +1,4 @@
-// Figma: Tab bar. Floating Liquid Glass capsule, 370 x 64pt, 16pt from each side, top at y 784. Four tabs.
+// Figma: Tab bar. Floating Liquid Glass capsule, 370 x 64pt, 16pt from each side, top at y 784. Four tabs, three for a practitioner.
 // Each tab is as wide as its label in Bold plus an equal share of the space left, so a long label like My Practice
 // sits inside its pill with room to spare, the way iOS 26 sizes its tab bar items. The selected pill is 4pt inside
 // the capsule on every side, so its ends follow the capsule's curve.
@@ -11,8 +11,8 @@ import { useTheme, type, elevation } from '../theme';
 import { useApp } from '../app/store';
 import Icon from './Icon';
 
-// The fourth tab is My Profile for a seeker and My Practice (shop icon) for a practitioner.
-// Figma: Tab bar, Account Seeker or Practitioner.
+// A seeker has four tabs, the last My Profile. A practitioner has three, with no Home: My Practice (shop icon) first,
+// Community, then Reach, where they add a promotion or get featured. Figma: Tab bar, Account Seeker or Practitioner.
 export const TABS = [
   { id: 'home', label: 'Home', icon: 'home-simple' },
   { id: 'directory', label: 'Directory', icon: 'map' },
@@ -20,11 +20,13 @@ export const TABS = [
   { id: 'profile', label: 'My Profile', icon: 'user-circle' },
 ];
 const PRACTICE_TAB = { id: 'profile', label: 'My Practice', icon: 'shop' };
+// A practitioner's Directory tab is Reach: add a promotion or get featured.
+const REACH_TAB = { id: 'directory', label: 'Reach', icon: 'antenna-signal' };
 
 export default function TabBar({ active, onChange }) {
   const { c, dark } = useTheme();
   const app = useApp();
-  const tabs = app && app.practitioner ? [...TABS.slice(0, 3), PRACTICE_TAB] : TABS;
+  const tabs = app && app.practitioner ? [PRACTICE_TAB, TABS[2], REACH_TAB] : TABS;
   return (
     <View style={[styles.bar, { backgroundColor: c('bg/color-glass'), borderColor: c('border/color-glass'), boxShadow: `${elevation.glass}, inset 0 1px 0.5px ${c('border/color-glass-highlight')}, inset 0 -1px 0.5px rgba(255,255,255,${dark ? 0.06 : 0.35}), 0 0 0 0.5px rgba(0,0,0,0.06)`, backdropFilter: 'blur(10px) saturate(190%) brightness(1.04)', WebkitBackdropFilter: 'blur(10px) saturate(190%) brightness(1.04)' }]}>
       {tabs.map((t) => {

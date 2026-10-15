@@ -6,7 +6,7 @@ import {
   Calendar, HalfMoon, Lock, HelpCircle, LogOut, CheckCircle, WarningCircle, InfoCircle, Check, Eye, EyeClosed,
   Mail, WifiOff, MediaImage, NavArrowDown, ArrowRight, Map as MapIcon, Menu, OpenNewWindow, MapsArrowDiagonal,
   Shop, Circle, Sparks, MinusCircle, MediaImagePlus, Copy, Trash, Page,
-  BadgeCheck, Gift, CalendarCheck, ChatBubbleQuestion, Megaphone, MailOpen, ArrowDown, ShieldCheck,
+  BadgeCheck, Gift, CalendarCheck, ChatBubbleQuestion, Megaphone, AntennaSignal, MailOpen, ArrowDown, ShieldCheck,
   Group, Apple as AppleFruit, SoilAlt, Leaf, Flower, Tree, PineTree, AfricanTree, Crown, Compass, Farm, UserLove, SunLight,
   EmojiTalkingHappy, Emoji, EmojiQuite, EmojiSad, Yoga, Walking, Flash, Medal, User, HomeUser, Brain,
   FilterList, Tools, Healthcare, Cart, CoffeeCup, Cutlery, ShoppingBag, Flask, PharmacyCrossTag, Soap, Gym, GraduationCap, ChatLines, Stroller, Suitcase, Building, Droplet, Bathroom, Potion, Star,
@@ -36,7 +36,7 @@ const REGULAR = {
   shop: Shop, circle: Circle, sparks: Sparks, 'minus-circle': MinusCircle, 'media-image-plus': MediaImagePlus,
   copy: Copy, trash: Trash, page: Page,
   'badge-check': BadgeCheck, gift: Gift, 'calendar-check': CalendarCheck, 'chat-bubble-question': ChatBubbleQuestion,
-  megaphone: Megaphone, 'mail-open': MailOpen, 'arrow-down': ArrowDown, 'arrow-right': ArrowRight, 'shield-check': ShieldCheck,
+  megaphone: Megaphone, 'antenna-signal': AntennaSignal, 'mail-open': MailOpen, 'arrow-down': ArrowDown, 'arrow-right': ArrowRight, 'shield-check': ShieldCheck,
   // Iconoir's apple is apple-fruit here, because apple is Apple's logo above.
   group: Group, 'apple-fruit': AppleFruit, 'soil-alt': SoilAlt, leaf: Leaf, flower: Flower, tree: Tree, 'pine-tree': PineTree,
   'african-tree': AfricanTree, crown: Crown, compass: Compass, farm: Farm, 'user-love': UserLove, 'sun-light': SunLight,

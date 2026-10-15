@@ -18,7 +18,7 @@ import { useApp, PRACTICE_TASKS, hoursSummary } from '../app/store';
 import { useFeedback, SNACK } from '../app/feedback';
 import { useForm } from '../app/form';
 import { useAppearance } from '../app/appearance';
-import { PRACTICE_TYPES, TYPE_ART, PRACTICE_STEPS, WEEK, FEATURE_LENGTHS, SPECIALTIES, FOCUS_AREAS, MAX_SPECIALTIES } from '../data';
+import { PRACTICE_TYPES, TYPE_ART, PRACTICE_STEPS, WEEK, FEATURE_LENGTHS, TODAY, SPECIALTIES, FOCUS_AREAS, MAX_SPECIALTIES } from '../data';
 import Screen, { BottomBar, useScrollTo } from '../components/Screen';
 import NavBar from '../components/NavBar';
 import TabBar from '../components/TabBar';
@@ -39,8 +39,9 @@ import { InterestCard } from '../components/Interests';
 import { Group, SettingRow, TaskRow, SectionLabel, DetailRow } from '../components/Rows';
 import ListingReviewSheet from '../components/ListingReviewSheet';
 import FieldError from '../components/FieldError';
-import { PracticeCard, StatTile, FeatureCard } from '../components/Practice';
+import { PracticeCard } from '../components/Practice';
 import OfferCard from '../components/OfferCard';
+import PromoCard from '../components/PromoCard';
 import ThreadRow from '../components/ThreadRow';
 
 const MAX_PHOTOS = 6;
@@ -463,17 +464,6 @@ export function MyPractice() {
         </View>
       )}
 
-      {p.status === 'live' && (
-        <View testID="this-month" style={{ gap: 8 }}>
-          <SectionLabel>This month</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 12 }}>
-            <StatTile value={p.stats.views} label="Views" />
-            <StatTile value={p.stats.saves} label="Saves" />
-            <StatTile value={p.stats.directions} label="Directions" />
-          </View>
-        </View>
-      )}
-      {p.status === 'live' && <FeatureCard feature={p.feature} onRequest={() => nav.navigate('GetFeatured')} onSeeHome={() => nav.switchTab('home')} />}
 
       {p.status !== 'draft' && !claimReview && (
         <Group label="Your listing">
@@ -651,6 +641,58 @@ export function EditOffer() {
   return <Editor testID="screen-editoffer" title="Member offer" hint="A thank you for people who find you here. Clear the offer to remove it." changed={!same(offer(), p.offer || null)} onSave={() => save({ offer: offer() })}>{field}</Editor>;
 }
 
+// ---------- Promotion ----------
+// From a practitioner's Directory: one line and how long it runs, then Add promotion (or Save). It shows on the
+// listing, above the Member offer, until the day it ends.
+const PROMO_LENGTHS = [['1 week', 7], ['2 weeks', 14], ['1 month', 30]];
+const addDays = (iso, n) => { const d = new Date(`${iso}T12:00:00`); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+export function EditPromotion() {
+  const { c } = useTheme();
+  const nav = useNav();
+  const app = useApp();
+  const fb = useFeedback();
+  const { params } = useRoute().route;
+  const current = app.practice.promo;
+  const [text, setText] = useState(params.text ?? (current ? current.text : ''));
+  const [length, setLength] = useState(params.length ?? (current ? current.length : null));
+  const form = useForm(!!params.validate);
+  const errors = { text: text.trim() ? null : 'Write your promotion.', length: length ? null : 'Pick how long it runs.' };
+  const shown = form.shown(errors);
+  const changed = !current || text.trim() !== current.text || length !== current.length;
+  const save = () => form.submit(errors, () => {
+    const days = PROMO_LENGTHS.find(([l]) => l === length)[1];
+    app.updatePractice({ promo: { text: text.trim(), length, ends: addDays(TODAY, days) } });
+    fb.haptic('success');
+    nav.goBack();
+    setTimeout(() => fb.snack({ message: current ? 'Promotion saved' : 'Promotion added', bottom: 874 - 716 + 16 }), 380);
+  });
+  return (
+    <Screen
+      testID="screen-editpromotion"
+      nav={<NavBar kind="back" title={current ? 'Your promotion' : 'Add a promotion'} onBack={nav.goBack} />}
+      bodyGap={24}
+      bottomSpace={150}
+      bottom={changed ? <BottomBar><Button testID="promo-save" label={current ? 'Save' : 'Add promotion'} fill onPress={save} /></BottomBar> : null}
+    >
+      <Text style={[type('BodyM'), { color: c('text/color-secondary') }]}>It shows on your listing until it ends.</Text>
+      <TextField testID="promo-text" label="Promotion" value={text} onChangeText={setText} placeholder="Like 15% off any massage this week" error={shown.text} />
+      <View style={{ gap: 8 }}>
+        <SectionLabel error={!!shown.length}>How long</SectionLabel>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {PROMO_LENGTHS.map(([l]) => <Chip key={l} testID={`promo-length-${l}`} label={l} selected={length === l} onPress={() => { setLength(l); fb.haptic('selection'); }} />)}
+        </View>
+        <FieldError testID="promo-length-error" message={shown.length} />
+      </View>
+      {!!text.trim() && !!length && (
+        <View testID="promo-preview" className="fx-fade-up" style={{ gap: 12 }}>
+          <SectionLabel>On your listing</SectionLabel>
+          <PromoCard promo={{ text: text.trim(), ends: addDays(TODAY, PROMO_LENGTHS.find(([l]) => l === length)[1]) }} />
+        </View>
+      )}
+    </Screen>
+  );
+}
+
 // ---------- Get featured ----------
 // A preview of the Sponsored card seekers would see on Home, how long, and Send request.
 export function GetFeatured() {
@@ -676,7 +718,7 @@ export function GetFeatured() {
       bottom={<BottomBar><Button testID="send-request" label="Send request" fill onPress={send} /></BottomBar>}
     >
       <View pointerEvents="none" accessibilityLabel="How your card looks on Home">
-        <ListingCard item={{ ...app.myListing, photo: app.practice.photos[0] }} variant="sponsored" />
+        <ListingCard item={{ ...app.myListing, photo: app.practice.photos[0] }} variant="sponsored" showSave={false} />
       </View>
       <View style={{ gap: 8 }}>
         <SectionLabel error={!!form.shown(errors).length}>How long</SectionLabel>

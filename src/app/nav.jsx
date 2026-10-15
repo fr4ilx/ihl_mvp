@@ -83,8 +83,8 @@ export function makeNavApi(setNav, onEvent) {
     },
     // Opens a tab on a fresh root, for links between tabs like Find a farm (Directory with Farms picked).
     openTab: (tab, name, params) => { ev('tab'); edit((n) => { n.tab = tab; n.tabs[tab] = [mk(name, params)]; return n; }); },
-    // A seeker lands on Home. A new practitioner lands on My Practice to finish the listing.
-    enterApp: ({ role, tab = 'home' } = {}) => { ev('fadeThrough'); edit((n) => ({ ...n, root: 'main', tab, tabs: tabRoots(role), modal: null, viewer: null })); },
+    // A seeker lands on Home. A practitioner has no Home: they land on My Practice, their first tab.
+    enterApp: ({ role, tab = role === 'practitioner' ? 'profile' : 'home' } = {}) => { ev('fadeThrough'); edit((n) => ({ ...n, root: 'main', tab, tabs: tabRoots(role), modal: null, viewer: null })); },
     signOut: () => { ev('fadeThrough'); edit((n) => ({ ...n, root: 'auth', auth: [mk('Welcome')], modal: null, viewer: null })); },
     openModal: (name, params) => { ev('modal'); edit((n) => ({ ...n, modal: mk(name, params) })); },
     closeModal: () => { ev('modal'); edit((n) => ({ ...n, modal: null })); },
