@@ -25,13 +25,13 @@ export const resolveColor = (scheme, background, name) => {
 };
 
 export function useTheme() {
-  const { scheme, reduceMotion, background = 'linen' } = useContext(ThemeContext);
+  const { scheme, reduceMotion, background = 'linen', tiles = 'grid' } = useContext(ThemeContext);
   const c = (name) => {
     const v = resolveColor(scheme, background, name);
     if (v === undefined && typeof console !== 'undefined') console.warn('Unknown token', name);
     return v;
   };
-  return { scheme, dark: scheme === 'dark', c, reduceMotion };
+  return { scheme, dark: scheme === 'dark', c, reduceMotion, tiles };
 }
 
 // withAlpha('#F4F0E8', 0.85) -> 'rgba(244,240,232,0.85)'. For fills that let a blur show through, like the nav bar.

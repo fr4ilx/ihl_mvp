@@ -53,6 +53,8 @@ export default function Showcase() {
   const [reduceMotion, setReduceMotion] = useState(false);
   const [appearance, setAppearance] = useState('automatic');
   const [background, setBackground] = useState('linen');
+  // Prototype only: how the Directory tiles lay out, two by two cards or one row of bare art.
+  const [tiles, setTiles] = useState('grid');
   const [nav, setNav] = useState(initialNav);
   const [seed, setSeed] = useState(null);
   const [dataKey, setDataKey] = useState(1);
@@ -264,6 +266,10 @@ export default function Showcase() {
               ))}
             </div>
           </div>
+          <div className="ctl">
+            <div className="ctl-label">Directory tiles</div>
+            <Segmented value={`tiles-${tiles}`} onChange={(v) => setTiles(v === 'tiles-row' ? 'row' : 'grid')} options={[['tiles-grid', '2 by 2'], ['tiles-row', 'One row']]} />
+          </div>
           <div className="ctl-hint">{CANVAS_OPTIONS.find(([k]) => k === background)[1]}{background === 'linen' ? ' · the design' : ''}{effective === 'dark' ? ' · shows in Light only' : ''}</div>
           <div className="ctl-hint" data-testid="hint-version">{VERSION_HINT[version]}</div>
           {appearance !== 'automatic' && <div className="ctl-hint">Dark mode is {appearance === 'dark' ? 'on' : 'off'} in the app · <button className="link" onClick={() => setAppearance('automatic')}>Follow phone</button></div>}
@@ -368,6 +374,7 @@ export default function Showcase() {
                   dataKey={dataKey}
                   version={version}
                   background={background}
+                  tiles={tiles}
                 />
                 <div className="island" />
               </div>

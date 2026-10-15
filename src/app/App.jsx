@@ -7,11 +7,11 @@ import { FeedbackProvider } from './feedback';
 import { AppearanceProvider } from './appearance';
 import { NavProvider, RootView, ModalView, ViewerView, makeNavApi, focusedRoute, StatusBarContext } from './nav';
 
-export default function PhoneApp({ nav, setNav, scheme, reduceMotion, network, content, seed, onEvent, appearance, setAppearance, dataKey, version = 2, background = 'linen' }) {
+export default function PhoneApp({ nav, setNav, scheme, reduceMotion, network, content, seed, onEvent, appearance, setAppearance, dataKey, version = 2, background = 'linen', tiles = 'grid' }) {
   const api = useMemo(() => makeNavApi(setNav, onEvent), [setNav, onEvent]);
   const effective = appearance === 'automatic' ? scheme : appearance;
   return (
-    <ThemeContext.Provider value={{ scheme: effective, reduceMotion, background }}>
+    <ThemeContext.Provider value={{ scheme: effective, reduceMotion, background, tiles }}>
       <AppearanceProvider mode={appearance} setMode={setAppearance}>
         <AppProvider key={dataKey} network={network} content={content} seed={seed} version={version}>
           <NavProvider api={api}>
