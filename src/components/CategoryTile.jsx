@@ -19,7 +19,7 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
   const pic = art || thumb;
   // With a watercolor the tile is just the art centered with its name under it, on the canvas with no card or wash.
   // Selected is the only time it gets a surface: bg/color-selected with a 2pt border/color-brand edge and a Bold name.
-  // Four to a row like a Yelp category grid: 72pt art over the name in Caption Bold, up to four lines.
+  // A category is 128pt art with the name in Body M, a subcategory 88pt art with the name in Body S.
   if (pic) {
     return (
       <Pressable
@@ -30,14 +30,14 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
         accessibilityLabel={label}
         style={({ pressed }) => [
           {
-            flex: 1, paddingVertical: 8, paddingHorizontal: 0, borderRadius: 16, alignItems: 'center', gap: 4,
-            ...(selected ? { backgroundColor: c('bg/color-selected'), borderWidth: 2, borderColor: c('border/color-brand'), paddingVertical: 6, paddingHorizontal: 0 } : {}),
+            flex: 1, padding: 8, borderRadius: 20, alignItems: 'center', gap: 0,
+            ...(selected ? { backgroundColor: c('bg/color-selected'), borderWidth: 2, borderColor: c('border/color-brand'), padding: 6 } : {}),
           },
           pressed && { transform: [{ scale: 0.97 }] },
         ]}
       >
-        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: 72, height: 72, marginBottom: 0 }} />
-        <Text numberOfLines={4} style={[type('Caption', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
+        <Image source={pic} resizeMode="contain" accessibilityIgnoresInvertColors style={{ width: art ? 128 : 88, height: art ? 128 : 88, marginBottom: art ? -14 : -10 }} />
+        <Text numberOfLines={art ? 2 : 3} style={[type(art ? 'BodyM' : 'BodyS', selected ? 'bold' : art ? 'medium' : 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{label}</Text>
       </Pressable>
     );
   }
@@ -68,16 +68,14 @@ export default function CategoryTile({ label, icon, thumb, art = thumb ? undefin
 
 // Tiles two to a row. items: [{ label, icon }]. Directory's four categories by default.
 export function CategoryTiles({ items = Object.keys(CATEGORY_ICONS).map((k) => ({ label: k, icon: CATEGORY_ICONS[k] })), value, onPick, testPrefix = 'category-tile' }) {
-  const pic = items.some((it) => it.thumb || CATEGORY_ART[it.label]);
   const rows = [];
-  const per = pic ? 4 : 2;
-  for (let i = 0; i < items.length; i += per) rows.push(items.slice(i, i + per));
+  for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
   return (
-    <View testID={`${testPrefix}s`} style={{ gap: pic ? 16 : 12 }}>
+    <View testID={`${testPrefix}s`} style={{ gap: 12 }}>
       {rows.map((row, r) => (
-        <View key={r} style={{ flexDirection: 'row', gap: pic ? 6 : 12 }}>
+        <View key={r} style={{ flexDirection: 'row', gap: 12 }}>
           {row.map((it) => <CategoryTile key={it.label} testID={`${testPrefix}-${it.label}`} label={it.label} icon={it.icon} thumb={it.thumb} selected={value === it.label} onPress={() => onPick(value === it.label ? null : it.label)} />)}
-          {Array.from({ length: per - row.length }, (_, k) => <View key={`pad${k}`} style={{ flex: 1 }} />)}
+          {row.length === 1 && <View style={{ flex: 1 }} />}
         </View>
       ))}
     </View>
