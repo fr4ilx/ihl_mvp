@@ -224,6 +224,7 @@ function ListingList({ items, keyPrefix, onOpen }) {
 // Professionals) shows those as tiles, each opening its own page. The last level has no tiles and shows the map, with
 // a pin for every place in the list, between the City picker and the list.
 function DirectoryLayout({ category, subcategory, subtype }) {
+  const { c } = useTheme();
   const nav = useNav();
   const app = useApp();
   const fb = useFeedback();
@@ -292,9 +293,11 @@ function DirectoryLayout({ category, subcategory, subtype }) {
               </View>
               <IconButton testID="open-saved" icon="bookmark" variant="outline" accessibilityLabel="Saved" onPress={() => nav.navigate('Saved')} />
             </View>
+            {!!tiles && <Text accessibilityRole="header" style={[type('H5', 'bold'), { color: c('text/color-primary'), marginTop: 8 }]}>Category</Text>}
             {tiles}
           </View>
           <View style={{ gap: 12 }}>
+            {app.listings.length > 0 && <Text accessibilityRole="header" style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>Listing</Text>}
             {app.listings.length > 0 && c2.row}
             {leaf && <ResultsMap testID="subcategory-map" places={state === 'ready' ? results : []} onOpen={open} />}
             {body}
