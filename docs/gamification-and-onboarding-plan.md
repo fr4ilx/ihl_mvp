@@ -175,8 +175,8 @@ Claim or add, set up, send for review, live, then request a feature. Their progr
 | 0 | IHL answers section 3 | Final rules |
 | 1 | Align prototype copy and rules, add stage Medallion on posts, first week card. Done October 15, 2026 | Updated V2 and HANDOFF |
 | 2 | Figma: stage mark on Post card, seasonal quest art, first week card | Mockups V2 |
-| 3 | Build in Expo: stages, check-in, I was here, paywall | MVP |
-| 4 | Add Winter, Spring and Summer quests, then group quests | Post launch |
+| 3 | Build in Expo: stages, check-in, reviews, paywall | MVP |
+| 4 | Add Winter, Spring and Summer quests, then group quests. In the prototype October 15, 2026: all four seasons and Together on the running quest | Post launch |
 
 ## 8. Risks
 

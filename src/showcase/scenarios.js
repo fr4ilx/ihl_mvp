@@ -125,6 +125,9 @@ export const FLOWS = [
       { id: 'quest-share', v: 2, label: 'Share a reflection', state: true, seed: QUEST_TWO, nav: modal(tab('home', ['Home'], ['Quest']), 'NewPost', { quest: 'share', topic: 'Food', text: REFLECTION }) },
       { id: 'quest-earned', v: 2, label: 'Harvest 2026 earned', state: true, seed: QUEST_TWO, nav: modal(tab('home', ['Home'], ['Quest']), 'NewPost', { quest: 'share', topic: 'Food', text: REFLECTION, autoPost: true }) },
       { id: 'quest-done', v: 2, label: 'Quest finished', state: true, seed: QUEST_DONE, nav: tab('home', ['Home'], ['Quest']) },
+      { id: 'quest-winter', v: 2, label: 'Winter Warmth, ahead', state: true, nav: tab('home', ['Home'], ['Quest'], ['Quest', { id: 'winter-2026' }]) },
+      { id: 'quest-spring', v: 2, label: 'Spring Renewal, ahead', state: true, nav: tab('home', ['Home'], ['Quest'], ['Quest', { id: 'spring-2027' }]) },
+      { id: 'quest-summer', v: 2, label: 'Summer Roots, ahead', state: true, nav: tab('home', ['Home'], ['Quest'], ['Quest', { id: 'summer-2027' }]) },
     ],
   },
   {

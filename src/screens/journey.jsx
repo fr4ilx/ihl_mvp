@@ -2,11 +2,11 @@
 // The journey grows from Seedling to Oak by taking part: check-ins, replies, posts and visits (the first review of a listing).
 // Nothing here ranks members against each other.
 import React, { useRef, useState } from 'react';
-import { View, Text, Image } from '../rn';
+import { View, Text, Image, Pressable } from '../rn';
 import { useTheme, type, elevation } from '../theme';
 import { useNav, useRoute } from '../app/nav';
 import { useApp } from '../app/store';
-import { STAGES, QUEST } from '../data';
+import { STAGES, QUEST, QUESTS } from '../data';
 import Screen from '../components/Screen';
 import NavBar from '../components/NavBar';
 import Button from '../components/Button';
@@ -92,13 +92,13 @@ export function Badges() {
   );
 }
 
-// Figma: Quest step (Done No, Yes). One step of the quest: a 32pt circle with its number (border/color-strong ring)
+// Figma: Quest step (Done No, Yes, Upcoming). One step of the quest: a 32pt circle with its number (border/color-strong ring)
 // or a check on bg/color-success once done, the step in Body M Bold and one line, then its action
-// (Secondary, Medium), or the Done badge.
-function QuestStep({ step, n, done, onGo }) {
+// (Secondary, Medium), or the Done badge. A quest that has not started shows its steps with no action.
+function QuestStep({ step, n, done, onGo, upcoming }) {
   const { c } = useTheme();
   return (
-    <View testID={`quest-step-${step.id}`} style={{ flexDirection: 'row', gap: 12, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised') }}>
+    <View testID={`quest-step-${step.id}`} style={{ flexDirection: 'row', gap: 12, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card }}>
       <View style={{ width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: done ? c('bg/color-success') : 'transparent', borderWidth: done ? 0 : 1.5, borderColor: c('border/color-strong') }}>
         {done
           ? <Icon name="check" size={18} strokeWidth={2} color={c('text/color-on-status')} />
@@ -107,49 +107,105 @@ function QuestStep({ step, n, done, onGo }) {
       <View style={{ flex: 1, gap: 4, paddingTop: 3 }}>
         <Text style={[type('BodyM', 'bold'), { color: c('text/color-primary') }]}>{step.title}</Text>
         <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{step.text}</Text>
-        <View style={{ marginTop: 8 }}>
-          {done
-            ? <Badge testID={`quest-done-${step.id}`} label="Done" tone="success" icon="check-circle" />
-            : <Button testID={`quest-go-${step.id}`} label={step.action} hierarchy="secondary" size="medium" onPress={onGo} />}
-        </View>
+        {!upcoming && (
+          <View style={{ marginTop: 8 }}>
+            {done
+              ? <Badge testID={`quest-done-${step.id}`} label="Done" tone="success" icon="check-circle" />
+              : <Button testID={`quest-go-${step.id}`} label={step.action} hierarchy="secondary" size="medium" onPress={onGo} />}
+          </View>
+        )}
       </View>
     </View>
   );
 }
 
+// The quest art: the painting when there is one, otherwise its glyph on the accent tint.
+function QuestArt({ quest, size }) {
+  const { c } = useTheme();
+  if (quest.art) return <Image source={quest.art} resizeMode="contain" style={{ width: size, height: size }} />;
+  return (
+    <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: c('bg/color-surface-raised'), alignItems: 'center', justifyContent: 'center' }}>
+      <Icon name={quest.icon} size={Math.round(size * 0.5)} color={c('icon/color-accent')} />
+    </View>
+  );
+}
+
+// Figma: Quest row. One season in This year's quests: the art at 48pt on a bg/color-accent-subtle tile, the name in
+// Body M Bold and its dates, then Now (Success) for the running quest or a chevron. Opens that quest.
+function QuestRow({ quest, live, onPress }) {
+  const { c } = useTheme();
+  return (
+    <Pressable testID={`quest-row-${quest.id}`} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${quest.name}, ${live ? 'running now' : `starts ${quest.starts}`}`} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 72, paddingVertical: 12 }, pressed && { opacity: 0.6 }]}>
+      <View style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: c('bg/color-accent-subtle'), alignItems: 'center', justifyContent: 'center' }}>
+        <QuestArt quest={quest} size={40} />
+      </View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={[type('BodyM', 'bold'), { color: c('text/color-primary') }]}>{quest.name}</Text>
+        <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{quest.dates}</Text>
+      </View>
+      {live ? <Badge label="Now" tone="success" /> : <Icon name="nav-arrow-right" size={20} color={c('icon/color-secondary')} />}
+    </Pressable>
+  );
+}
+
+// Quest: the running quest by default, or any season by id. Grove members take part in the running one, the others
+// show their steps and badge ahead of time with "Starts Dec 21". Together adds up everyone who finished it, as a group
+// goal, with no names and no ranks. This year's quests lists all four seasons.
 export function Quest() {
   const { c } = useTheme();
   const nav = useNav();
   const app = useApp();
-  const total = QUEST.steps.length;
-  const done = QUEST.steps.filter((s) => app.questDone(s.id)).length;
-  const harvest = app.badges.find((b) => b.id === QUEST.badge);
-  // Each step leads to where it happens. A visit counts with the first review on the listing.
-  const go = (id) => {
-    if (id === 'farm') nav.openTab('directory', 'CategoryResults', { category: 'Food' });
-    if (id === 'practitioner') nav.openTab('directory', 'CategoryResults', { category: 'Holistic Business' });
-    if (id === 'share') nav.openModal('NewPost', { quest: 'share' });
+  const { params } = useRoute().route;
+  const quest = QUESTS.find((q) => q.id === params.id) || QUEST;
+  const live = quest.id === QUEST.id;
+  const total = quest.steps.length;
+  const done = live ? quest.steps.filter((s) => app.questDone(s.id)).length : 0;
+  const badge = live ? app.badges.find((b) => b.id === quest.badge) : null;
+  const earned = badge && badge.earned;
+  // Each step leads to where it happens. A place counts with its first review.
+  const go = (step) => {
+    if (step.go[0] === 'category') nav.openTab('directory', 'CategoryResults', { category: step.go[1] });
+    if (step.go[0] === 'post') nav.openModal('NewPost', { quest: 'share' });
   };
+  // Finishing adds you to Together.
+  const together = live && done === total ? quest.together.done + 1 : quest.together.done;
   return (
     <Screen testID="screen-quest" nav={<NavBar kind="back" onBack={nav.goBack} />} bodyGap={24}>
       <View style={{ alignItems: 'center', gap: 8, padding: 24, borderRadius: 20, backgroundColor: c('bg/color-accent-subtle') }}>
-        <Image source={QUEST.art} resizeMode="contain" style={{ width: 128, height: 128 }} />
-        <Text style={[type('H2', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{QUEST.name}</Text>
-        <Text style={[type('BodyS', 'bold'), { color: c('text/color-accent') }]}>{QUEST.dates}</Text>
-        <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>{QUEST.about}</Text>
+        <QuestArt quest={quest} size={128} />
+        <Text style={[type('H2', 'bold'), { color: c('text/color-primary'), textAlign: 'center' }]}>{quest.name}</Text>
+        <Text style={[type('BodyS', 'bold'), { color: c('text/color-accent') }]}>{quest.dates}</Text>
+        <Text style={[type('BodyM'), { color: c('text/color-secondary'), textAlign: 'center' }]}>{quest.about}</Text>
       </View>
-      <View style={{ gap: 8 }}>
-        <Text testID="quest-progress" style={[type('BodyS', 'bold'), { color: c('text/color-primary') }]}>{done === total ? 'All done' : `${done} of ${total} done`}</Text>
-        <ProgressBar value={done} max={total} />
-      </View>
+      {live ? (
+        <View style={{ gap: 8 }}>
+          <Text testID="quest-progress" style={[type('BodyS', 'bold'), { color: c('text/color-primary') }]}>{done === total ? 'All done' : `${done} of ${total} done`}</Text>
+          <ProgressBar value={done} max={total} />
+        </View>
+      ) : (
+        <Badge testID="quest-starts" label={`Starts ${quest.starts}`} tone="info" icon="calendar" />
+      )}
       <View style={{ gap: 12 }}>
-        {QUEST.steps.map((s, i) => <QuestStep key={s.id} step={s} n={i + 1} done={app.questDone(s.id)} onGo={() => go(s.id)} />)}
+        {quest.steps.map((s, i) => <QuestStep key={s.id} step={s} n={i + 1} upcoming={!live} done={live && app.questDone(s.id)} onGo={() => go(s)} />)}
       </View>
-      <View testID="quest-reward" style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised') }}>
-        <Medallion icon={harvest.icon} size={64} state={harvest.earned ? 'earned' : 'progress'} />
+      <View testID="quest-reward" style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card }}>
+        <Medallion icon={live ? badge.icon : quest.icon} size={64} state={earned ? 'earned' : 'progress'} />
         <View style={{ flex: 1, gap: 4 }}>
-          <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>{harvest.name} badge</Text>
-          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{harvest.earned ? `You earned it ${harvest.earned === 'Today' ? 'today' : `on ${harvest.earned}`}.` : `Finish all three by ${QUEST.ends} to earn it.`}</Text>
+          <Text style={[type('H5', 'bold'), { color: c('text/color-primary') }]}>{quest.badgeName} badge</Text>
+          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{earned ? `You earned it ${earned === 'Today' ? 'today' : `on ${earned}`}.` : live ? `Finish all three by ${quest.ends} to earn it.` : `Finish all three between ${quest.starts} and ${quest.ends} to earn it.`}</Text>
+        </View>
+      </View>
+      {live && (
+        <View testID="quest-together" style={{ gap: 8, padding: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card }}>
+          <H5>Together</H5>
+          <Text style={[type('BodyS'), { color: c('text/color-secondary') }]}>{together} of {quest.together.goal} members finished it so far.</Text>
+          <ProgressBar value={together} max={quest.together.goal} />
+        </View>
+      )}
+      <View testID="quest-year" style={{ gap: 8 }}>
+        <H5>This year’s quests</H5>
+        <View style={{ paddingHorizontal: 16, borderRadius: 20, backgroundColor: c('bg/color-surface-raised'), boxShadow: elevation.card }}>
+          {QUESTS.map((q) => <QuestRow key={q.id} quest={q} live={q.id === QUEST.id} onPress={() => (q.id === quest.id ? null : nav.navigate('Quest', { id: q.id }))} />)}
         </View>
       </View>
     </Screen>

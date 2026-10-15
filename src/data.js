@@ -586,16 +586,50 @@ export const MOODS = [
   { id: 'hard', label: 'Hard', icon: 'emoji-sad' },
 ];
 
-// The season's quest. Grove members take part. Steps are marked done by the member.
-export const QUEST = {
-  id: 'fall-2026', name: 'Fall Harvest Quest', art: questFall, dates: 'Sep 22 to Dec 20', ends: 'Dec 20', badge: 'harvest',
-  about: 'Three small ways to enjoy the season close to home.',
-  steps: [
-    { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby, then review it.', action: 'Find a farm' },
-    { id: 'practitioner', title: 'Visit a practitioner', text: 'Try a class, a massage or a consult, then review it.', action: 'Find one' },
-    { id: 'share', title: 'Share a reflection', text: 'Post what you tried and how it felt.', action: 'Write a post' },
-  ],
-};
+// The season's quests, one a quarter, Grove only, three steps each ending in that season's badge. The Fall Harvest Quest
+// runs now, the next three are ahead. A step done by reviewing a place counts with that place's first review.
+// together: the group goal, how many members finished it so far out of the goal. Nothing ranks members, it only adds up.
+// icon: the quest's art for now, an Iconoir glyph on the accent tint, until Steven paints the other three.
+export const QUESTS = [
+  {
+    id: 'fall-2026', season: 'Fall', name: 'Fall Harvest Quest', art: questFall, icon: 'apple-fruit', dates: 'Sep 22 to Dec 20', starts: 'Sep 22', ends: 'Dec 20', badgeName: 'Harvest 2026', badge: 'harvest',
+    about: 'Three small ways to enjoy the season close to home.', together: { done: 212, goal: 500 },
+    steps: [
+      { id: 'farm', title: 'Visit a farm or market', text: 'Pick up something grown nearby, then review it.', action: 'Find a farm', go: ['category', 'Food'] },
+      { id: 'practitioner', title: 'Visit a practitioner', text: 'Try a class, a massage or a consult, then review it.', action: 'Find one', go: ['category', 'Holistic Business'] },
+      { id: 'share', title: 'Share a reflection', text: 'Post what you tried and how it felt.', action: 'Write a post', go: ['post'] },
+    ],
+  },
+  {
+    id: 'winter-2026', season: 'Winter', name: 'Winter Warmth Quest', icon: 'coffee-cup', dates: 'Dec 21 to Mar 19', starts: 'Dec 21', ends: 'Mar 19', badgeName: 'Winter Warmth 2026', badge: 'winter',
+    about: 'Stay warm and well through the cold months.', together: { done: 0, goal: 500 },
+    steps: [
+      { id: 'shop', title: 'Visit a tea or herb shop', text: 'Find a blend for the cold months, then review it.', action: 'Find a shop', go: ['category', 'Shop'] },
+      { id: 'class', title: 'Try a class or a practitioner', text: 'Yoga, a massage or a consult, then review it.', action: 'Find one', go: ['category', 'Holistic Business'] },
+      { id: 'share', title: 'Share a reflection', text: 'Post what kept you warm.', action: 'Write a post', go: ['post'] },
+    ],
+  },
+  {
+    id: 'spring-2027', season: 'Spring', name: 'Spring Renewal Quest', icon: 'flower', dates: 'Mar 20 to Jun 20', starts: 'Mar 20', ends: 'Jun 20', badgeName: 'Spring Renewal 2027', badge: 'spring',
+    about: 'Wake up with the season and try something new.', together: { done: 0, goal: 500 },
+    steps: [
+      { id: 'farm', title: 'Visit a local farm', text: 'See what is coming up this spring, then review it.', action: 'Find a farm', go: ['category', 'Food'] },
+      { id: 'class', title: 'Try a class or a practitioner', text: 'Start something new near you, then review it.', action: 'Find one', go: ['category', 'Holistic Business'] },
+      { id: 'share', title: 'Share a reflection', text: 'Post what you are growing this spring.', action: 'Write a post', go: ['post'] },
+    ],
+  },
+  {
+    id: 'summer-2027', season: 'Summer', name: 'Summer Roots Quest', icon: 'sun-light', dates: 'Jun 21 to Sep 21', starts: 'Jun 21', ends: 'Sep 21', badgeName: 'Summer Roots 2027', badge: 'summer',
+    about: 'Get outside and meet the people who grow your food.', together: { done: 0, goal: 500 },
+    steps: [
+      { id: 'market', title: 'Visit a farmers market', text: 'Meet a grower, then review the market.', action: 'Find a market', go: ['category', 'Food'] },
+      { id: 'outdoor', title: 'Try an outdoor class', text: 'Yoga in the park or a garden walk, then review it.', action: 'Find one', go: ['category', 'Holistic Business'] },
+      { id: 'share', title: 'Share a reflection', text: 'Post your favorite summer find.', action: 'Write a post', go: ['post'] },
+    ],
+  },
+];
+// The quest running now. Members take part in this one, the others show what is ahead.
+export const QUEST = QUESTS[0];
 
 // Onboarding quiz: three questions that set the Home feed and suggest groups.
 // Each answer is a tile with an Iconoir glyph, two to a row. Answers are kept with the member and never shown to others.
