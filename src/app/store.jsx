@@ -260,7 +260,7 @@ export function AppProvider({ children, network = 'online', content = 'full', se
         const grew = change((m) => ({ ...m, weeks, mood, progress: { ...m.progress, steady: Math.min(n, 4) }, badges: earned ? { ...m.badges, steady: 'Today' } : m.badges }));
         return { streak: n, earned, grew };
       },
-      // I was here on a listing: counts toward Sprout, Explorer, Farm Friend and, for Grove, the quest.
+      // The first rating of a listing marks the visit: counts toward Sprout, Explorer, Farm Friend and, for Grove, the quest.
       // Returns { earned, grew } like checkIn.
       visit: (listing) => {
         if ((me.visited || []).includes(listing.id)) return {};

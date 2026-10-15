@@ -560,7 +560,7 @@ export const GROVE_PERKS = [
 
 // ---------- Your journey ----------
 // Stages and badges from the brief. Events are not in the MVP, so Sprout asks for a local visit instead.
-// A visit is I was here on a listing. unit: what the progress counts, as in "6 of 10 places".
+// A visit is the first rating of a listing. unit: what the progress counts, as in "6 of 10 places".
 export const STAGES = [
   { id: 'seedling', name: 'Seedling', icon: 'soil-alt', steps: ['Make your account'] },
   { id: 'sprout', name: 'Sprout', icon: 'leaf', steps: ['Add a short bio', 'Reply to a post', 'Visit a local place'] },

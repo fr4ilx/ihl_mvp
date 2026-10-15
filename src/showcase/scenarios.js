@@ -3,7 +3,7 @@
 //   seed: sample data the app starts with for this item, for example which places are saved.
 //   Route params like email, name, draft, denied, emailError, showAlert, autoSubmit, autoSend, autoPost, validate, picks,
 //   expanded, scrollTo, openMaps, openShare, confirmDelete, openTopics, showWaiver, waiverRead, promo, query, openCheckIn, mood,
-//   autoCheckIn, autoVisit, confirmLeave, replyTo, showStore, welcome and open only exist for the panel.
+//   autoCheckIn, autoRate, confirmLeave, replyTo, showStore, welcome and open only exist for the panel.
 //   In the app every form opens empty.
 //   v: 2 marks an item that only exists in V2 (the seeker round). v1: { label, nav } is how an item reads and opens
 //   in V1, when it differs.
@@ -151,10 +151,9 @@ export const FLOWS = [
       { id: 'tag-results', label: 'Tag results', nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', scrollTo: 'listing-specialties' }], ['TagResults', { tag: 'Stress' }]) },
       { id: 'listing-share', label: 'Share', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', openShare: true }]) },
       { id: 'listing-more', label: 'Show more', state: true, seed: { saved: SAVED_ALL }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', expanded: true, scrollTo: 'listing-about-section' }]) },
-      { id: 'listing-visited', v: 2, label: 'You’ve been here', state: true, seed: { me: { visited: ['wildroot'] } }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
-      { id: 'listing-sprout', v: 2, label: 'I was here, Sprout reached', state: true, seed: FRESH, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'traders', autoVisit: true }]) },
-      { id: 'listing-review', label: 'Add a review', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot', openReview: true }]) },
-      { id: 'listing-reviewed', label: 'Your review', state: true, seed: { reviews: { wildroot: { rating: 5, text: 'Sarah blended a sleep tea for me and it works. Lovely shop, no rush.' } } }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
+      { id: 'listing-sprout', v: 2, label: 'Rated, Sprout reached', state: true, seed: FRESH, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'traders', autoRate: 5 }]) },
+      { id: 'listing-rate', label: 'Rate this place', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
+      { id: 'listing-rated', label: 'Rated', state: true, seed: { reviews: { wildroot: { rating: 4 } } }, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'wildroot' }]) },
       { id: 'listing-booking', label: 'With a booking link', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'quietmind' }]) },
       { id: 'listing-offer-locked', v: 2, label: 'Member offer, Seedling', state: true, seed: SEEDLING, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'quietmind', scrollTo: 'listing-offer' }]) },
       { id: 'listing-no-website', label: 'No website', state: true, nav: tab('directory', ['Directory'], ['ListingProfile', { id: 'garfield' }]) },
@@ -333,7 +332,7 @@ export const FORM_PRESETS = {
   Conversation: { empty: {}, half: { draft: 'Chamomile and' }, filled: { draft: REPLY_DRAFT } },
 };
 // Params that only trigger a one-off state. Changing the form clears them.
-const ONE_OFF = ['showMismatch', 'emailError', 'autoSubmit', 'autoPost', 'autoSend', 'validate', 'showAlert', 'denied', 'showWaiver', 'waiverRead', 'waiverEarly', 'autoCheckIn', 'autoVisit'];
+const ONE_OFF = ['showMismatch', 'emailError', 'autoSubmit', 'autoPost', 'autoSend', 'validate', 'showAlert', 'denied', 'showWaiver', 'waiverRead', 'waiverEarly', 'autoCheckIn', 'autoRate'];
 
 // Which form level a route shows right now, for the panel highlight.
 export function formLevel(route) {
