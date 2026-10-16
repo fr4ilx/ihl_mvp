@@ -41,9 +41,9 @@ These apply to UI copy, docs, commit messages and replies.
 
 ## Git
 
-- Branch `main`, private GitHub repo `alessandrorlang/ihl-prototype`.
+- Branch `main`, GitHub repo `fr4ilx/ihl_mvp`, the `origin` remote.
 - Commit as alessandrorlang `hariadi.alessandro@gmail.com`, already set in the repo config. No co-author trailers.
-- Push from VS Code. The repo turns off the keychain credential helper, so VS Code's GitHub account, alessandrorlang, signs every push.
+- The repo turns off the keychain credential helper, so a plain `git push` has no login. Push from VS Code, or from the terminal through the GitHub CLI, signed in as fr4ilx: `git -c credential.helper='!gh auth git-credential' push origin main`.
 
 ## Reference
 
