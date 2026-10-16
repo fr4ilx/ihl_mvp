@@ -44,7 +44,9 @@ photorealistic, 3D render, glossy, vector, flat cartoon, black outlines, text, l
 
 ## Applied
 
-The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 88pt, two to a row, centered on a white card with the name under them. The goal, care, mood and perk sets are made and not placed yet.
+The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 88pt, two to a row, centered on a white card with the name under them.
+
+The rest are in too (October 15, 2026): the quiz answers and moods at 56pt in place of the Select tile circle (`art` on QUIZ_GOALS, QUIZ_CARE and MOODS), the Grove perks at 48pt (`art` on GROVE_PERKS), the follow-up stages, badges and quests as the Medallion and quest art (MEDALLION_ART and QUESTS), the first week steps at 56pt (STEP_ART) and the interests. The grey copies for the stages and badges are made here from the color art: grayscale and 15% lighter, then the Medallion sets them to 80%. The greys in the brief (30% lighter) almost vanished on bg/color-surface. The goal, care, mood and perk sets are made and not placed yet.
 
 ## The list
 
