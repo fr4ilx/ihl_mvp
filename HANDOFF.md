@@ -243,7 +243,7 @@ app/
       interests.tsx           Edit interests
       privacy.tsx             Privacy: Policies, Permissions, Delete account
       waiver.tsx              Liability waiver
-    practice/_layout.tsx      Stack, a Practitioner's fourth tab
+    practice/_layout.tsx      Stack, a Practitioner's first tab
       index.tsx               My Practice: Draft (Continue setup or Send for review), In review or Live
                               Continue setup pushes the first missing step with setup="resume".
                               Without setup the same screens are editors with Save
@@ -258,7 +258,8 @@ app/
       contact.tsx             Phone and links
       services.tsx            Services
       offer.tsx               Member offer
-      get-featured.tsx        Get featured
+      get-featured.tsx        Get featured, pushed from Reach
+      promotion.tsx           Add a promotion, pushed from Reach
       post/[postId].tsx       A question for you (Conversation)
       privacy.tsx             Privacy (re-exports the profile screen)
       listing/[id].tsx        Their listing as seekers see it
@@ -334,10 +335,12 @@ The tab bar hides on every pushed screen (Listing profile, Tag results, Saved, C
 | Edit profile | profile.jsx | | Short bio growing to 4 lines (V2), No photo or location, Add photo sheet, Photo picked, Photo added, Date sheet, Location sheet, Place not found, Email not valid, Profile saved |
 | Edit interests | profile.jsx | | Nothing picked (Save shows "Pick at least one."), One picked |
 | Privacy | profile.jsx | | Delete account alert, then Welcome with the Your account was deleted Snackbar |
-| My Practice | practice.jsx | | Draft with Continue setup, Ready to send, Check your listing with the Slide button, In review, Claim in review, Live with Questions for you, scrolled to the Feature card, Request sent, Featured |
+| My Practice | practice.jsx | | Draft with Continue setup, Ready to send, Check your listing with the Slide button, In review, Claim in review, Live with Questions for you |
 | Photos, About, Hours, Phone and links, Services, Member offer (steps 4 to 9) | practice.jsx | setup | Empty and filled for each step, Errors on Continue, Choose photos sheet, Hours sheet, Finish later. As editors: nothing changed (no Save), Saved Snackbar |
 | Name and type, Address | practice.jsx | | Editors only |
 | Hours | practice.jsx | setup | A day with no hours reads Add, Hours sheet open, Closed day, closing before opening |
+| Reach | home.jsx | | Nothing running, Promotion on, Request sent, Featured, before live |
+| Add a promotion | practice.jsx | | Empty, Errors ("Write your promotion.", "Pick how long it runs."), Filled with the preview, Edit promotion |
 | Get featured | practice.jsx | | Nothing picked (Send request shows "Pick how long."), 3 months picked |
 
 The other params you see in `scenarios.js` (`email`, `password`, `confirm`, `name`, `dob`, `gender`, `location`, `text`, `photos`, `showAlert`, `autoSubmit`, `autoPost`, `validate`, `openSheet`, `openCategories`, `picked`, `picks`, `expanded`, `scroll`, `openMaps`, `openShare`, `confirmDelete`, `openTopics`, `pick`, `type`, `kind`, `address`, `city`, `openPlace`, `about`, `hours`, `openDay`, `phone`, `website`, `services`, `length`, `showWaiver`, `waiverRead`, `promo`, `scrollTo`, `openCheckIn`, `mood`, `autoCheckIn`, `autoVisit`, `confirmLeave`, `showStore`, `welcome`, `plan`, `open`, `from`, `openCheck`, `waiverEarly`, `showMismatch`, `emailError`, `showApple`, `denied`, `openDate`, `placeQuery`, `photo`, `draft`, `autoSend`, `claimed`, `role`) and the `seed` values only exist so the review panel can jump straight to a state. Do not port them. In the app every form opens empty.
@@ -423,7 +426,7 @@ The other params you see in `scenarios.js` (`email`, `password`, `confirm`, `nam
 - I was here is gone. In V2 the first review of a place counts as the visit for Sprout, Explorer, Farm Friend and the quest.
 - A listing's tags show under About as Tag chips, under Specialties and Approach. A booking link makes Book the main button next to Call and moves the website into a Detail row. Without one: Website and Call, or Call alone when there is no website. A member offer shows in its own card (locked for a Seedling).
 - From My Practice a Task row or a Your listing row opens its step as an editor: a Back bar named after the row, the same fields, and Save only once something changed. Save goes back to My Practice and confirms with "Photos saved", "Hours saved" and so on. Photos takes up to 6 and the first is the Cover on the listing and the Sponsored card. Hours: a day opens the Hours sheet, Open off means Closed, and a closing time before the opening time shows "Pick a closing time after it opens." under the wheels, and Done answers it with the error haptic.
-- Get featured is a request, nothing is paid in the app. Get featured is the main button on a practitioner's Directory, which also holds Add a promotion: one line and how long it runs (1 week, 2 weeks, 1 month), stored as `practice.promo` `{ text, length, ends }` and shown on the listing above the Member offer until it ends (`PromoCard.jsx`, `EditPromotion` in practice.jsx). One at a time, Edit and Remove on the Directory. This month moved off the app for now. Send request returns there with "Request sent", and the Feature card shows "Requested  ·  3 months" until the IHL team sets it up. Featured shows the end date, and the practice card leads the Home reel, labeled Sponsored.
+- Get featured is a request, nothing is paid in the app. Get featured is the main button on Reach, a practitioner's third tab, which also holds Add a promotion: one line and how long it runs (1 week, 2 weeks, 1 month), stored as `practice.promo` `{ text, length, ends }` and shown on the listing above the Member offer until it ends (`PromoCard.jsx`, `EditPromotion` in practice.jsx). One at a time, Edit promotion and Remove on Reach. The monthly numbers (Views, Saves, Directions) are out of the app for now. Send request returns there with "Request sent", and the Feature card shows "Requested  ·  3 months" until the IHL team sets it up. Featured shows the end date, and the practice card leads the Home reel, labeled Sponsored.
 - Questions for you: once live, Community (on top, as Answer cards in `Questions.jsx`) and My Practice list the Ask the Experts questions that match the practice's specialties and that the practice hasn't answered yet. Answer opens the conversation with the Reply bar focused (`focus` param). With none waiting Community shows You’re all caught up, before going live Questions start once you’re live. The practitioner answers as the practice ("Answer as Quiet Mind Massage"), and the answer shows the Expert badge.
 - A practitioner never sees a save button on their own listing, on the listing profile or in the Home reel, and has no check-in, quest or membership.
 - In Community a practitioner reads, replies and answers as their practice: the practice name, its cover photo as the avatar and the Practitioner badge. They never start a post: no New post button, no Your groups row, no Join or plus on a group page ("Members post here. You can reply."), and empty feeds have no New post action. `addPost` is for members only. Offers belong in the Member offer on the listing.
