@@ -66,7 +66,7 @@ The prototype holds two versions of the app (section 7, V1 and V2). V1 is the MV
 | `src/rn.jsx` | Web stand-ins for React Native primitives | No. Import from `react-native` |
 | `src/data.js` | Sample listings, people, posts and images | Reference and seed data |
 | `src/showcase/`, `src/main.jsx`, `src/styles.css`, `scripts/` | The review page and build | No |
-| `assets/img/` | Photos, interest illustrations, empty state illustrations, the role art on Which one are you? (`role_*`), a cover for each group (`grp_*`), the Fall Harvest Quest art, Medallion art for the stages and badges (`art_*` in full color, `art_*_grey` for one not earned yet), logo (PNG and WebP). All from the Figma file | Yes |
+| `assets/img/` | Photos, interest illustrations, empty state illustrations, the role art on Which one are you? (`role_*`), a cover for each group (`grp_*`), the Fall Harvest Quest art, watercolor art from `docs/watercolor-icons.md` (`wc_*`: categories, subcategories, interests, quiz answers, moods, Grove perks, first week steps, quests, and the Medallion art for stages and badges with `_grey` copies for one not earned yet), logo (PNG and WebP). All from the Figma file | Yes |
 | `assets/tokens.figma.json` | Raw token export from Figma | Source for `tokens.js` |
 | `assets/app-icon/` | The app icon: Light, Dark and Tinted 1024 PNGs, SVG masters, Icon Composer layers | Yes, see its README |
 

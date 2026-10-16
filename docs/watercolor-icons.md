@@ -44,11 +44,13 @@ photorealistic, 3D render, glossy, vector, flat cartoon, black outlines, text, l
 
 ## Applied
 
-The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 88pt, two to a row, centered on a white card with the name under them. The goal, care, mood and perk sets are made and not placed yet.
+The 23 subcategory watercolors are on the tiles (October 15, 2026): `assets/img/wc_sub_*.webp` at 192 by 192, 1024 masters in `assets/watercolor`. They show at 88pt, two to a row, centered on a white card with the name under them.
+
+The rest are in too (October 15, 2026): the quiz answers and moods at 56pt in place of the Select tile circle (`art` on QUIZ_GOALS, QUIZ_CARE and MOODS), the Grove perks at 48pt (`art` on GROVE_PERKS), the follow-up stages, badges and quests as the Medallion and quest art (MEDALLION_ART and QUESTS), the first week steps at 56pt (STEP_ART) and the interests. The grey copies for the stages and badges are made here from the color art: grayscale and 15% lighter, then the Medallion sets them to 80%. The greys in the brief (30% lighter) almost vanished on bg/color-surface. The goal, care, mood and perk sets are made and not placed yet.
 
 ## The list
 
-46 images.
+46 images, plus 31 in Follow-up: the gaps.
 
 ### Directory categories
 
@@ -152,9 +154,96 @@ The moods move from faces to weather, which reads warmer than painted faces and 
 | Ask the Experts | `perk_experts` | an open book with a pressed leaf on the page |
 | Member offers | `perk_offers` | a small gift wrapped in brown paper and twine |
 
+## Follow-up: the gaps
+
+31 more images for the gamification and the interests, added October 15, 2026. They use the same style prompt, the same avoid list and `cat_holistic` as the style reference.
+
+Two extra rules for this set:
+
+- **Medallion art** (stages and badges) sits inside a 62% circle on the Medallion. Keep the subject compact and roughly round, so nothing pokes past the ring. Add this line to the prompt: `Compact rounded silhouette that fits inside a circle.`
+- **Grey copies** are made from the color file, not generated: desaturate, lighten 30% and set to 80%. Name them `wc_stage_{slug}_grey.png` and `wc_badge_{slug}_grey.png`.
+
+Keep each subject apart from the first 46: no second barn, apple crate, yoga mat or teacup. The subjects below already avoid them.
+
+### Journey stages (V2)
+
+From smallest to biggest, so the six read as one growing line.
+
+| Stage | Slug | Subject |
+|---|---|---|
+| Seedling | `stage_seedling` | a tiny seedling with two round leaves in a small mound of soil |
+| Sprout | `stage_sprout` | a young sprout with four leaves rising from dark soil |
+| Root | `stage_root` | a small plant lifted from the ground, its pale roots showing |
+| Grove | `stage_grove` | three young trees growing close together |
+| Forest | `stage_forest` | a cluster of tall deep green pine trees |
+| Oak | `stage_oak` | a mature oak with a wide round crown and acorns at its foot |
+
+`stage_oak` and `goal_aging` both show an oak. Keep the acorns on the stage, so they read apart.
+
+### Badges (V2)
+
+The Seedling badge reuses `stage_seedling`.
+
+| Badge | Slug | Subject |
+|---|---|---|
+| Explorer | `badge_explorer` | a brass pocket compass, lid open |
+| Farm Friend | `badge_farmfriend` | a woven straw hat with a sprig of wheat in its band |
+| Welcomer | `badge_welcomer` | two hands meeting in a warm handshake, simple shapes, no faces |
+| Steady | `badge_steady` | a small brass lantern with a warm glow |
+| Harvest 2026 | `badge_harvest` | a round orange pumpkin with one green leaf |
+| Winter Warmth 2026 | `badge_winter` | a knitted cream mitten with a sprig of pine |
+| Spring Renewal 2027 | `badge_spring` | a tulip bulb with a green shoot breaking out of it |
+| Summer Roots 2027 | `badge_summer` | a single sunflower head, slightly turned |
+
+### Seasonal quests (V2)
+
+The hero art on a quest, at 128pt on the accent tint, and at 40pt in This year's quests. Each one is a small still life, still one group of objects.
+
+| Quest | Slug | Subject |
+|---|---|---|
+| Fall Harvest | `quest_fall` | a woven basket of small pumpkins, squash and red apples with an autumn leaf |
+| Winter Warmth | `quest_winter` | a round teapot with steam, two cinnamon sticks and a sprig of pine beside it |
+| Spring Renewal | `quest_spring` | a terracotta pot of green seedlings with a small trowel leaning on it |
+| Summer Roots | `quest_summer` | a straw sun hat resting beside a loose bunch of wildflowers |
+
+`quest_fall` redoes the art in the app today, so all four match.
+
+### Your first week (V2)
+
+The 48pt circle on the First week card, one per step.
+
+| Step | Slug | Subject |
+|---|---|---|
+| Join the Welcome Circle | `step_join` | a small wooden garden gate standing open |
+| Say hello | `step_hello` | a blank folded note card with a sprig of lavender, no writing |
+| Review a place near you | `step_review` | a single honey yellow five pointed star with soft edges |
+| Check in this week | `step_checkin` | a small stone sundial in soft morning light |
+
+### Grove perks, one more (V2)
+
+| Row | Slug | Subject |
+|---|---|---|
+| Seasonal quests | `perk_quests` | a brass medal on a sage green ribbon |
+
+### Interests
+
+The eight Interest cards and Interest tiles, on About you, What are you into?, Edit interests and My Profile. They replace the current illustrations.
+
+| Interest | Slug | Subject |
+|---|---|---|
+| Herbs | `int_herbs` | a small terracotta pot of fresh rosemary |
+| Yoga | `int_yoga` | a cork yoga block with a rolled cotton strap |
+| Farms | `int_farms` | a small vintage red tractor |
+| Nutrition | `int_nutrition` | a bowl of grains and greens with half an avocado |
+| Sound baths | `int_soundbaths` | a frosted crystal singing bowl with a wooden striker |
+| Markets | `int_markets` | a canvas tote bag full of fresh produce |
+| Gardening | `int_gardening` | a pair of gardening gloves crossed over a trowel |
+| Meditation | `int_meditation` | a round meditation cushion with a smooth stone on top |
+
 ## How to run it
 
 1. Generate Holistic Business (`cat_holistic`) first with the style prompt. Adjust until the client approves it.
 2. Use that image as the style reference for every other image, and keep the same seed where the tool allows it.
 3. Work set by set and review each set side by side, so the palette and framing stay even.
 4. Drop the approved WebPs into the prototype and check them on Directory, a category page and the quiz in Light and Dark.
+5. For the follow-up, check the stages and badges inside the Medallion at 40 and 96pt, and the interests on Interests and My Profile, in Light and Dark.
